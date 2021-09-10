@@ -101,6 +101,8 @@
        
   <h3 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h3><p>[TOC]</p>
 <h3 id="1-HTTPS是什么"><a href="#1-HTTPS是什么" class="headerlink" title="1. HTTPS是什么"></a>1. HTTPS是什么</h3><p>定义：HTTPS（全称： Hypertext Transfer Protocol Secure，超文本传输安全协议），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。HTTPS由两部分组成：HTTP + SSL / TLS，也就是在HTTP上又加了一层处理加密信息的模块。服务端和客户端的信息传输都会通过TLS进行加密，所以传输的数据都是加密后的数据。具体来说，HTTPS是HTTP报文直接将报文信息传输给SSL套接字进行加密，SSL加密后将加密后的报文发送给TCP套接字，然后TCP套接字再将加密后的报文发送给目的主机，目的主机将通过TCP套接字获取加密后的报文给SSL套接字，SSL解密后交给对应进程。</p>
+ <span id="more"></span>
+
 <p>HTTP： 直接通过明文在浏览器和服务器之间传递信息。</p>
 <p>HTTPS： 采用 对称加密算法加密数据+非对称加密算法交换密钥+数字证书验证身份 结合的方式来保护浏览器和服务端之间的通信安全。</p>
 <p><img src="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTPS/wps37.jpg" alt="img"> </p>

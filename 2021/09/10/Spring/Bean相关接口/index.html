@@ -101,6 +101,8 @@
        
   <h3 id="1-BeanFactoryPostProcessor"><a href="#1-BeanFactoryPostProcessor" class="headerlink" title="1. BeanFactoryPostProcessor"></a>1. <em><strong>BeanFactoryPostProcessor</strong></em></h3><p>接口，只有一个方法postProcessBeanFactory</p>
 <p>如果实现了此接口，那么会在所有的 Bean 都加载、注册到BeanFactory，但是都还没有初始化时，Spring 会负责调用里面的 postProcessBeanFactory 方法</p>
+ <span id="more"></span>
+
 <p>@FunctionalInterface</p>
 <p>public interface BeanFactoryPostProcessor {</p>
 <p>  void <em><strong>*postProcessBeanFactory*</strong></em>(ConfigurableListableBeanFactory var1) </p>

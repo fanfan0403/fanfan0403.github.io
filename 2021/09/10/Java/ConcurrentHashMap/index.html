@@ -99,8 +99,11 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h3 id="1-底层数据结构"><a href="#1-底层数据结构" class="headerlink" title="1. 底层数据结构"></a>1. 底层数据结构</h3><p><strong>JDK1.7</strong>： segment数组+HashEntry数组+链表</p>
+  <p>[TOC]</p>
+<h3 id="1-底层数据结构"><a href="#1-底层数据结构" class="headerlink" title="1. 底层数据结构"></a>1. 底层数据结构</h3><p><strong>JDK1.7</strong>： segment数组+HashEntry数组+链表</p>
 <p><strong>JDK1.8</strong>：Node数组+链表/红黑树，当链表长度达到一定长度时，转为红黑树。</p>
+<span id="more"></span>
+
 <p>volatile Node&lt;K,V&gt;[] table;</p>
 <p>  static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {</p>
 <p>​    final int hash;</p>
@@ -154,7 +157,7 @@
 </li>
 </ol>
 <p>如何保证线程安全：volatile</p>
-<h3 id="size"><a href="#size" class="headerlink" title="size()*"></a>size()*</h3><p><em><strong>*size*</strong>***</em>*()****<em><strong>*方法是加锁实现的吗？不是*</strong></em></p>
+<h4 id="size"><a href="#size" class="headerlink" title="size()*"></a>size()*</h4><p><em><strong>*size*</strong>***</em>*()****<em><strong>*方法是加锁实现的吗？不是*</strong></em></p>
 <p>核心方法<em><strong>*sumCount*</strong></em>()：</p>
 <p>当数组counterCells为空时直接返回baseCount</p>
 <p>当数组counterCells不为空时遍历它并累加到baseCount中</p>

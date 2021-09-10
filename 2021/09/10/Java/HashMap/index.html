@@ -102,6 +102,8 @@
   <p>[TOC]</p>
 <p>HashMap 主要用来存放<strong>键值对</strong>，它基于哈希表的 Map 接口实现，是常用的 Java 集合之一，是非线程安全的。</p>
 <p><code>HashMap</code> 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个。</p>
+<span id="more"></span>
+
 <h3 id="1-底层数据结构"><a href="#1-底层数据结构" class="headerlink" title="1.底层数据结构"></a>1.底层数据结构</h3><h4 id="JDK1-7-：数组-链表"><a href="#JDK1-7-：数组-链表" class="headerlink" title="JDK1.7 ：数组+链表"></a>JDK1.7 ：数组+链表</h4><p>HashMap 通过 key 的 hashCode 经过扰动函数处理过后得到 hash 值，然后通过 <code>(n - 1) &amp; hash</code> 判断当前元素存放的位置（这里的 n 指的是数组的长度），如果当前位置存在元素的话，就判断该元素与要存入的元素的 hash 值以及 key 是否相同，如果相同的话，直接覆盖，不相同就通过<strong>拉链法</strong>解决冲突。</p>
 <p> <strong>“拉链法”</strong> 就是：将链表和数组相结合。也就是说创建一个链表数组，数组中每一格就是一个链表。若遇到哈希冲突，则将冲突的值加到链表中即可。</p>
 <p><img src="https://camo.githubusercontent.com/aa7cb4f75f247d974819c750e8f9ca530a5ee83f1e7b162eebc64a506f38ae92/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d372f6a646b312e382545342542392538422545352538392538442545372539412538342545352538362538352545392538332541382545372542422539332545362539452538342e706e67" alt="jdk1.8之前的内部结构"></p>
