@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>常用数据结构总结 |  Fanfan</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <!-- mermaid -->
+      
+    <link rel="alternate" href="/atom.xml" title="Fanfan" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-数据结构/常用数据结构总结"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  常用数据结构总结
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2021-09-10T05:08:03.000Z" itemprop="datePublished">2021-09-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">4.8k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">16 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>[TOC]</p>
+<h2 id="1-数组"><a href="#1-数组" class="headerlink" title="1.数组"></a>1.<em>数组</em></h2><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a><em>概念</em></h4><p><strong>数组</strong>（Array） 是一种很常见的数据结构。它由****相同类型的元素****（element）组成，并且是使用一块连续的内存来存储。</p>
+<p>我们直接可以利用元素的索引（index）可以计算出该元素对应的存储地址。</p>
+<p>数组的特点是：****提供随机访问 并且容量有限****。</p>
+<h4 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a><strong><strong>使用场景</strong></strong></h4><p>1）数据量较小。</p>
+<p>2）数据规模已知。</p>
+<p>3）随机访问，修改元素值。</p>
+<p>如果插入速度很重要，选择无序数组。如果查找速度很重要，选择有序数组，并使用二分查找。</p>
+<h2 id="2-链表"><a href="#2-链表" class="headerlink" title="2. 链表"></a>2. <em>链表</em></h2><p>****链表*<em><strong>（LinkedList） 虽然是一种</strong></em>*线性表****，但是并不会按线性的顺序存储数据，使用的不是连续的内存空间来存储数据。</p>
+<p>链表的插入和删除操作的复杂度为 O(1) ，只需要知道目标位置元素的上一个元素即可。但是，在<em><strong>*查找一个节点或者访问特定位置的节点的时候复杂度为 O(n)*</strong></em> 。</p>
+<p>使用链表结构可以克服数组需要预先知道数据大小的缺点，链表结构可以充分利用计算机内存空间,实现灵活的内存动态管理。但链表不会节省空间，相比于数组会占用更多的空间，因为链表中每个节点存放的还有指向其他节点的指针。除此之外，链表不具有数组随机读取的优点。</p>
+<h4 id="链表分类"><a href="#链表分类" class="headerlink" title="链表分类"></a>链表分类</h4><ol>
+<li><p>单链表</p>
+</li>
+<li><p>双向链表</p>
+</li>
+<li><p>循环链表</p>
+</li>
+<li><p>双向循环链表</p>
+</li>
+</ol>
+<p><strong>单链表</strong></p>
+<p>单链表 单向链表****只有一个方向，结点只有一个后继指针 next 指向后面的节点****。因此，链表这种数据结构通常在物理内存上是不连续的。我们习惯性地把第一个结点叫作头结点，链表通常有一个不保存任何值的 head 节点(头结点)，通过头结点我们可以遍历整个链表。尾结点通常指向 null。</p>
+<p><strong>循环链表</strong></p>
+<p>循环链表 其实是一种特殊的单链表，和单链表不同的是循环链表的尾结点不是指向 null，而是指向链表的头结点。</p>
+<p><strong>双向链表</strong></p>
+<p>双向链表 包含两个指针，一个 prev 指向前一个节点，一个 next 指向后一个节点。</p>
+<p><strong>双向循环链表</strong></p>
+<p>双向循环链表 最后一个节点的 next 指向 head，而 head 的 prev 指向最后一个节点，构成一个环。</p>
+<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><p>如果需要支持随机访问的话，链表没办法做到。</p>
+<p>如果需要****存储的数据元素的个数不确定*<em><strong>，并且需要</strong></em>*经常添加和删除数据****的话，使用链表比较合适。</p>
+<p>如果需要存储的数据元素的个数确定，并且不需要经常添加和删除数据的话，使用数组比较合适。</p>
+<h4 id="数组-vs-链表"><a href="#数组-vs-链表" class="headerlink" title="数组 vs 链表"></a>数组 vs 链表</h4><p>· 数组支持随机访问，而链表不支持。</p>
+<p>· 数组使用的是连续内存空间对 CPU 的缓存机制友好，链表则相反。</p>
+<p>· 数组的大小固定，而链表则天然支持动态扩容。如果声明的数组过小，需要另外申请一个更大的内存空间存放数组元素，然后将原数组拷贝进去，这个操作是比较耗时的！</p>
+<h2 id="3-栈"><a href="#3-栈" class="headerlink" title="3. 栈"></a>3. 栈</h2><h4 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h4><p>****栈 (stack)*<em><strong>只允许在</strong></em>*有序的线性数据集合的一端（称为栈顶 top）进行加入数据****（push）和移除数据（pop）。因而按照 <em><strong>*后进先出*<em><strong>（LIFO, Last In First Out） 的原理运作。在栈中，</strong></em>*push 和 pop 的操作都发生在栈顶。*</strong></em></p>
+<p>栈常用一维****数组或链表****来实现，用数组实现的栈叫作 顺序栈 ，用链表实现的栈叫作 链式栈 。</p>
+<h4 id="应用场景-1"><a href="#应用场景-1" class="headerlink" title="应用场景"></a>应用场景</h4><p>当我们我们要处理的数据只涉及在一端插入和删除数据，并且满足 后进先出（LIFO, Last In First Out） 的特性时，我们就可以使用栈这个数据结构。</p>
+<p><strong>1.实现浏览器的回退和前进功能</strong></p>
+<p>我们只需要使用<em><strong>*两个栈*</strong></em>(Stack1 和 Stack2)和就能实现这个功能。比如你按顺序查看了 1,2,3,4 这四个页面，我们依次把 ****1,2,3,4 这四个页面压入 Stack1 中****。当你想回头看 2 这个页面的时候，你点击回退按钮，我们依次把 ****4,3 这两个页面从 Stack1 弹出，然后压入 Stack2 中****。假如你又想回到页面 3，你点击前进按钮，我们将 3 页面从 Stack2 弹出，然后压入到 Stack1 中。</p>
+<p>2.<strong>检查符号是否成对出现</strong></p>
+<p>括号匹配问题：</p>
+<ol>
+<li><p>首先我们将括号间的对应规则存放在 Map 中，这一点应该毋容置疑；</p>
+</li>
+<li><p>创建一个栈。遍历字符串，如果字符是****左括号就直接加入stack中****，否则将stack 的栈顶元素与这个括号做比较，如果不相等就直接返回 false。遍历结束，如果stack为空，返回 true。</p>
+</li>
+</ol>
+<p>3.<strong>反转字符串</strong></p>
+<p>将字符串中的每个字符先入栈再出栈就可以了。</p>
+<p>4.<strong>维护函数调用</strong></p>
+<p>最后一个被调用的函数必须先完成执行，符合栈的 后进先出（LIFO, Last In First Out） 特性。</p>
+<h2 id="4-队列"><a href="#4-队列" class="headerlink" title="4. 队列"></a>4. 队列</h2><h4 id="概念-2"><a href="#概念-2" class="headerlink" title="概念"></a>概念</h4><p>队列 是 <em><strong>*先进先出*</strong></em>( FIFO，First In, First Out) 的线性表。在具体应用中通常用****链表或者数组*<em><strong>来实现，用数组实现的队列叫作 顺序队列 ，用链表实现的队列叫作 链式队列 。队列只允许在</strong></em>*后端（rear）进行插入操作也就是 入队 enqueue，在前端（front）进行删除****操作也就是出队 dequeue</p>
+<p>队列的操作方式和堆栈类似，唯一的区别在于队列只允许新数据在后端进行添加。</p>
+<h4 id="队列分类"><a href="#队列分类" class="headerlink" title="队列分类"></a>队列分类</h4><p><strong>单队列</strong></p>
+<p>单队列就是常见的队列, 每次添加元素时，都是添加到队尾。单队列又分为 <em><strong>*顺序队列（数组实现）*</strong></em> 和 ****链式队列（链表实现）****。</p>
+<p><em><strong>*顺序队列存在“假溢出”的问题也就是明明有位置却不能添加的情况。*</strong></em></p>
+<p><strong>循环队列</strong></p>
+<p>****循环队列*<em><strong>可以解决顺序队列的</strong></em>*假溢出和越界问题****。解决办法就是：从头开始，这样也就会形成头尾相接的循环，这也就是循环队列名字的由来。</p>
+<p>还是用上面的图，我们将 rear 指针指向数组下标为 0 的位置就不会有越界问题了。当我们再向队列中添加元素的时候， rear 向后移动。</p>
+<h4 id="应用场景-2"><a href="#应用场景-2" class="headerlink" title="应用场景"></a>应用场景</h4><p>当我们需要按照一定顺序来处理数据的时候可以考虑使用队列这个数据结构。</p>
+<p><strong>·</strong> <em><strong>阻塞队列：</strong></em> 阻塞队列可以看成在队列基础上加了阻塞操作的队列。当队列为空的时候，出队操作阻塞，当队列满的时候，入队操作阻塞。使用阻塞队列我们可以很容易实现“生产者 - 消费者“模型。</p>
+<p><strong>·</strong> <em><strong>线程池中的请求/任务队列：</strong></em> 线程池中没有空闲线程时，新的任务请求线程资源时，线程池该如何处理呢？答案是将这些请求放在队列中，当有空闲线程的时候，会循环中反复从队列中获取任务来执行。队列分为无界队列(基于链表)和有界队列(基于数组)。无界队列的特点就是可以一直入列，除非系统资源耗尽，比如 ：FixedThreadPool 使用无界队列 LinkedBlockingQueue。但是有界队列就不一样了，当队列满的话后面再有任务/请求就会拒绝，在 Java 中的体现就是会抛出java.util.concurrent.RejectedExecutionException 异常。</p>
+<p>· Linux 内核进程队列（按优先级排队）</p>
+<p>· 现实生活中的派对，播放器上的播放列表;</p>
+<p>· 消息队列</p>
+<h2 id="5-图"><a href="#5-图" class="headerlink" title="5. 图"></a>5. 图</h2><h4 id="概念-3"><a href="#概念-3" class="headerlink" title="概念"></a>概念</h4><p>图就是由****顶点*<em><strong>的有穷非空集合和</strong></em>*顶点之间的边**<strong>组成的集合。通常表示为：</strong>G(V,E)**，其中，G表示一个图，V表示顶点的集合，E表示边的集合。</p>
+<h4 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h4><p><strong>无向图和有向图</strong></p>
+<p>边表示的是顶点之间的关系，有的关系是双向的，比如同学关系，A是B的同学，那么B也肯定是A的同学，那么在表示A和B的关系时，就<em><strong>不用关注方向，用不带箭头的边表示，这样的图就是无向图。</strong></em></p>
+<p>有的关系是有方向的，比如父子关系，师生关系，微博的关注关系，A是B的爸爸，但B肯定不是A的爸爸，A关注B，B不一定关注A。在这种情况下，我们就用带箭头的边表示二者的关系，这样的图就是<strong>有向图</strong>。</p>
+<p><strong>无权图和带权图</strong></p>
+<p>对于一个关系，如果我们只****关心关系的有无，而不关心关系有多强*<em><strong>，那么就可以用</strong></em>*无权图****表示二者的关系。</p>
+<p>对于一个关系，如果我们****既关心关系的有无，也关心关系的强度*<em><strong>，比如描述地图上两个城市的关系，需要用到距离，那么就用</strong></em>*带权图****来表示，带权图中的每一条边一个数值表示权值，代表关系的强度。</p>
+<h4 id="图的存储"><a href="#图的存储" class="headerlink" title="图的存储"></a>图的存储</h4><p><strong>邻接矩阵存储</strong></p>
+<p>邻接矩阵将图用****二维矩阵存储****，是一种较为直观的表示方式。</p>
+<p>如果第i个顶点和第j个顶点之间有关系，且关系权值为n，则 A[i][j]=n 。</p>
+<p>在****无向图****中，我们只关心关系的有无，所以当顶点i和顶点j有关系时，A[i][j]=1，当顶点i和顶点j没有关系时，A[i][j]=0。</p>
+<p><strong>邻接表存储</strong></p>
+<p>针对上面<em><strong>*邻接矩阵比较浪费内存空间*<em><strong>的问题，诞生了图的另外一种存储方法—</strong></em>*邻接表*</strong></em> 。</p>
+<p>邻接链表使用****一个链表来存储某个顶点的所有后继相邻顶点****。对于图中每个顶点Vi，把所有邻接于Vi的顶点Vj链成一个单链表，这个单链表称为顶点Vi的 邻接表。</p>
+<h4 id="图的搜索"><a href="#图的搜索" class="headerlink" title="图的搜索"></a>图的搜索</h4><p><strong>广度优先搜索-队列</strong></p>
+<p>广度优先搜索就像水面上的波纹一样一层一层向外扩展。</p>
+<p><strong>深度优先搜索-栈</strong></p>
+<p>深度优先搜索就是“一条路走到黑”，从源顶点开始，一直走到没有后继节点，才回溯到上一顶点，然后继续“一条路走到黑”。</p>
+<h2 id="6-堆"><a href="#6-堆" class="headerlink" title="6. 堆"></a>6. 堆</h2><h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><p>堆是一种满足以下条件的树：</p>
+<p>堆中的每一个节点值都大于等于（或小于等于）子树中所有节点的值。或者说，任意一个节点的值都大于等于（或小于等于）所有子节点的值。</p>
+<p><strong>·</strong> <em><strong>堆不一定是完全二叉树</strong></em>，只是为了方便存储和索引，我们通常用完全二叉树的形式来表示堆，事实上，广为人知的斐波那契堆和二项堆就不是完全二叉树,它们甚至都不是二叉树。</p>
+<p>· （<em><strong>二叉</strong></em>）堆是一个数组，它可以被看成是一个 ****近似的完全二叉树****。——《算法导论》第三版</p>
+<h4 id="堆的用途"><a href="#堆的用途" class="headerlink" title="堆的用途"></a>堆的用途</h4><p>当我们只关心所有数据中的最大值或者最小值，存在多次获取最大值或者最小值，多次插入或删除数据时，就可以使用堆。</p>
+<p>有小伙伴可能会想到用有序数组，初始化一个有序数组时间复杂度是 O(nlog(n))，查找最大值或者最小值时间复杂度都是 O(1)，但是，涉及到更新（插入或删除）数据时，时间复杂度为 O(n)，即使是使用复杂度为 O(log(n)) 的二分法找到要插入或者删除的数据，在移动数据时也需要 O(n) 的时间复杂度。</p>
+<p><em><strong>*相对于有序数组而言，堆的主要优势在于更新数据效率较高。*</strong></em> 堆的初始化时间复杂度为 O(nlog(n))，堆可以做到O(1)时间复杂度取出最大值或者最小值，O(log(n))时间复杂度插入或者删除数据，具体操作在后续章节详细介绍。</p>
+<h4 id="堆的分类"><a href="#堆的分类" class="headerlink" title="堆的分类"></a>堆的分类</h4><p>堆分为 <em><strong>*最大堆*</strong></em> 和 ****最小堆****。二者的区别在于节点的排序方式。</p>
+<p><strong>·</strong> <em><strong>*最大堆*</strong></em> ：堆中的每一个节点的值都大于等于子树中所有节点的值</p>
+<p><strong>·</strong> <em><strong>*最小堆*</strong></em> ：堆中的每一个节点的值都小于等于子树中所有节点的值</p>
+<h4 id="堆的操作总结"><a href="#堆的操作总结" class="headerlink" title="堆的操作总结"></a>堆的操作总结</h4><p><strong>·</strong> <em><strong>*插入元素*</strong></em> ：先将元素放至数组末尾，再自底向上堆化，将末尾元素上浮</p>
+<p><strong>·</strong> <em><strong>*删除堆顶元素*</strong></em> ：删除堆顶元素，将末尾元素放至堆顶，再自顶向下堆化，将堆顶元素下沉。也可以自底向上堆化，只是会产生“气泡”，浪费存储空间。最好采用自顶向下堆化的方式。</p>
+<h2 id="7-树"><a href="#7-树" class="headerlink" title="7. 树"></a>7. 树</h2><h4 id="概念-4"><a href="#概念-4" class="headerlink" title="概念"></a><em>概念</em></h4><p>树就是一种类似现实生活中的树的数据结构（倒置的树）。任何一颗非空树只有一个根节点。</p>
+<p>一棵树具有以下特点：</p>
+<ol>
+<li><p>一棵树中的任意两个结点有且仅有唯一的一条路径连通。</p>
+</li>
+<li><p>一棵树如果有 n 个结点，那么它一定恰好有 n-1 条边。</p>
+</li>
+<li><p>一棵树不包含回路。</p>
+</li>
+</ol>
+<h4 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h4><p>①　二叉树（Binary tree）是每个节点最多只有两个分支（即不存在分支度大于 2 的节点）的树结构。</p>
+<p>②　二叉树 的分支通常被称作“左子树”或“右子树”。并且，二叉树 的分支具有左右次序，不能随意颠倒。</p>
+<p>③　二叉树 的第 i 层至多拥有 2^(i-1) 个节点，深度为 k 的二叉树至多总共有 2^k-1 个节点</p>
+<h4 id="满二叉树"><a href="#满二叉树" class="headerlink" title="满二叉树"></a>满二叉树</h4><p>一个二叉树，如果每一个层的结点数都达到最大值，则这个二叉树就是 ****满二叉树****。也就是说，如果一个二叉树的层数为 K，且结点总数是(2^k) -1 ，则它就是 ****满二叉树****。如下图所示：</p>
+<h4 id="完全二叉树"><a href="#完全二叉树" class="headerlink" title="完全二叉树"></a>完全二叉树</h4><p>除最后一层外，若其余层都是满的，并且最后一层或者是满的，或者是在右边缺少连续若干节点，则这个二叉树就是 <em><strong>*完全二叉树*</strong></em> 。</p>
+<p>大家可以想象为一棵树从根结点开始扩展，扩展完左子节点才能开始扩展右子节点，每扩展完一层，才能继续扩展下一层</p>
+<h4 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h4><p><em><strong>平衡二叉树</strong></em> 是一棵二叉排序树，且具有以下性质：</p>
+<ol>
+<li><p>可以是一棵空树</p>
+</li>
+<li><p>如果不是空树，它的左右两个子树的高度差的绝对值不超过 1，并且左右两个子树都是一棵平衡二叉树。</p>
+</li>
+</ol>
+<p>平衡二叉树的常用实现方法有 <em><strong>红黑树</strong></em>、<em><strong>AVL 树</strong></em>、<em><strong>替罪羊树</strong></em>、<em><strong>加权平衡树</strong></em>、<em><strong>伸展树</strong></em> 等。</p>
+<h4 id="二叉树的存储"><a href="#二叉树的存储" class="headerlink" title="二叉树的存储"></a>二叉树的存储</h4><p>二叉树的存储主要分为 <em><strong>*链式存储*</strong></em> 和 <em><strong>*顺序存储*</strong></em> 两种：</p>
+<p><strong>链式存储</strong></p>
+<p>和链表类似，二叉树的链式存储依靠指针将各个节点串联起来，不需要连续的存储空间。</p>
+<p>每个节点包括三个属性：</p>
+<p>· 数据 data。data 不一定是单一的数据，根据不同情况，可以是多个具有不同类型的数据。</p>
+<p>· 左节点指针 left</p>
+<p>· 右节点指针 right。</p>
+<p><strong>顺序存储</strong></p>
+<p>顺序存储就是利用数组进行存储，数组中的每一个位置仅存储节点的 data，不存储左右子节点的指针，子节点的索引通过数组下标完成。根结点的序号为 1，对于每个节点 Node，假设它存储在数组中下标为 i 的位置，那么它的左子节点就存储在 2 _ i 的位置，它的右子节点存储在下标为 2 _ i+1 的位置。</p>
+<h4 id="二叉树的遍历"><a href="#二叉树的遍历" class="headerlink" title="二叉树的遍历"></a>二叉树的遍历</h4><p>先序、中序、后续</p>
+<h4 id="二叉查找树"><a href="#二叉查找树" class="headerlink" title="二叉查找树"></a>二叉查找树</h4><p>二叉查找树：为了实现快速查找而生。要求在树的任意一个节点，左子树中每个节点的值都小于这个节点的值，右子树中每个节点的值都大于这个节点。</p>
+<h4 id="平衡二叉树-1"><a href="#平衡二叉树-1" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h4><p>平衡二叉树：二叉树中任意一个节点的左右子树的高度相差不能大于1.</p>
+<p>平衡二叉查找树：（很多并没有严格符合上述定义）</p>
+<p>****设计初衷*****：解决普通二叉查找树在频繁插入、删除等动态更新情况下，出现的复杂度退化问题。让整个树比较平衡。</p>
+<p>平衡二叉树有哪些：</p>
+<p>​    AVL树，高度平衡的二叉查找树</p>
+<p>​    红黑树，根节点到各个叶子结点的最大路径可能会比最短路径大一倍。</p>
+<p>​    Splay Tree伸展树</p>
+<p>​    Treap树堆</p>
+<p><em><strong>*如何保持平衡：*</strong></em></p>
+<p>根据新插入的结点与最低不平衡结点的位置关系进行相应的调整。</p>
+<p>分为LL型、RR型、LR型和RL型4种类型</p>
+<p><img src="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93/wps25.jpg" alt="img"> </p>
+<p><img src="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93/wps26.jpg" alt="img"> </p>
+<p><img src="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93/wps27.jpg" alt="img"> </p>
+<p><img src="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93/wps28.jpg" alt="img"> </p>
+<h4 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h4><p>红黑树是平衡二叉查找树的一种。</p>
+<p><em><strong>*红黑树*</strong></em></p>
+<p>Red-Black Tree，R-B Tree，不严格的平衡二叉查找树，做到了近似平衡。</p>
+<p>解决普通二叉查找树在频繁插入、删除等动态更新情况下，出现的复杂度退化问题。让整个树比较平衡。</p>
+<p>红黑树的高度近似log2n，插入、删除、查找操作的时间复杂度都是O(logn)。</p>
+<p>红黑树是一种性能非常稳定的二叉查找树。</p>
+<p>相比于AVL，<em><strong>*红黑树优势：*</strong></em></p>
+<p>引入RB-Tree是功能、性能、空间开销的折中结果。</p>
+<ol>
+<li><p>维护成本：红黑树较小，AVL更大</p>
+</li>
+<li><p>读取性能：红黑树略逊于AVL</p>
+</li>
+<li><p>空间开销：两者类似，内容极多时略优于AVL</p>
+</li>
+</ol>
+<p>基本上主要的几种平衡树看来，红黑树有着良好的稳定性，综合实力强。实际应用中，若搜索的次数远远大于插入和删除，那么选择AVL，如果搜索，插入删除次数几乎差不多，应该选择RB。</p>
+<p>定义：红黑树中的节点一类被标记为黑色，一类标记为红色，还有几个要求：</p>
+<ol>
+<li><p>根节点为黑色</p>
+</li>
+<li><p>每个叶子节点都是黑色的空节点（NIL），也就是说，叶子节点不存储数据</p>
+</li>
+<li><p>任何相邻的节点都不能同时为红色，也就是说，红色节点是被黑色节点隔开的</p>
+</li>
+<li><p>每个节点，从该节点到达其可达叶子节点的所有路径，都包含相同数目的黑色节点</p>
+</li>
+</ol>
+<h4 id="红黑树、B-树"><a href="#红黑树、B-树" class="headerlink" title="红黑树、B+树"></a>红黑树、B+树</h4><p>红黑树多用在内部排序，即全放在内存中的，STL的map和set的内部实现就是红黑树。</p>
+<p>B+树多用于外存上时，B+也被成为一个磁盘友好的数据结构。</p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            排序算法总结
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/09/10/Spring/Mybatis/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Mybatis</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2021
+        <i class="ri-heart-fill heart_icon"></i> fyr
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/my.jpg" alt="Fanfan"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/life">生活</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+  </div>
+</body>
+
+</html>

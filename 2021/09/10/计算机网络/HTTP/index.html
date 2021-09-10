@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>HTTP |  Fanfan</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <!-- mermaid -->
+      
+    <link rel="alternate" href="/atom.xml" title="Fanfan" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-计算机网络/HTTP"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  HTTP
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP/" class="article-date">
+  <time datetime="2021-09-10T05:35:17.000Z" itemprop="datePublished">2021-09-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">5.6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">20 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>[TOC]</p>
+<h3 id="1-HTTP是什么"><a href="#1-HTTP是什么" class="headerlink" title="1. HTTP是什么"></a>1. HTTP是什么</h3><p>超文本传输协议（HTTP，HyperText Transfer Protocol)是互联网上应用最为广泛的一种网络协议。所有的 WWW（万维网） 文件都必须遵守这个标准。设计 HTTP 最初的目的是为了提供一种发布和接收 HTML 页面的方法。</p>
+<h3 id="2-状态码"><a href="#2-状态码" class="headerlink" title="2. 状态码"></a>2. 状态码</h3><p><strong>1XX：Informational信息性状态码，接收的请求正在处理</strong></p>
+<p><strong>2XX：Success成功状态码，请求正常处理完毕</strong></p>
+<p>​    200：ok 请求成功</p>
+<p>​    204：no content请求成功，但没有结果返回</p>
+<p>​    206：partial content客户端请求一部分资源，服务端成功响应，返回一部分资源</p>
+<p><strong>3XX：Redirection重定向状态码</strong></p>
+<p>代表需要客户端采取进一步的操作才能完成请求。通常，这些状态码用来重定向，后续的请    求地址（重定向目标）在本次响应的Location域中指明。</p>
+<p>​    300 Multiple Choices</p>
+<p>​    被请求的资源有一系列可供选择的回馈信息，每个都有自己特定的地址和浏览器驱动的商议    信息。用户或浏览器能够自行选择一个首选的地址进行重定向。</p>
+<p>​    301：move permanently永久性重定向</p>
+<p>​    被请求的资源已永久移动到新位置，并且将来任何对此资源的引用都应该使用本响应返回的若干个URI之一。如果可能，拥有链接编辑功能的客户端应当自动把请求的地址修改为从服务器反馈回来的地址。</p>
+<p>​    302：found临时性重定向</p>
+<p>​    要求客户端执行临时重定向（原始描述短语为“Moved Temporarily”）。由于这样的重定向是临时的，客户端应当继续向原有地址发送以后的请求。</p>
+<p>​    注意：很多现存的浏览器将302响应视作为303响应，并且使用GET方式访问在Location中规定的URI，而无视原先请求的方法。[20]因此状态码303和307被添加了进来，用以明确服务器期待客户端进行何种反应。</p>
+<p>​    303：see other</p>
+<p>​    对应当前请求的响应可以在另一个URI上被找到，当响应于POST（或PUT / DELETE）接收到响应时，客户端应该假定服务器已经收到数据，并且应该使用单独的GET消息发出重定向。这个方法的存在主要是为了允许由脚本激活的POST请求输出重定向到一个新的资源。这个新的URI不是原始资源的替代引用。同时，303响应禁止被缓存。当然，第二个请求（重定向）可能被缓存。</p>
+<p>​    304：not modified </p>
+<p>​    表示资源在由请求头中的If-Modified-Since或If-None-Match参数指定的这一版本之后，未曾被修改。在这种情况下，由于客户端仍然具有以前下载的副本，因此不需要重新传输资源。</p>
+<p>​    307 temporary redirect </p>
+<p>​    在这种情况下，请求应该与另一个URI重复，但后续的请求应仍使用原始的URI。 与302相反，当重新发出原始请求时，不允许更改请求方法。 例如，应该使用另一个POST请求来重复POST请求。</p>
+<p><strong>4XX：Client Error客户端错误状态码，服务器无法处理的请求</strong></p>
+<p>​    400：bad request</p>
+<p>​    由于明显的客户端错误（例如，格式错误的请求语法，太大的大小，无效的请求消息或欺骗    性路由请求），服务器不能或不会处理该请求。</p>
+<p>​    401：unauthorized</p>
+<p>​    该状态码表示当前请求需要用户验证。</p>
+<p>​    第一次请求后，响应包含一个适用于被请求资源的WWW-Authenticate信息头用以询问用户    信息。客户端第二次请求，重复提交一个包含恰当的Authorization头信息的请求，如果再次    返回401响应代表着服务器验证已经拒绝了那些证书，认证失败。</p>
+<p>​    403：forbidden</p>
+<p>​    服务器已经理解请求，但是拒绝执行它。</p>
+<p>​    404：not found</p>
+<p>​    服务器上无法找到请求的资源</p>
+<p>​    405：method not allow请求所针对的资源不支持对应的请求方法</p>
+<p><strong>5XX：Server Error服务器错误状态码，服务器处理请求出错</strong></p>
+<p>​    500：internal server error服务端执行请求时发生了错误</p>
+<p>​    502：bad Gateway网关错误</p>
+<p>​    503：service unavailable服务器正在超负载或停机维护，无法处理请求</p>
+<h3 id="3-HTTP-请求头字段"><a href="#3-HTTP-请求头字段" class="headerlink" title="3. HTTP 请求头字段"></a>3. HTTP 请求头字段</h3><ol>
+<li><p>Accept : 浏览器可以接收的内容类型，例如 Accept: text/plain</p>
+</li>
+<li><p>Accept-Charset：浏览器能识别的字符集，例如 Accept-Charset: utf-8</p>
+</li>
+<li><p>Accept-Encoding：浏览器可以处理的编码方式，注意这里的编码方式有别于字符集，这里的编码方式通常指gzip,deflate等。例如 Accept-Encoding: gzip, deflate</p>
+</li>
+<li><p>Accept-Language：浏览器接收的语言，其实也就是用户在什么语言地区，例如简体中文的就是 Accept-Language: zh-CN</p>
+</li>
+<li><p>Accept-Datetime：设置接受的版本时间，例如Accept-Datetime: Thu, 31 May 2007 20:35:00 GMT</p>
+</li>
+<li><p>Via：用来记录一个请求经过了哪些代理或网关才被送到目标服务器上</p>
+</li>
+<li><p>Referer：指当前请求的URL是在什么地址引用的</p>
+</li>
+<li><p>User-Agent： 通常就是用户的浏览器相关信息。例如：User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/12.0</p>
+</li>
+<li><p>Cache-Control：这个指令在request和response中都有，用来指示缓存系统（服务器上的，或者浏览器上的）应该怎样处理缓存。eg：Cache-Control: no-cache</p>
+</li>
+<li><p>Connection：告诉服务器这个浏览器想要使用怎样的连接方式。值有keep-alive和close</p>
+</li>
+</ol>
+<p>等等。</p>
+<h3 id="4-HTTP-长连接-短连接"><a href="#4-HTTP-长连接-短连接" class="headerlink" title="4. HTTP  长连接 短连接*"></a>4. HTTP  长连接 短连接*</h3><p><em><strong>如何保证长连接</strong></em></p>
+<p>短连接：客户端和服务器每进行一次HTTP操作，就建立一次连接，任务结束就中断连接。当客户端浏览器访问的某个HTML或其他类型的Web页中包含有其他的Web资源（如JavaScript文件、图像文件、CSS文件等），每遇到这样一个Web资源，浏览器就会重新建立一个HTTP会话。在HTTP/1.0中默认使用。</p>
+<p>而从HTTP/1.1起，默认使用长连接，用以保持连接特性。使用长连接的HTTP协议，会在请求头中设置：<em><strong>Connection:keep-alive</strong></em></p>
+<p>在使用长连接的情况下，当一个网页打开完成后，客户端和服务器之间用于传输HTTP数据的TCP连接不会关闭，客户端再次访问这个服务器时，会继续使用这一条已经建立的连接。Keep-Alive不会永久保持连接，它有一个保持时间，可以在不同的服务器软件（如Apache）中设定这个时间。实现长连接需要客户端和服务端都支持长连接。</p>
+<p>开启Keep-Alive的优缺点：</p>
+<p>优点：Keep-Alive模式更加高效，因为避免了连接建立和释放的开销。</p>
+<p>缺点：长时间的Tcp连接容易导致系统资源无效占用，浪费系统资源。</p>
+<h3 id="5-HTTP-无状态，如何保存用户状态"><a href="#5-HTTP-无状态，如何保存用户状态" class="headerlink" title="5. HTTP 无状态，如何保存用户状态"></a>5. HTTP 无状态，如何保存用户状态</h3><p>HTTP 是一种无状态（stateless）协议。也就是说 HTTP 协议自身不对请求和响应之间的通信状态进行保存。</p>
+<p>那么我们保存用户状态呢？Session 机制。</p>
+<p>主要作用就是通过服务端记录用户的状态。典型的场景是购物车，当你要添加商品到购物车的时候，系统不知道是哪个用户操作的，因为 HTTP 协议是无状态的。服务端给特定的用户创建特定的 Session 之后就可以标识这个用户并且跟踪这个用户了（一般情况下，服务器会在一定时间内保存这个 Session，过了时间限制，就会销毁这个Session）。</p>
+<p>在服务端保存 Session 的方法很多，最常用的就是内存和数据库(比如是使用内存数据库redis保存)。既然 Session 存放在服务器端，那么我们如何实现 Session 跟踪呢？大部分情况下，我们都是通过在 Cookie 中附加一个 Session ID 来方式来跟踪。</p>
+<p>Cookie 被禁用怎么办?</p>
+<p>最常用的就是利用 URL 重写把 Session ID 直接附加在URL路径的后面。</p>
+<h3 id="6-HTTP-八种请求方式"><a href="#6-HTTP-八种请求方式" class="headerlink" title="6. HTTP 八种请求方式*"></a>6. HTTP 八种请求方式*</h3><p><em><strong>*get*</strong></em> 请求从服务器获取特定资源</p>
+<p><em><strong>*post*</strong></em> 在服务器上创建一个新的资源</p>
+<p>put 更新服务器上的资源（更新整个资源，比如编号12的学生信息）</p>
+<p>delete 从服务器删除特定的资源</p>
+<p>head 类似于get，只不过返回的响应中没有具体内容，用于获取报头</p>
+<p>options 返回服务器针对特定资源所支持的HTTP请求方法，也可以利用向web服务器发送‘*’的请求来测试服务器的功能性</p>
+<p>connect 预留给能够将连接改为管道方式的代理服务器</p>
+<p>trace 回显服务器收到的请求，主要用于测试或诊断</p>
+<h3 id="7-HTTP-1-0-HTTP-1-1"><a href="#7-HTTP-1-0-HTTP-1-1" class="headerlink" title="7. HTTP 1.0 HTTP 1.1"></a>7. HTTP 1.0 HTTP 1.1</h3><p>主要区别主要体现在：</p>
+<ol>
+<li><p>长连接 : 在HTTP/1.0中，默认使用的是短连接，也就是说每次请求都要重新建立一次连接。HTTP 是基于TCP/IP协议的,每一次建立或者断开连接都需要三次握手四次挥手的开销，如果每次请求都要这样的话，开销会比较大。因此最好能维持一个长连接，可以用个长连接来发多个请求。HTTP 1.1起，默认使用长连接 ,默认开启Connection： keep-alive。 HTTP/1.1的持续连接有非流水线方式和流水线方式 。流水线方式是客户在收到HTTP的响应报文之前就能接着发送新的请求报文。与之相对应的非流水线方式是客户在收到前一个响应后才能发送下一个请求</p>
+</li>
+<li><p>错误状态响应码 :在HTTP1.1中新增了24个错误状态响应码，如409（Conflict）表示请求的资源与资源的当前状态发生冲突；410（Gone）表示服务器上的某个资源被永久性的删除</p>
+</li>
+<li><p>缓存处理 :在HTTP1.0中主要使用header里的If-Modified-Since,Expires来做为缓存判断的标准，HTTP1.1则引入了更多的缓存控制策略例如Entity tag，If-Unmodified-Since, If-Match, If-None-Match等更多可供选择的缓存头来控制缓存策略</p>
+</li>
+<li><p>带宽优化及网络连接的使用 :HTTP1.0中，存在一些浪费带宽的现象，例如客户端只是需要某个对象的一部分，而服务器却将整个对象送过来了，并且不支持断点续传功能，HTTP1.1则在请求头引入了range头域，它允许只请求资源的某个部分，即返回码是206（Partial Content），这样就方便了开发者自由的选择以便于充分利用带宽和连接。、</p>
+</li>
+</ol>
+<h4 id="9-http-1-0、1-1、2-0"><a href="#9-http-1-0、1-1、2-0" class="headerlink" title="9. http***1.0、1.1、2.0***"></a>9. <em><strong>http</strong>***</em>1.0、1.1、2.0***</h4><p><em><strong>HTTP1.0版本的特性：</strong></em></p>
+<p>①　早先1.0的HTTP版本，是一种无状态、无连接的应用层协议。</p>
+<p>②　HTTP1.0规定浏览器和服务器保持短暂的连接，浏览器的每次请求都需要与服务器建立一个TCP连接，服务器处理完成后立即断开TCP连接（无连接），服务器不跟踪每个客户端也不记录过去的请求（无状态）。</p>
+<p> <strong>HTTP1.1版本新特性</strong></p>
+<p>①　默认持久连接节省通信量，只要客户端服务端任意一端没有明确提出断开TCP连接，就一直保持连接，可以发送多次HTTP请求</p>
+<p>②　管线化，客户端可以同时发出多个HTTP请求，而不用一个个等待响应</p>
+<p>③　断点续传原理</p>
+<p><strong>HTTP2.0版本的特性</strong></p>
+<p>①　二进制分帧（采用二进制格式的编码将其封装）</p>
+<p>②　首部压缩（设置了专门的首部压缩设计的HPACK算法。）</p>
+<p>③　流量控制（设置了接收某个数据流的多少字节一些流量控制）</p>
+<p>④　多路复用（可以在共享TCP链接的基础上同时发送请求和响应）</p>
+<p>⑤　请求优先级（可以通过优化这些帧的交错和传输顺序进一步优化性能）</p>
+<p>服务器推送（就是服务器可以对一个客户端请求发送多个响应。服务器向客户端推送资源无需客户端明确的请求。</p>
+<h3 id="10-HTTP断点重传"><a href="#10-HTTP断点重传" class="headerlink" title="10. HTTP断点重传"></a>10. HTTP断点重传</h3><p>定义：HTTP/FTP 服务器或下载软件具有断点续传能力，允许用户从上传/下载断线的地方继续传送。 </p>
+<p>HTTP1.1 协议（RFC2616）开始支持获取文件的部分内容，这为并行下载以及断点续传提供了技术支持。它通过在 Header 里两个参数实现的，客户端发请求时对应的是 <em><strong>*Range*</strong></em> ，服务器端响应时对应的是 ****Content-Range****。</p>
+<p>Range：用于请求头中，指定第一个字节的位置和最后一个字节的位置，一般格式：</p>
+<p>Range:(unit=first byte pos)-[last byte pos]</p>
+<p>Range 头部的格式有以下几种情况：</p>
+<p>Range: bytes=0-499 表示第 0-499 字节范围的内容 </p>
+<p>Range: bytes=500-999 表示第 500-999 字节范围的内容 </p>
+<p>Range: bytes=-500 表示最后 500 字节的内容 </p>
+<p>Range: bytes=500- 表示从第 500 字节开始到文件结束部分的内容 </p>
+<p>Range: bytes=0-0,-1 表示第一个和最后一个字节 </p>
+<p>Range: bytes=500-600,601-999 同时指定几个范围</p>
+<p>Content-Range：用于响应头中，在发出带 Range 的请求后，服务器会在 Content-Range 头部返回当前接受的范围和文件总大小。一般格式：</p>
+<p>Content-Range: bytes (unit first byte pos) - [last byte pos]/[entity legth]</p>
+<p>例如：</p>
+<p>Content-Range: bytes 0-499/22400</p>
+<p>0－499 是指当前发送的数据的范围，而 22400 则是文件的总大小。</p>
+<p>而在响应完成后，返回的响应头状态码也不同：</p>
+<p>HTTP/1.1 <em><strong>*200*</strong></em> Ok（不使用断点续传方式） </p>
+<p>HTTP/1.1 <em><strong>*206*</strong></em> Partial Content（使用断点续传方式）表示客户端请求一部分资源，服务端成功响应，返回一部分资源</p>
+<p>增强校验</p>
+<p>在实际场景中，会出现一种情况，即在终端发起续传请求时，URL 对应的文件内容在服务器端已经发生变化，此时续传的数据肯定是错误的。解决办法：</p>
+<ol>
+<li><p>Last-Modified 来标识文件的最后修改时间，这样即可判断出续传文件时是否已经发生过改动。</p>
+</li>
+<li><p>使用 ETag 头来放置文件的唯一标识</p>
+</li>
+</ol>
+<p>检测服务器是否支持断点续传</p>
+<p>[root@localhost ~]# curl <em><strong>*-i –range 0-9*</strong></em> <a target="_blank" rel="noopener" href="http://www.baidu.com/img/bdlogo.gif">http://www.baidu.com/img/bdlogo.gif</a></p>
+<p>HTTP/1.1 206 Partial Content</p>
+<p>Date: Mon, 21 Nov 2016 05:26:29 GMT</p>
+<p>Server: Apache</p>
+<p>P3P: CP=” OTI DSP COR IVA OUR IND COM “</p>
+<p>Set-Cookie: BAIDUID=0CD0E23B4D4F739954DFEDB92BE6CE03:FG=1; expires=Tue, 21-Nov-17 05:26:29 GMT; max-age=31536000; path=/; domain=.baidu.com; version=1</p>
+<p>Last-Modified: Fri, 22 Feb 2013 03:45:02 GMT</p>
+<p>ETag: “627-4d648041f6b80”</p>
+<p>Accept-Ranges: bytes</p>
+<p>Content-Length: 10</p>
+<p>Cache-Control: max-age=315360000</p>
+<p>Expires: Thu, 19 Nov 2026 05:26:29 GMT</p>
+<p>Content-Range: bytes 0-9/1575</p>
+<p>Connection: Keep-Alive</p>
+<p>Content-Type: image/gif</p>
+<p>能够找到 Content-Range，则表明服务器支持断点续传。有些服务器还会返回 Accept-Ranges，输出结果 Accept-Ranges: bytes ，说明服务器支持按字节下载。</p>
+<p><em><strong>*Last-Modified*</strong></em>    服务器发给客户</p>
+<p>If-Modified-Since    客户发给服务器</p>
+<p>都是用于记录页面最后修改时间的 HTTP 头信息。再次请求本地存在的 cache 页面时，客户端会通过 If-Modified-Since 头将先前服务器端发过来的 Last-Modified 最后修改时间戳发送回去，这是为了让服务器端进行验证，通过这个时间戳判断客户端的页面是否是最新的，如果不是最新的，则返回新的内容，如果是最新的，则返回 304 告诉客户端其本地 cache 的页面是最新的，于是客户端就可以直接从本地加载页面了，这样在网络上传输的数据就会大大减少，同时也减轻了服务器的负担。</p>
+<p>（304：not modified 服务端已经执行了GET，但文件未变化）</p>
+<p><em><strong>*Etag*</strong></em></p>
+<p>为了解决 Last-Modified 无法解决的一些问题。</p>
+<p>一些文件也许会周期性的更改，但是内容并不改变（仅改变修改时间），这时候我们并不希望客户端认为这个文件被修改了，而重新 GET。</p>
+<p>某些文件修改非常频繁，例如：在秒以下的时间内进行修改（1s 内修改了 N 次），If-Modified-Since 能检查到的粒度是 s 级的，这种修改无法判断（或者说 UNIX 记录 MTIME 只能精确到秒）。</p>
+<p>某些服务器不能精确的得到文件的最后修改时间。</p>
+<p>为此，HTTP/1.1 引入了 Etag。Etag 仅仅是一个和文件相关的标记，可以是一个版本标记，例如：v1.0.0；或者说 “627-4d648041f6b80” 这么一串看起来很神秘的编码。但是 HTTP/1.1 标准并没有规定 Etag 的内容是什么或者说要怎么实现，唯一规定的是 Etag 需要放在 “” 内。</p>
+<p>If-Range</p>
+<p>用于判断实体是否发生改变，如果实体未改变，服务器发送客户端丢失的部分，否则发送整个实体。一般格式：If-Range: Etag | HTTP-Date</p>
+<p>也就是说，If-Range 可以使用 Etag 或者 Last-Modified 返回的值。当没有 ETage 却有 Last-modified 时，可以把 Last-modified 作为 If-Range 字段的值。</p>
+<p>例如：</p>
+<p>If-Range: “627-4d648041f6b80” </p>
+<p>If-Range: Fri, 22 Feb 2013 03:45:02 GMT</p>
+<p>If-Range 必须与 Range 配套使用。如果请求报文中没有 Range，那么 If-Range 就会被忽略。如果服务器不支持 If-Range，那么 Range 也会被忽略。</p>
+<p>如果请求报文中的 Etag 与服务器目标内容的 Etag 相等，即没有发生变化，那么应答报文的状态码为 206。如果服务器目标内容发生了变化，那么应答报文的状态码为 200。</p>
+<p>用于校验的其他 HTTP 头信息：If-Match/If-None-Match、If-Modified-Since/If-Unmodified-Since。</p>
+<h3 id="11-HTTP-HTTPS"><a href="#11-HTTP-HTTPS" class="headerlink" title="11. HTTP  HTTPS*"></a>11. HTTP  HTTPS*</h3><p>区别：</p>
+<ol>
+<li><p>端口 ：HTTP的URL由“http://”起始且默认使用端口80，而HTTPS的URL由“https://”起始且默认使用端口443。</p>
+</li>
+<li><p>安全性： HTTP协议运行在TCP之上，所有传输的内容都是明文，客户端和服务器端都无法验证对方的身份。HTTPS是运行在****SSL/TLS****之上的HTTP协议，SSL/TLS 运行在TCP之上。所有传输的内容都经过加密，加密采用对称加密，但对称加密的密钥用服务器方的证书进行了非对称加密。所以，HTTP 安全性没有 HTTPS高。</p>
+</li>
+<li><p>资源消耗：HTTPS 比HTTP耗费更多服务器资源</p>
+</li>
+<li></li>
+</ol>
+<h3 id="12-HTTP-Request-Response格式"><a href="#12-HTTP-Request-Response格式" class="headerlink" title="12. HTTP Request Response格式*"></a>12. HTTP Request Response格式*</h3><p>HTTP消息是服务器和客户端之间交换数据的方式。有两种类型的消息︰ </p>
+<p>请求（requests）–由客户端发送用来触发一个服务器上的动作</p>
+<p>​    起始行</p>
+<p>​    Headers</p>
+<p>​    Body</p>
+<p>响应（responses）–来自服务器的应答。</p>
+<p>​    状态行</p>
+<p>​    Headers</p>
+<p>​    Body</p>
+<p><em><strong>*Request*</strong>***</em>*- 起始行****</p>
+<p>包含三个元素：</p>
+<p>\1. HTTP 方法，GET, PUT 或者 POST等</p>
+<p>\2. 请求目标 ，通常是一个 URL，或者是协议、端口和域名的绝对路径，通常以请求的环境为特征。</p>
+<p>\3. HTTP 版本 </p>
+<p><em><strong>*Request*</strong>***</em>*- Headers****</p>
+<p>整个 header（包括值）由一行组成，这一行可以相当长。</p>
+<p>有许多请求头可用，它们可以分为几组：</p>
+<p>\1. General headers，例如 Via，适用于整个报文。</p>
+<p>\2. Request headers，例如 User-Agent，Accept-Type，通过进一步的定义(例如 Accept-Language)，或者给定上下文(例如 Referer)，或者进行有条件的限制 (例如 If-None) 来修改请求。</p>
+<p>\3. Entity headers，例如 Content-Length，适用于请求的 body。显然，如果请求中没有任何 body，则不会发送这样的头文件。</p>
+<p><img src="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP/wps35-1631252167679.jpg" alt="img"> </p>
+<p><em><strong>*Request*</strong>***</em>*- Body****</p>
+<p>请求的最后一部分是它的 body。不是所有的请求都有一个 body：例如获取资源的请求，GET，HEAD，DELETE 和 OPTIONS，通常它们不需要 body。 有些请求将数据发送到服务器以便更新数据：常见的的情况是 POST 请求（包含 HTML 表单数据）。</p>
+<p>Body 大致可分为两类：</p>
+<p>\1. Single-resource bodies，由一个单文件组成。该类型 body 由两个 header 定义： Content-Type 和 Content-Length.</p>
+<p>\2. Multiple-resource bodies，由多部分 body 组成，每一部分包含不同的信息位。通常是和  HTML Forms 连系在一起。</p>
+<p><em><strong>*Response*</strong>***</em>*-状态行****</p>
+<p>HTTP 响应的起始行被称作 状态行 (status line)，包含以下信息：</p>
+<p>\1. 协议版本，通常为 HTTP/1.1</p>
+<p>\2. 状态码 (status code)，表明请求是成功或失败。常见的状态码是 200，404，或 302。</p>
+<p>\3. 状态文本 (status text)。一个简短的，纯粹的信息，通过状态码的文本描述，帮助人们理解该 HTTP 消息。</p>
+<p>一个典型的状态行看起来像这样：HTTP/1.1 404 Not Found。</p>
+<p><em><strong>*Response*</strong>***</em>*-Headers****</p>
+<p>有许多响应头可用，这些响应头可以分为几组：</p>
+<p>\1. General headers，例如 Via，适用于整个报文</p>
+<p>\2. Response headers，例如 Vary 和 Accept-Ranges，提供其它不符合状态行的关于服务器的信息</p>
+<p>\3. Entity headers，例如 Content-Length，适用于请求的 body。显然，如果请求中没有任何 body，则不会发送这样的头文件。</p>
+<p><img src="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP/wps36-1631252167678.jpg" alt="img"> </p>
+<p><em><strong>*Response*</strong>***</em>*-Body****</p>
+<p>响应的最后一部分是 body。不是所有的响应都有 body：具有状态码 (如 201 或 204) 的响应，通常不会有 body。</p>
+<p>Body 大致可分为三类：</p>
+<ol>
+<li><p>Single-resource bodies，由已知长度的单个文件组成。该类型 body 由两个 header 定义：Content-Type 和 Content-Length。</p>
+</li>
+<li><p>Single-resource bodies，由未知长度的单个文件组成，通过将 Transfer-Encoding 设置为 chunked 来使用 chunks 编码</p>
+</li>
+<li><p>Multiple-resource bodies，由多部分 body 组成，每部分包含不同的信息段。但这是比较少见的。</p>
+</li>
+</ol>
+<p>引用：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/findumars/p/5745345.html">https://www.cnblogs.com/findumars/p/5745345.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Messages">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Messages</a></p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTPS/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            HTTPS
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/DNS/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">DNS</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2021
+        <i class="ri-heart-fill heart_icon"></i> fyr
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/my.jpg" alt="Fanfan"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/life">生活</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+  </div>
+</body>
+
+</html>

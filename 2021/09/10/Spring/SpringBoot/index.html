@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>SpringBoot |  Fanfan</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <!-- mermaid -->
+      
+    <link rel="alternate" href="/atom.xml" title="Fanfan" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Spring/SpringBoot"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  SpringBoot
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/10/Spring/SpringBoot/" class="article-date">
+  <time datetime="2021-09-10T04:54:22.000Z" itemprop="datePublished">2021-09-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.8k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>[TOC]</p>
+<h3 id="1-Springboot是什么"><a href="#1-Springboot是什么" class="headerlink" title="1. Springboot是什么"></a>1. Springboot是什么</h3><p>Spring Boot 并不是用来替代 Spring 的解决方案，而是和 Spring 框架紧密结合用于提升 Spring 开发者体验的工具。</p>
+<p>集成了大量常用的第三方库配置，Spring Boot中这些第三方库几乎可以是零配置的开箱即用（out-of-the-box），只需要非常少量的配置代码，开发者能够更加专注于业务逻辑。</p>
+<h3 id="2-优点"><a href="#2-优点" class="headerlink" title="2. 优点"></a>2. 优点</h3><ol>
+<li><p>SpringBoot继承了Spring优秀的基因，在Spring中开发更为方便快捷，帮助开发者快速的搭建Spring框架</p>
+</li>
+<li><p>简化依赖。比如创建一个 web 项目，在使用 Spring 的时需要在 pom 文件中添加多个依赖，在 Spring Boot 中，我们只需要在 pom 文件中添加如下一个 starter-web 依赖即可。</p>
+</li>
+<li><p>简化配置。Spring各种XML、Annotation配置会让人眼花缭乱，Spring Boot更多的是采用 Java Config 的方式，对 Spring 进行配置。比如@Configuration。另外，Spring 有多个 xml 和 properties配置，在 Spring Boot 中只需要个 application.yml即可</p>
+</li>
+<li><p>简化部署。Spring 项目部署时需要我们在服务器上部署 tomcat，然后把项目打成 war 包扔到 tomcat里。Spring Boot 不需要在服务器上去部署 tomcat，内嵌了 tomcat，我们只需要将项目打成 jar 包，使用 java -jar xxx.jar一键式启动项目。</p>
+</li>
+</ol>
+<h3 id="3-自动装配原理"><a href="#3-自动装配原理" class="headerlink" title="3. 自动装配原理"></a>3. 自动装配原理</h3><p><em><strong>是什么</strong></em></p>
+<p>SpringBoot 定义了一套接口规范，这套规范规定：SpringBoot 在启动时会扫描外部引用 jar 包中的META-INF/spring.factories文件，将文件中配置的类型信息加载到 Spring 容器，并执行类中定义的各种操作。对于外部 jar 来说，只需要按照 SpringBoot 定义的标准，就能将自己的功能装置进 SpringBoot。</p>
+<p>没有 Spring Boot 的情况下，如果我们需要引入第三方依赖，需要手动配置，非常麻烦。但是，Spring Boot 中，我们直接引入一个 starter 即可。比如你想要在项目中使用 redis 的话，直接在项目中引入对应的 spring-boot-starter-data-redis即可。</p>
+<p>引入 starter 之后，我们通过少量注解和一些简单的配置就能使用第三方组件提供的功能了。自动装配可以简单理解为：通过注解或者一些简单的配置就能在 Spring Boot 的帮助下实现某块功能。</p>
+<p><em><strong>如何实现？</strong></em></p>
+<p>@SpringBootApplication可以看做以下3个的集合：</p>
+<ol>
+<li><p>@EnableAutoConfiguration：启用 SpringBoot 的自动配置机制</p>
+</li>
+<li><p>@Configuration：允许在上下文中注册额外的 bean 或导入其他配置</p>
+</li>
+<li><p>@ComponentScan： 扫描被@Component (@Service,@Controller)注解的 bean，注解默认会扫描启动类所在的包下所有的类 ，可以自定义不扫描某些 bean。</p>
+</li>
+</ol>
+<p>@EnableAutoConfiguration:实现自动装配的核心注解</p>
+<p>EnableAutoConfiguration 只是一个简单地注解，自动装配核心功能的实现实际是通过 AutoConfigurationImportSelector类。</p>
+<p>AutoConfigurationImportSelector:加载自动装配类，该类实现了 ImportSelector接口，也就实现了这个接口中的 selectImports方法，该方法主要用于获取所有符合条件的类的全限定类名，这些类需要被加载到 IoC 容器中。实现如下：</p>
+<p>private static final String[] NO_IMPORTS = new String[0];</p>
+<p>public String[] selectImports(AnnotationMetadata annotationMetadata) {</p>
+<p>​    // &lt;1&gt;.判断自动装配开关是否打开</p>
+<p>​    if (!this.isEnabled(annotationMetadata)) {</p>
+<p>​      return NO_IMPORTS;</p>
+<p>​    } else {</p>
+<p>​     //&lt;2&gt;.获取所有需要装配的bean</p>
+<p>​      AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader.loadMetadata(this.beanClassLoader);</p>
+<p>​      AutoConfigurationImportSelector.AutoConfigurationEntry autoConfigurationEntry = this.getAutoConfigurationEntry(autoConfigurationMetadata, annotationMetadata);</p>
+<p>​      return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());</p>
+<p>​    }</p>
+<p>  }</p>
+<p>getAutoConfigurationEntry()方法：主要负责加载自动配置类的。源码如下：</p>
+<p>AutoConfigurationEntry getAutoConfigurationEntry(AutoConfigurationMetadata autoConfigurationMetadata, AnnotationMetadata annotationMetadata) {</p>
+<p>​    //&lt;1&gt;.判断自动装配开关是否打开</p>
+<p>​    if (!this.isEnabled(annotationMetadata)) {</p>
+<p>​      return EMPTY_ENTRY;</p>
+<p>​    } else {</p>
+<p>​      //&lt;2&gt;.获取exclude 和 excludeName</p>
+<p>​      AnnotationAttributes attributes = this.getAttributes(annotationMetadata);</p>
+<p>​      //&lt;3&gt;.读取META-INF/spring.factories</p>
+<p>​      List<String> configurations = this.getCandidateConfigurations(annotationMetadata, attributes);</String></p>
+<p>​      //&lt;4&gt;.选出@ConditionalOnXXX 中的所有条件</p>
+<p>​      configurations = this.removeDuplicates(configurations);</p>
+<p>​      Set<String> exclusions = this.getExclusions(annotationMetadata, attributes);</String></p>
+<p>​      this.checkExcludedClasses(configurations, exclusions);</p>
+<p>​      configurations.removeAll(exclusions);</p>
+<p>​      configurations = this.filter(configurations, autoConfigurationMetadata);</p>
+<p>​      this.fireAutoConfigurationImportEvents(configurations, exclusions);</p>
+<p>​      return new AutoConfigurationImportSelector.AutoConfigurationEntry(configurations, exclusions);</p>
+<p>​    }</p>
+<p>  }</p>
+<ol>
+<li><p>判断自动装配开关是否打开。默认spring.boot.enableautoconfiguration=true，可在 application.properties 或 application.yml 中设置</p>
+</li>
+<li><p>用于获取EnableAutoConfiguration注解中的 exclude 和 excludeName</p>
+</li>
+<li><p>获取需要自动装配的所有配置类，读取META-INF/spring.factories</p>
+</li>
+</ol>
+<p><img src="/2021/09/10/Spring/SpringBoot/wps22.jpg" alt="img"> </p>
+<p>不光是这个依赖下的META-INF/spring.factories被读取到，所有 Spring Boot Starter 下的META-INF/spring.factories都会被读取到。所以，你可以清楚滴看到， druid 数据库连接池的 Spring Boot Starter 就创建了META-INF/spring.factories文件。</p>
+<ol start="4">
+<li><p>spring.factories中这么多配置，每次启动并不是全部加载。需要一遍筛选，@ConditionalOnXXX 中的所有条件都满足，该类才会生效。Spring Boot 提供的条件注解</p>
+<ol>
+<li><p>@ConditionalOnBean：当容器里有指定 Bean 的条件下</p>
+</li>
+<li><p>@ConditionalOnMissingBean：当容器里没有指定 Bean 的情况下</p>
+</li>
+<li><p>@ConditionalOnSingleCandidate：当指定 Bean 在容器中只有一个，或者虽然有多个但是指定首选 Bean</p>
+</li>
+<li><p>@ConditionalOnClass：当类路径下有指定类的条件下</p>
+</li>
+<li><p>@ConditionalOnMissingClass：当类路径下没有指定类的条件下</p>
+</li>
+<li><p>@ConditionalOnProperty：指定的属性是否有指定的值</p>
+</li>
+<li><p>@ConditionalOnResource：类路径是否有指定的值</p>
+</li>
+<li><p>等</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="4-版本"><a href="#4-版本" class="headerlink" title="4. 版本"></a>4. 版本</h3><p>2.3.4</p>
+<h3 id="5-Springboot如何启动Tomcat"><a href="#5-Springboot如何启动Tomcat" class="headerlink" title="5. Springboot如何启动Tomcat*"></a>5. Springboot如何启动Tomcat*</h3><p>SpringBoot可以把web程序打包成jar包，直接启动，这得益于SpringBoot内置了容器，可以直接启动。</p>
+<p>Springboot从main启动</p>
+<p>@SpringBootApplication</p>
+<p>public class TomcatDebugApplication {</p>
+<p>  public static void main(String[] args) {</p>
+<p>​    SpringApplication.run(TomcatDebugApplication.class, args);</p>
+<p>  }</p>
+<p>}</p>
+<p>run方法是调用ConfigurableApplicationContext 方法</p>
+<ol>
+<li><p>配置属性，设置系统属性『java.awt.headless』</p>
+</li>
+<li><p>获取监听器，发布应用开始启动事件</p>
+</li>
+<li><p>初始化输入参数</p>
+</li>
+<li><p>配置环境。创建并配置当前SpringBoot应用将要使用的Environment（包括配置要使用的PropertySource以及Profile）；并遍历调用所有的SpringApplicationRunListener的environmentPrepared()方法，广播Environment准备完毕。</p>
+</li>
+<li><p>输出banner</p>
+</li>
+<li><p>创建ApplicationContext：<em><strong>*createApplicationContext()*</strong></em></p>
+</li>
+<li><p>通过SpringFactoriesLoader检索META-INF/spring.factories,获取并实例化异常分析器</p>
+</li>
+<li><p>prepareContext: </p>
+<ol>
+<li><p>为ApplicationContext加载environment，之后逐个执行ApplicationContextInitializer的initialize()方法来进一步封装ApplicationContext</p>
+</li>
+<li><p>调用所有的SpringApplicationRunListener的contextPrepared()方法</p>
+</li>
+<li><p>初始化IoC容器</p>
+</li>
+</ol>
+</li>
+<li><p>刷新<em><strong>*refreshContext(context);在此启动tomcat*</strong>***</em>*容器****</p>
+</li>
+<li><p>发布应用已经启动事件</p>
+</li>
+<li><p>发布应用启动完成事件</p>
+</li>
+</ol>
+<p><em><strong>*createApplicationContext()*</strong></em></p>
+<p>根据webApplicationType属于哪种类型的Servlet，分类如下：</p>
+<ol>
+<li><p>SERVLET  Web类型（我们建立的是web类型）</p>
+</li>
+<li><p>REACTIVE响应式Web类型</p>
+</li>
+<li><p>default 非Web类型</p>
+</li>
+</ol>
+<p>我们建立的是Web类型，实例化对应的applicationContext。</p>
+<p>即实例化DEFAULT_SERVLET_WEB_CONTEXT_CLASS指定的类。</p>
+<p>也就是****AnnotationConfigServletWebServerApplicationContext****类</p>
+<p>经过各种调用..</p>
+<p>到达createWebServer()：启动web服务，但是还没有真正启动Tomcat</p>
+<p>​    通过工厂方法TomcatServletWebServerFactory.getWebServer()获得</p>
+<p>​        第一件事：把Connnctor对象添加到Tomcat中</p>
+<p>第二件事：configureEngine。Engine是容器，上层接口Container</p>
+<p>而启动Tomcat就是在第9步的“刷新上下文”</p>
+<p>Tomcat的启动主要是初始化2个核心组件：连接器(Connector)和容器（Container）</p>
+<p>一个Tomcat实例就是一个Server，一个Server包含多个Service，也就是多个应用程序，每个Service包含多个连接器（Connetor）和一个容器（Container)，而容器下又有多个子容器，按照父子关系分别为：Engine、Host、Context、Wrapper，其中除了Engine外，其余的容器都是可以有多个。</p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/09/10/Spring/SpringBoot/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/09/10/Spring/Servlet/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Servlet
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/09/10/Spring/SpringMVC/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">SpringMVC</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2021
+        <i class="ri-heart-fill heart_icon"></i> fyr
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/my.jpg" alt="Fanfan"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/life">生活</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+  </div>
+</body>
+
+</html>

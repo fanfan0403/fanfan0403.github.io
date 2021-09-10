@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>HashMap |  Fanfan</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <!-- mermaid -->
+      
+    <link rel="alternate" href="/atom.xml" title="Fanfan" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Java/HashMap"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  HashMap
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/10/Java/HashMap/" class="article-date">
+  <time datetime="2021-09-10T02:47:46.000Z" itemprop="datePublished">2021-09-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java/">Java</a> / <a class="article-category-link" href="/categories/Java/%E9%9B%86%E5%90%88%E5%AE%B9%E5%99%A8/">集合容器</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">14 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>[TOC]</p>
+<p>HashMap 主要用来存放<strong>键值对</strong>，它基于哈希表的 Map 接口实现，是常用的 Java 集合之一，是非线程安全的。</p>
+<p><code>HashMap</code> 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个。</p>
+<h3 id="1-底层数据结构"><a href="#1-底层数据结构" class="headerlink" title="1.底层数据结构"></a>1.底层数据结构</h3><h4 id="JDK1-7-：数组-链表"><a href="#JDK1-7-：数组-链表" class="headerlink" title="JDK1.7 ：数组+链表"></a>JDK1.7 ：数组+链表</h4><p>HashMap 通过 key 的 hashCode 经过扰动函数处理过后得到 hash 值，然后通过 <code>(n - 1) &amp; hash</code> 判断当前元素存放的位置（这里的 n 指的是数组的长度），如果当前位置存在元素的话，就判断该元素与要存入的元素的 hash 值以及 key 是否相同，如果相同的话，直接覆盖，不相同就通过<strong>拉链法</strong>解决冲突。</p>
+<p> <strong>“拉链法”</strong> 就是：将链表和数组相结合。也就是说创建一个链表数组，数组中每一格就是一个链表。若遇到哈希冲突，则将冲突的值加到链表中即可。</p>
+<p><img src="https://camo.githubusercontent.com/aa7cb4f75f247d974819c750e8f9ca530a5ee83f1e7b162eebc64a506f38ae92/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d372f6a646b312e382545342542392538422545352538392538442545372539412538342545352538362538352545392538332541382545372542422539332545362539452538342e706e67" alt="jdk1.8之前的内部结构"></p>
+<h4 id="JDK1-8-：数组-链表-红黑树"><a href="#JDK1-8-：数组-链表-红黑树" class="headerlink" title="JDK1.8 ：数组+链表/红黑树"></a>JDK1.8 ：数组+链表/红黑树</h4><p>当链表长度大于阈值（默认为 8）时，会首先调用 <code>treeifyBin()</code>方法。这个方法会根据 HashMap 数组来决定是否转换为红黑树。只有当<strong>数组长度大于或者等于 64</strong> 的情况下，才会执行转换红黑树操作，以减少搜索时间。否则，就是只是执行 <code>resize()</code> 方法对数组扩容。相关源码这里就不贴了，重点关注 <code>treeifyBin()</code>方法即可！</p>
+<p><img src="https://camo.githubusercontent.com/95fe53625bad15529f73f6e15e74a6937e464c3863903dcfd136ec3113c906ce/68747470733a2f2f6f7363696d672e6f736368696e612e6e65742f6f73636e65742f75702d62626132383332323836393364616537346537386461316566376139613034633638342e706e67" alt="img"></p>
+<h3 id="2-put"><a href="#2-put" class="headerlink" title="2.put()"></a>2.put()</h3><p>put方法中调用了putVal()，putVal并未提供给用户使用。</p>
+<p>putVal()方法的过程：</p>
+<ol>
+<li><p>table是否为null或者为空：是，resize；否，第2步</p>
+</li>
+<li><p>使用hash计算数组下标(n - 1) &amp; hash，判断对应下标是否有值：如果没有，newNode后直接插入数组；如果有，第3步</p>
+</li>
+<li><p>如果数组对应位置已经有值且key值相等，直接覆盖；如果key值不相同，产生哈希冲突，第4步</p>
+</li>
+<li><p>判断该位置节点是否为树节点TreeNode，如果是，放入树中；如果不是，第5步</p>
+</li>
+<li><p>那么该位置节点必定是链表节点，在链表尾部插入新节点。判断此时链表长度是否大于TREEIFY_THRESHOLD=8，如果大于，第6步</p>
+</li>
+<li><p>如果大于8，执行treeifyBin 方法转为红黑树</p>
+</li>
+<li><p>所有步骤的最后一步：++size，并判断数组长度是否超过threshold=64，如果大于调用resize进行扩容</p>
+</li>
+</ol>
+<h3 id="3-get"><a href="#3-get" class="headerlink" title="3.get()"></a>3.get()</h3><ol>
+<li><p>判断数组table非null非空</p>
+</li>
+<li><p>根据hash计算下标，找出该位置的第一个元素first = tab[(n - 1) &amp; hash]</p>
+</li>
+<li><p>如果两者hash相同且key相同，返回first；否则说明数组该位置不止一个节点，下一步</p>
+</li>
+<li><p>判断是否为树节点TreeNode，在树中get；如果不是，下一步</p>
+</li>
+<li><p>遍历链表，找出hash相同且key相同的值返回。</p>
+</li>
+</ol>
+<h3 id="4-reisze"><a href="#4-reisze" class="headerlink" title="4.reisze()"></a>4.reisze()</h3><ol>
+<li><p>若threshold（阈值）不为空，table的首次初始化大小为阈值，否则初始化为缺省值大小16</p>
+</li>
+<li><p>当size（元素总数）大于threshold（阈值），就会扩容，扩容后的table大小变为原来的两倍。即扩容前的table大小为2的N次方，扩容后为2的N+1次方。那么该元素的table索引值由这N+1位确定，比原来多了一位</p>
+</li>
+<li><p>rehashing，节点分为三种情况：</p>
+<ol>
+<li><p>该索引位置没有冲突，没有链表，直接newTab[e.hash &amp; (newCap - 1)] = e;</p>
+</li>
+<li><p>有冲突，是红黑树节点，调用split方法，重建树</p>
+</li>
+<li><p>有冲突，有链表。如果hash值第N+1位为0，则表示不需要调整该链表节点位置；如果为1，表示需要调整到原索引的两倍位置（原因如下）</p>
+</li>
+</ol>
+</li>
+<li><p>扩容或初始化完成后，resize方法返回新的table</p>
+</li>
+</ol>
+<h3 id="5-HashMap1-8中的hash函数（扰动函数）"><a href="#5-HashMap1-8中的hash函数（扰动函数）" class="headerlink" title="5.HashMap1.8中的hash函数（扰动函数）"></a>5.HashMap1.8中的hash函数（扰动函数）</h3><p>扰动函数的目的：避免一些比较差的hashCode方法，减少碰撞。</p>
+<p>  static final int hash(Object key) {</p>
+<p>​    int h;</p>
+<p>​    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);</p>
+<p>  }</p>
+<p>为什么hash函数要这样设计？</p>
+<p>首先，hash函数也称为扰动函数，这个函数的最终返回值会用来计算数组的下标，即源码中的 (n - 1) &amp; hash。 </p>
+<p>HashMap的数组长度要取2的整次幂，这样的话，n-1 正好相当于一个低位掩码。在经过与操作之后，hash值的高位全部归零，只保留低位值，用来做数组的下标。</p>
+<p>但是，这就存在一个问题：就算散列值分布再松散，只取最后几位的话，碰撞也会很严重。</p>
+<p>这时候扰动函数的价值就体现出来了，扰动函数的源码中将key的hashCode高16位和低16位进行异或，目的是：混合原始哈希码的高位和低位，以此来加大低位的随机性；并且，混合后的低位掺杂了高位的部分特征，这样高位的信息也被变相保存下来了。</p>
+<p>在Java1.8中，做了一次扰动，之前做四次，多了可能边际效用也不大，所谓为了效率考虑就改成一次了。</p>
+<h3 id="6-为什么数组长度要取2的整次幂"><a href="#6-为什么数组长度要取2的整次幂" class="headerlink" title="6. 为什么数组长度要取2的整次幂*"></a>6. 为什么数组长度要取2的整次幂*</h3><p>HashMap的数组长度要取2的整次幂，这样的话，n-1 正好相当于一个低位掩码。在经过与操作之后，hash值的高位全部归零，只保留低位值，用来做数组的下标。</p>
+<p>如何保证？</p>
+<p>HashMap 中的<em><strong>*tableSizeFor()方法*</strong></em></p>
+<p>  static final int tableSizeFor(int cap) {</p>
+<p>​    int n = cap - 1;</p>
+<p>​    n |= n &gt;&gt;&gt; 1;</p>
+<p>​    n |= n &gt;&gt;&gt; 2;</p>
+<p>​    n |= n &gt;&gt;&gt; 4;</p>
+<p>​    n |= n &gt;&gt;&gt; 8;</p>
+<p>​    n |= n &gt;&gt;&gt; 16;</p>
+<p>​    return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;</p>
+<p>  }</p>
+<p>返回不小于cap的最接近2的整数幂的数，比如10返回16,25返回32。</p>
+<p>如何实现的？</p>
+<p>​    思路：将最高位1之后的所有位全部变为1，然后加1返回即可。</p>
+<p>​    右移1位，与或，前2位变为1；</p>
+<p>​    右移2位，与或，前4位变为1；</p>
+<p>​    右移4位，与或，前8位变为1；</p>
+<p>​    …依次类推</p>
+<p>​    将最终的结果+1，即为所求。</p>
+<p>一开始-1，是为了避免已经是给定容量的8这样2的幂次时，返回16，比预期的8更大。</p>
+<p>太强了…</p>
+<h3 id="7-几个HashMap的属性"><a href="#7-几个HashMap的属性" class="headerlink" title="7.几个HashMap的属性"></a>7.几个HashMap的属性</h3><p>\1. loadFactor默认加载因子=0.75f</p>
+<ol>
+<li><p>=数组存放数组个数/数组长度；loadFactor越大，数组存放越密；loadFactor越小，存放越稀疏</p>
+</li>
+<li><p>太大导致查找元素效率低，太小导致数组的利用率低，存放的数据会很分散。loadFactor 的默认值为 0.75f 是官方给出的一个比较好的临界值。</p>
+</li>
+<li><p>给定的默认容量为 16，负载因子为 0.75。使用过程中不断的往HashMap里面存放数据，当数量达到了 16 * 0.75 = 12 就需要将当前 16 的容量进行扩容</p>
+</li>
+</ol>
+<p>\2. threshold 临界值</p>
+<ol>
+<li>threshold = capacity * loadFactor，当 size&gt;=threshold的时候，那么就要考虑对数组的扩增了，衡量数组是否需要扩容的一个标准。</li>
+</ol>
+<h3 id="8-负载因子为什么是0-75？"><a href="#8-负载因子为什么是0-75？" class="headerlink" title="8.负载因子为什么是0.75？"></a>8.负载因子为什么是0.75？</h3><p>通常，加载因子需要在时间和空间成本上寻求一种折衷。</p>
+<p>加载因子过高，例如为1，虽然减少了空间开销，提高了空间利用率，但同时也增加了查询时间成本；</p>
+<p>加载因子过低，例如0.5，虽然可以减少查询时间成本，但是空间利用率很低，同时提高了rehash操作的次数。</p>
+<p>选择0.75作为默认的加载因子，完全是提高空间利用率和减少查询成本的折中，主要是泊松分布，0.75的话碰撞最小。</p>
+<h3 id="9-为什么是8时转为红黑树？"><a href="#9-为什么是8时转为红黑树？" class="headerlink" title="9.为什么是8时转为红黑树？"></a>9.为什么是8时转为红黑树？</h3><p>默认是链表长度达到 8 就转成红黑树，而当长度降到 6 就转换回去，这体现了时间和空间平衡的思想。</p>
+<p>最开始使用链表的时候，空间占用是比较少的，而且由于链表短，所以查询时间也没有太大的问题。可是当链表越来越长，需要用红黑树的形式来保证查询的效率。对于何时应该从链表转化为红黑树，需要确定一个阈值，这个阈值默认为 8，并且在源码中也对选择 8 这个数字做了说明：</p>
+<p>如果 hash 计算的结果离散好的话，那么红黑树这种形式是很少会被用到的。在理想情况下，链表长度符合泊松分布，当长度为 8 的时候，概率仅为 0.00000006，小于千万分之一的概率，通常我们的 Map 里面是不会存储这么多的数据的，所以通常情况下，并不会发生从链表向红黑树的转换。</p>
+<h3 id="10-HashMap为什么不安全"><a href="#10-HashMap为什么不安全" class="headerlink" title="10.HashMap为什么不安全**"></a>10.HashMap为什么不安全**</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/developer_chan/p/10450908.html">https://www.cnblogs.com/developer_chan/p/10450908.html</a></p>
+<p>HashMap是线程不安全的，其主要体现：</p>
+<ol>
+<li><p>在jdk1.7中，在多线程环境下，扩容resize时会造成环形链或数据丢失。</p>
+</li>
+<li><p>在jdk1.8中，在多线程环境下，put元素时会发生数据覆盖的情况。</p>
+</li>
+</ol>
+<h4 id="1-1-7死循环"><a href="#1-1-7死循环" class="headerlink" title="(1) 1.7死循环"></a>(1) 1.7死循环</h4><p><strong>出现在扩容的transfer函数中</strong></p>
+<p>在对table扩容到newTable后，需要将原来的数据转移到newTable当中，在转移过程中，使用的是头插法，环形链表就是在这里产生。</p>
+<p>举例：</p>
+<p>假设地址0处有元素A和B，这时需要添加C，发现需要扩容。</p>
+<p>线程1：读取到当前的hashmap情况，在准备扩容时，线程二介入</p>
+<p><img src="/2021/09/10/Java/HashMap/wps1.jpg" alt="img"> </p>
+<p>线程二：读取hashmap，进行扩容；扩容后变为B.next=A</p>
+<p><img src="/2021/09/10/Java/HashMap/wps2.jpg" alt="img"> </p>
+<p>线程一：继续执行，变为A.next=B，出现环</p>
+<p><img src="/2021/09/10/Java/HashMap/wps3.jpg" alt="img"></p>
+<h4 id="2-1-7数据丢失"><a href="#2-1-7数据丢失" class="headerlink" title="(2) 1.7数据丢失"></a>(2) 1.7数据丢失</h4><p>线程A、B操作如下HashMap：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps4.jpg" alt="img"> </p>
+<p>A执行：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps5.jpg" alt="img"> </p>
+<p>A的执行结果如下：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps6.jpg" alt="img"> </p>
+<p>A被挂起，B继续执行：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps7.jpg" alt="img"> </p>
+<p>B执行完了，所以现在java内存中newtable和table中的Entry都是B线程执行完的最新值即： newTable[1]=5 | 5.next=null | newTable[3]=3 | 3.next=7 | 7.next=null</p>
+<p>线程A继续执行：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps8.jpg" alt="img"> </p>
+<p>结果如下：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps9.jpg" alt="img"> </p>
+<p>继续循环（此时e=5 由上次循环的代码可知）</p>
+<p><img src="/2021/09/10/Java/HashMap/wps10.jpg" alt="img"> </p>
+<p>至此e=null，循环结束</p>
+<p>结果如下：</p>
+<p>3元素丢失，并形成环形链表。并在后续操作hashmap时造成死循环。</p>
+<p><img src="/2021/09/10/Java/HashMap/wps11.jpg" alt="img"> </p>
+<p>  void transfer(Entry[] newTable, boolean rehash) {</p>
+<p>​    int newCapacity = newTable.length;</p>
+<p>​    for (Entry&lt;K,V&gt; e : table) {</p>
+<p>​      while(null != e) {</p>
+<p>​        Entry&lt;K,V&gt; next = e.next;</p>
+<p>​        if (rehash) {</p>
+<p>​          e.hash = null == e.key ? 0 : hash(e.key);</p>
+<p>​        }</p>
+<p>​        int i = indexFor(e.hash, newCapacity);</p>
+<p>​        e.next = newTable[i];</p>
+<p>​        <em><strong>*newTable[i] = e;*</strong></em></p>
+<p>​        e = next;</p>
+<p>​      }</p>
+<p>​    }</p>
+<p>  }</p>
+<h4 id="3-1-8-put时数据覆盖问题"><a href="#3-1-8-put时数据覆盖问题" class="headerlink" title="(3) 1.8 put时数据覆盖问题"></a>(3) 1.8 put时数据覆盖问题</h4><p>​    在jdk1.8中对HashMap进行了优化，在发生hash碰撞时，不再采用头插法方式，而是****尾插法*<em><strong>，因此不会出现环形链表的情况，但是在多线程的情况下会产生</strong>数据覆盖</em>*的问题。</p>
+<p>​    在putVal源码中，在判断没有哈希碰撞后，会直接插入元素。如果线程A和线程B同时进行put操作，插入的两个元素哈希值相同，且该位置为null。线程A判断后还未插入时被挂起，线程B正常执行，插入数据，然后线程A获得时间片，此时线程A不用进行判断，直接插入数据，这时，<strong>线程A就会覆盖线程B的数据</strong>。</p>
+<h3 id="11-与HashTable比较"><a href="#11-与HashTable比较" class="headerlink" title="11. 与HashTable比较"></a>11. 与HashTable比较</h3><ol>
+<li><p>线程是否安全： HashMap 是非线程安全的，HashTable 是线程安全的,因为 HashTable 内部的方法基本都经过synchronized 修饰，同一把锁效率低下。（如果你要保证线程安全的话就使用 ConcurrentHashMap 吧！）；</p>
+</li>
+<li><p>效率： 因为线程安全的问题，HashMap 要比 HashTable 效率高一点。另外，HashTable 基本被淘汰，不要在代码中使用它；</p>
+</li>
+<li><p>底层数据结构： JDK1.8 后 HashMap数组+链表/红黑树。Hashtable 数组+链表。</p>
+</li>
+<li><p>对 Null key 和 Null value 的支持： HashMap 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个；HashTable 不允许有 null 键和 null 值，否则会抛出 NullPointerException。</p>
+</li>
+<li><p>初始容量大小和每次扩充容量大小的不同 ： ① 创建时如果不指定容量初始值，Hashtable 默认的初始大小为 11，之后每次扩充，容量变为原来的 2n+1。HashMap 默认的初始化大小为 16。之后每次扩充，容量变为原来的 2 倍。② 创建时如果给定了容量初始值，那么 Hashtable 会直接使用你给定的大小，而 HashMap 会将其扩充为 2 的幂次方大小。</p>
+</li>
+</ol>
+<h3 id="12-与HashSet比较"><a href="#12-与HashSet比较" class="headerlink" title="12. 与HashSet比较"></a>12. 与HashSet比较</h3><ol>
+<li><p>底层基于HashMap实现，HashSet 的源码非常非常少，因为除了 clone()、writeObject()、readObject()是 HashSet 自己不得不实现之外，其他方法都是直接调用 HashMap 中的方法。</p>
+</li>
+<li><p>自定义属性private transient HashMap&lt;E,Object&gt; map;存储数据</p>
+</li>
+</ol>
+<p><strong>与HashMap区别：</strong></p>
+<ol>
+<li><p>HashSet</p>
+<ol>
+<li><p>实现Set接口</p>
+</li>
+<li><p>存储对象</p>
+</li>
+<li><p>调用add添加元素</p>
+</li>
+<li><p>使用对象值计算hashcode</p>
+</li>
+</ol>
+</li>
+<li><p>HashMap</p>
+<ol>
+<li><p>实现Map接口</p>
+</li>
+<li><p>存储键值对</p>
+</li>
+<li><p>调用put添加元素</p>
+</li>
+<li><p>使用key计算hashcode</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="13-与TreeMap"><a href="#13-与TreeMap" class="headerlink" title="13. 与TreeMap"></a>13. 与TreeMap</h3><p>TreeMap 和HashMap 都继承自AbstractMap ，但是需要注意的是TreeMap它还实现了NavigableMap接口和SortedMap 接口。</p>
+<p>实现 NavigableMap 接口让 TreeMap 有了对集合内元素的搜索的能力。</p>
+<p>实现SortMap接口让 TreeMap 有了对集合中的元素根据键排序的能力。默认是按 key 的升序排序，不过我们也可以指定排序的比较器。</p>
+<p>综上，相比于HashMap来说 TreeMap 主要多了对集合中的元素根据键排序的能力以及对集合内元素的搜索的能力。</p>
+<h3 id="14-与CurrentHashMap的区别"><a href="#14-与CurrentHashMap的区别" class="headerlink" title="14. 与CurrentHashMap的区别"></a>14. 与CurrentHashMap的区别</h3><ol>
+<li><p>HashMap线程不安全；CurrentHashMap线程安全</p>
+</li>
+<li><p>可以使用Collections.sychronizedMap(HashMap) 来包装HashMap作为同步容器，这时它的作用几乎与Hashtable一样,当每次对Map做修改操作的时候都会锁住这个Map对象，而ConcurrentHashMap基于CAS自旋+ volatile+synchronized实现线程安全。</p>
+</li>
+<li><p>ConcurrentHashMap在多线程环境下性能方面比做了同步的HashMap要好，但是在单线程环境下，HashMap会比ConcurrentHashMap好一点。</p>
+</li>
+<li><p>ConcurrentHashMap的key和value均不能为null，HashMap都可以</p>
+</li>
+</ol>
+<h3 id="15-HashMap的遍历方式"><a href="#15-HashMap的遍历方式" class="headerlink" title="15 .HashMap的遍历方式"></a>15 .HashMap的遍历方式</h3><p><strong>4类方式，可细分为7种：</strong></p>
+<ol>
+<li><p>迭代器Iterator</p>
+<ol>
+<li><p>迭代器的EntrySet</p>
+</li>
+<li><p>迭代器的KeySet</p>
+</li>
+</ol>
+</li>
+<li><p>For each</p>
+<ol>
+<li><p>EntrySet</p>
+</li>
+<li><p>KeySet</p>
+</li>
+</ol>
+</li>
+<li><p>Lambda</p>
+</li>
+<li><p>Stream API</p>
+<ol>
+<li><p>单线程方式</p>
+</li>
+<li><p>多线程方式</p>
+</li>
+</ol>
+</li>
+</ol>
+<p><strong>遍历比较性能：</strong></p>
+<p>​    EntrySet比KeySet性能高。原因：KeySet只是得到key值，之后还需要map.get(key)获取对应的value值，2n次操作。EntrySet得到的对象包括key和value，需要n次操作。</p>
+<p>安全性：</p>
+<p>​    <strong>迭代器</strong>直接调用iterator.remove();在遍历中删除元素；</p>
+<p>​    <strong>for each</strong>中删除map.remove(entry.getKey());抛出ConcurrentModificationException；</p>
+<p>​    <strong>Lambda</strong>删除map.remove(key);抛出ConcurrentModificationException；正确：使用        map.keySet().removeIf(key -&gt; key == 1);先删除错误数据，然后遍历。</p>
+<p>​    <strong>Stream</strong>删除map.remove(entry.getKey());抛出ConcurrentModificationException；正确：使用filter过滤不需要数据。</p>
+<p>综上，建议使用迭代器的EntrySet遍历HashMap.</p>
+<p>摘自：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/developer_chan/p/10450908.html">https://www.cnblogs.com/developer_chan/p/10450908.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bendandedaima/p/13259284.html">https://www.cnblogs.com/bendandedaima/p/13259284.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zQBN3UvJDhRTKP6SzcZFKw">https://mp.weixin.qq.com/s/zQBN3UvJDhRTKP6SzcZFKw</a></p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/09/10/Java/HashMap/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/09/10/Java/ConcurrentHashMap/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            ConcurrentHashMap
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/09/10/MySQL/%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E3%80%81%E5%A4%B1%E6%95%88%E7%9A%84%E6%9D%A1%E4%BB%B6/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">联合索引生效、失效的条件</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2021
+        <i class="ri-heart-fill heart_icon"></i> fyr
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/my.jpg" alt="Fanfan"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/life">生活</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+  </div>
+</body>
+
+</html>

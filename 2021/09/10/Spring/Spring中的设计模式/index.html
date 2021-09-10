@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Spring中的设计模式 |  Fanfan</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <!-- mermaid -->
+      
+    <link rel="alternate" href="/atom.xml" title="Fanfan" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Spring/Spring中的设计模式"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Spring中的设计模式
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/10/Spring/Spring%E4%B8%AD%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="article-date">
+  <time datetime="2021-09-10T04:29:47.000Z" itemprop="datePublished">2021-09-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">8 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>[TOC]</p>
+<p>以下几种：</p>
+<ol>
+<li><p>简单工厂：BeanFactory</p>
+</li>
+<li><p>工厂方法：FactoryBean</p>
+</li>
+<li><p>单例模式：单例注册表</p>
+</li>
+<li><p>代理模式：AOP</p>
+</li>
+<li><p>模板模式</p>
+</li>
+<li></li>
+</ol>
+<h3 id="简单工厂"><a href="#简单工厂" class="headerlink" title="简单工厂"></a><em><strong>简单工厂</strong></em></h3><p>简单工厂定义：由一个工厂类根据传入的参数，动态决定应该创建哪一个产品类</p>
+<p>实现： <em><strong>*BeanFactory 接口*</strong></em></p>
+<p>是一个管理bean的工厂，有多个实现类。</p>
+<p>在<em><strong>*g*</strong>***</em>*etBean(beanName)****方法中，根据传入的参数beanName，动态决定创建哪一个Bean对象。</p>
+<p>举例：在ClassPathXmlApplicationContext启动Spring中，使用DefaultListableBeanFactory。</p>
+<p>在初始化该BeanFactory时，会加载配置文件，并解析为BeanDefinition，最后将这个beanDefinition注册到BeanFactory中，即将beanName-BeanDefinition放到beanDefinitionMap中。</p>
+<p>在初始化单例 bean阶段，会调用getBean(beanName)，先从beanDefinitionMap中获取对应的BeanDefinition，然后进行后面的创建操作。</p>
+<p>作用：</p>
+<ol>
+<li><p>封装创建过程，对调用者透明；适用于创建逻辑比较复杂的，将对象的创建和使用相分离。</p>
+</li>
+<li><p>代码复用：创建对象的代码可复用</p>
+</li>
+<li><p>隔离复杂性：调用者无需了解复杂的创建逻辑</p>
+</li>
+<li><p>职责单一：将创建代码抽离，使原来的函数或类职责更加单一，代码简洁</p>
+</li>
+</ol>
+<h3 id="工厂方法"><a href="#工厂方法" class="headerlink" title="工厂方法"></a><em><strong>工厂方法</strong></em></h3><p>工厂方法定义：定义一个创建对象的接口，让其子类决定实例化哪一个工厂类，使对象的创建过程延迟到子类进行。</p>
+<p>实现方式：<em><strong>*FactoryBean接口*</strong></em></p>
+<p>实现原理：实现了FactoryBean接口的bean是一类叫做factory的bean。其特点是spring会在使用getBean()调用获得该bean时，自动调用该bean的****getObject()****方法，所以返回的不是factory这个bean，而是这个bean.getOjbect()方法的返回值。</p>
+<p>例子：典型的例子有spring与mybatis的结合。</p>
+<p><img src="/2021/09/10/Spring/Spring%E4%B8%AD%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Spring%E4%B8%AD%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/wps19.png" alt="img"> </p>
+<p>sqlSessionFactory因为实现了FactoryBean接口，所以返回的不是 SqlSessionFactoryBean 的实例，而是它的 SqlSessionFactoryBean.getObject() 的返回值。</p>
+<h3 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a><em><strong>单例模式</strong></em></h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/twoheads/p/9723543.html">https://www.cnblogs.com/twoheads/p/9723543.html</a></p>
+<p>单例模式定义： 保证一个类仅有一个实例，并提供一个访问它的全局访问点。</p>
+<p>Spring框架对单例的支持是采用****单例注册表****的方式实现。原因：一般的将单例类构造方法定义为private是不可继承的。</p>
+<p>singletonCache：Bean实例的缓存，作为单例注册表</p>
+<ol>
+<li><p>先singletonCache.get(beanName)，如果已经注册过，直接返回，否则下一步</p>
+</li>
+<li><p>加锁synchronized(this.singletonCache)</p>
+</li>
+<li><p>再次判断如果singletonCache.get(beanName)=null，创建bean，并将这个bean加入map中</p>
+</li>
+</ol>
+<p>public abstract class AbstractBeanFactory implements ConfigurableBeanFactory{   </p>
+<p>  private final Map <em><strong>*singletonCache*</strong></em>=new HashMap();   </p>
+<p>  public Object getBean(String name)throws BeansException{   </p>
+<p>​    return getBean(name,null,null);   </p>
+<p>  }   </p>
+<p>…   </p>
+<p>  public Object getBean(String name,Class requiredType,Object[] args)</p>
+<p>throws BeansException{   </p>
+<p>   //处理传入的name  </p>
+<p>   String beanName=transformedBeanName(name);   </p>
+<p>   Object bean=null;   </p>
+<p>   //手工检测单例注册表   </p>
+<p>   Object sharedInstance=null;   </p>
+<p>   //使用了代码锁定同步块，原理和同步方法相似，但是这种写法效率更高   </p>
+<p>   <em><strong>*synchronized(this.singletonCache)*</strong></em>{   </p>
+<p>​     sharedInstance=this.singletonCache.get(beanName);   </p>
+<p>​    }   </p>
+<p>   if(sharedInstance!=null){   </p>
+<p>​     …   </p>
+<p>​     //返回已缓存Bean实例   </p>
+<p>​     bean=getObjectForSharedInstance(name,sharedInstance);   </p>
+<p>   }else{   </p>
+<p>​    …   </p>
+<p>​    //取得Bean的定义   </p>
+<p>​    RootBeanDefinition mergedBeanDefinition=getMergedBeanDefinition(beanName,false);   </p>
+<p>​     …   </p>
+<p>​    //根据Bean定义判断，如果是单例  </p>
+<p>​    if(mergedBeanDefinition.isSingleton()){   </p>
+<p>​      <em><strong>*synchronized(this.singletonCache)*</strong></em>{   </p>
+<p>​      //再次检测单例注册表   </p>
+<p>​       sharedInstance=this.singletonCache.get(beanName);   </p>
+<p>​       if(sharedInstance==null){   </p>
+<p>​        …   </p>
+<p>​        try {   </p>
+<p>​         //真正创建Bean实例   </p>
+<p>​         sharedInstance=createBean(beanName,mergedBeanDefinition,args);   </p>
+<p>​         //向单例注册表注册Bean实例   </p>
+<p>​          <em><strong>*addSingleton(beanName,sharedInstance);*</strong></em>   </p>
+<p>​        }catch (Exception ex) {   </p>
+<p>​         …   </p>
+<p>​        }finally{   </p>
+<p>​         …   </p>
+<p>​       }   </p>
+<p>​       }   </p>
+<p>​      }   </p>
+<p>​     bean=getObjectForSharedInstance(name,sharedInstance);   </p>
+<p>​    }   </p>
+<p>​    //如果是非单例</p>
+<p>​    else{   </p>
+<p>​     bean=createBean(beanName,mergedBeanDefinition,args);   </p>
+<p>​    }   </p>
+<p>}   </p>
+<p>…   </p>
+<p>  return bean;   </p>
+<p>}   </p>
+<p>}</p>
+<h3 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a><em><strong>代理模式</strong></em></h3><p>定义：在不改变原始类（被代理类）代码的情况下，通过引入代理类来给原始类附加功能。</p>
+<p>动态代理：不事先为每个原始类编写代理类，而是在运行时，动态地创建原始类对应的代理类，然后在系统中用代理类替换掉原始类。</p>
+<p>作用：与大业务代码解耦；保证业务类职责单一</p>
+<p>实现方式：AOP底层，就是****动态代理****模式的实现。</p>
+<h3 id="模版方法"><a href="#模版方法" class="headerlink" title="模版方法"></a><em><strong>模版方法</strong></em></h3><p>定义：在一个方法中定义一个算法骨架，并将某些步骤推迟到子类中实现。模板模式可以让子类在不改变算法整体结构的情况下，重新定义算法中的某些步骤。</p>
+<p>Spring模板方法模式实质：是****模板方法模式和回调模式的结合****，Spring几乎所有的外接扩展都采用这种模式。</p>
+<p>JDBC：</p>
+<p>具体实现：JDBC的抽象和对Hibernate的集成，都采用了一种理念或者处理方式，那就是模板方法模式与相应的Callback接口相结合。</p>
+<p>解决问题：</p>
+<ol>
+<li><p>复用。把算法中不变的流程抽象到父类的模板方法中，将可变部分留给子类来实现。所有子类复用父类模板方法中定义的流程代码。</p>
+</li>
+<li><p>扩展。不是指代码的扩展性，而是功能扩展，使框架用户可以不修改框架源码的情况下，定制化框架的功能。</p>
+</li>
+</ol>
+<p>引入回调原因：</p>
+<p>JdbcTemplate是抽象类，不能够独立使用，我们每次进行数据访问的时候都要给出一个相应的子类实现,这样肯定不方便，所以就引入了回调。</p>
+<p>回调代码</p>
+<p>Public interface StatementCallback{</p>
+<p>  Object doWithStatement（Statement stmt）;</p>
+<p>}</p>
+<p>JdbcTemplate方法：</p>
+<p>Public class JdbcTemplate {</p>
+<p>  Public final Object execute（StatementCallback callback）{</p>
+<p>​    Connection con=null;</p>
+<p>​    Statement stmt=null;</p>
+<p>​    try{</p>
+<p>​      con=getConnection（）;</p>
+<p>​      stmt=con.createStatement（）;</p>
+<p>​      Object retValue=callback.doWithStatement（stmt）;</p>
+<p>​      return retValue;</p>
+<p>​    }catch（SQLException e）{</p>
+<p>​      …</p>
+<p>​    }finally{</p>
+<p>​      closeStatement（stmt）;</p>
+<p>​      releaseConnection（con）;</p>
+<p>​    }</p>
+<p>  }</p>
+<p>  …//其它方法定义</p>
+<p>}</p>
+<p>Jdbc使用方法如下：</p>
+<p>  JdbcTemplate jdbcTemplate=…;</p>
+<p>  final String sql=…;</p>
+<p>  StatementCallback callback=new StatementCallback(){</p>
+<p>  public Object=doWithStatement(Statement stmt){</p>
+<p>​    return …;</p>
+<pre><code>    &#125;
+</code></pre>
+<p>  }</p>
+<p>jdbcTemplate.execute(callback);</p>
+<p>模板模式：基于继承实现，子类重写父类方法，是一种类之间的关系。</p>
+<p>回调：基于组合关系实现，把一个对象传递给另一个对象，是一种对象之间的关系。组合优于继承。更加灵活。优势如下：</p>
+<ol>
+<li><p>类只能单继承</p>
+</li>
+<li><p>回调可以使用匿名类创建回调函数</p>
+</li>
+<li><p>某个类中有多个模板方法，每个方法都有对应的抽象方法，如果我们只用到一个模板方法，子类必须实现所有的抽象方法。回调更加灵活，只需要将需要的模板方法注入回调对象即可。</p>
+</li>
+</ol>
+<h3 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a><em><strong>观察者模式</strong></em></h3><p>发布订阅模式</p>
+<p>定义：在对象之间定义一个一对多的依赖，当一个对象（被观察者）状态改变时，所有依赖的对象（观察者）都会自动收到通知。</p>
+<p>将观察者和被观察者的代码解耦。</p>
+<p>事件的发布者（ApplicationEventPublisher）</p>
+<p>事件类型（ApplicationEvent）</p>
+<p>事件广播器（ApplicationEventMulticaster）：该类是整个观察者的核心，接收发布者的事件推送并选择适当的事件监听器进行事件的准确分发。</p>
+<p>事件监听器（ApplicationListener）：该组件为观察者对象，由用户自行实现其void onApplicationEvent(E event)方法，定制业务逻辑。</p>
+<p>导出项目中基于spring观察者模式的应用：</p>
+<p>需求：在application初始化完成后，将事件类型和事件处理器映射存储到map中。方便Consumer中根据EventType调用不同的EventHandler，比如导出事件调用ExportHandler。</p>
+<p>这样设计的作用：可扩展。</p>
+<p>事件处理器接口EventHandler</p>
+<p>导出事件实现EventHandler，定义为：ExportHandler</p>
+<p>导入事件实现EventHandler，定义为：ImportHandler</p>
+<p>具体设计：</p>
+<ol>
+<li><p>在Consumer类实现ApplicationListener<ApplicationReadyEvent>接口，并实现其onApplicationEvent方法，在完成ApplicationReadyEvent后，触发onApplicationEvent方法中的自定义的逻辑</ApplicationReadyEvent></p>
+</li>
+<li><p>Consumer类实现ApplicationContextAware，用来得到applicationContext，从中可获得EventHandler的所有bean</p>
+</li>
+<li><p>在onApplicationEvent中，从applicationContext中获取所有EventHandler的bean，将type和bean的映射存储到map中</p>
+</li>
+</ol>
+<p>代码：</p>
+<p>@Component</p>
+<p>public class EventConsumer implements ApplicationContextAware, ApplicationListener<ApplicationReadyEvent> {</ApplicationReadyEvent></p>
+<p>  private ApplicationContext applicationContext;</p>
+<p>  private static final Map&lt;EventType, List<EventHandler>&gt; config = new HashMap&lt;&gt;();</EventHandler></p>
+<p>  @Override</p>
+<p>  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {</p>
+<p>​    this.applicationContext = applicationContext;</p>
+<p>  }</p>
+<p>  @Override</p>
+<p>  public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {</p>
+<p>​    //初始化所有的事件</p>
+<p>​    //获取所有EventHandler的实现类</p>
+<p>​    Map&lt;String, EventHandler&gt; beans = applicationContext.getBeansOfType(EventHandler.class);</p>
+<p>​    for (Map.Entry&lt;String, EventHandler&gt; entry : beans.entrySet()) {</p>
+<p>​      List<EventType> types = entry.getValue().getSupportEventTypes();</EventType></p>
+<p>​      for (EventType type : types) {</p>
+<p>​        if(!config.containsKey(type)){</p>
+<p>​          config.put(type, new ArrayList&lt;&gt;());</p>
+<p>​        }</p>
+<p>​        //一种事件类型对应多个处理类</p>
+<p>​        config.get(type).add(entry.getValue());</p>
+<p>​      }</p>
+<p>​    }</p>
+<p>}</p>
+<h3 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a><em><strong>适配器模式</strong></em></h3><p>实现方式：SpringMVC中的适配器HandlerAdatper</p>
+<p>实现原理：HandlerAdatper根据Handler规则找到对应的Handler，并让其执行。Spring定义了一个适配接口，使得每一种Controller有一种对应的适配器实现类，让适配器代替controller执行相应的方法。这样再扩展Controller时，只需要增加一个适配器类就完成了SpringMVC的扩展了。</p>
+<p>实现意义：HandlerAdatper使得Handler的扩展变得容易，只需要增加一个新的Handler和一个对应的HandlerAdapter即可。</p>
+<h3 id="装饰器模式"><a href="#装饰器模式" class="headerlink" title="装饰器模式"></a><em><strong>装饰器模式</strong></em></h3><p>定义：</p>
+<ol>
+<li><p>使用组合代替继承</p>
+</li>
+<li><p>装饰器类是对原始类功能相关的增强</p>
+</li>
+<li><p>装饰器类和原始类继承同样的父亲，这样可以对原始类嵌套多个装饰器类。</p>
+</li>
+</ol>
+<p>实现方式：Spring中用到的包装器模式在类名上有两种表现：一种是类名中含有Wrapper，另一种是类名中含有Decorator。</p>
+<p>实质：动态地给一个对象添加一些额外的职责。</p>
+<p>摘自：</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/114244039">https://zhuanlan.zhihu.com/p/114244039</a></p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/09/10/Spring/Spring%E4%B8%AD%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/09/10/Spring/Spring%E4%BA%8B%E5%8A%A1/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Spring事务
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/09/10/Spring/Spring%E5%AE%B9%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Spring容器的启动流程</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2021
+        <i class="ri-heart-fill heart_icon"></i> fyr
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/my.jpg" alt="Fanfan"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/life">生活</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+  </div>
+</body>
+
+</html>

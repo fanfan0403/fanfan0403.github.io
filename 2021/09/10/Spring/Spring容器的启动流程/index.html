@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Spring容器的启动流程 |  Fanfan</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <!-- mermaid -->
+      
+    <link rel="alternate" href="/atom.xml" title="Fanfan" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Spring/Spring容器的启动流程"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Spring容器的启动流程
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/10/Spring/Spring%E5%AE%B9%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" class="article-date">
+  <time datetime="2021-09-10T04:24:34.000Z" itemprop="datePublished">2021-09-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.5k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>[TOC]</p>
+<h3 id="S-pring-容器的启动流程"><a href="#S-pring-容器的启动流程" class="headerlink" title="S***pring***容器的启动流程"></a><em><strong>S</strong>***</em>pring***<em><strong>容器的启动流程</strong></em></h3><p>spring容器的启动方式有很多种： </p>
+<ol>
+<li><p>xml的方式，入口为ClassPathXmlApplicationContext（从类路径中加载xml文件）或FileSystemXmlApplicationContext（从指定文件地址加载xml文件）</p>
+</li>
+<li><p>Java Config，基于注解中的方式，入口为AnnotationConfigApplicationContext</p>
+</li>
+</ol>
+<h3 id="xml方式（源码分析）"><a href="#xml方式（源码分析）" class="headerlink" title="xml方式（源码分析）"></a>xml方式（源码分析）</h3><p><a target="_blank" rel="noopener" href="https://javadoop.com/post/spring-ioc">https://javadoop.com/post/spring-ioc</a></p>
+<p>整个流程的大致过程：初始化BeanFactory；加载xml配置文件；将beanDefinition注册到beanFactory；创建bean（创建bean实例；属性填充；各种回调）</p>
+<p>启动Spring容器，入口：</p>
+<p>public static void main(String[] args) {</p>
+<p>  ApplicationContext context </p>
+<p>= new <em><strong>*ClassPathXmlApplicationContext*</strong></em>(“classpath:applicationfile.xml”);</p>
+<p>}</p>
+<p>maven中添加spring-context依赖，spring-context 会自动将 spring-core、spring-beans、spring-aop、spring-expression 这几个基础 jar 包带进来。</p>
+<p>从ClassPathXmlApplicationContext构造方法开始：</p>
+<ol>
+<li><p>处理文件路径</p>
+</li>
+<li><p>refresh()</p>
+</li>
+</ol>
+<p>refresh() 会将原来的 ApplicationContext 销毁，然后再重新执行一次初始化操作</p>
+<ol>
+<li><p>prepareRefresh() 做一些准备工作，比如记录下容器的启动时间、标记“已启动”状态、检验xml配置文件</p>
+</li>
+<li><p>初始化BeanFactory，加载配置文件，并解析为BeanDefinition，最后将这个beanDefinition注册到BeanFactory中，这一步并不会生成Bean实例。ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory()</p>
+<p><strong>1)</strong> <em><strong>初始化</strong>***</em>BeanFactory***，DefaultListableBeanFactory，这基本上是最厉害的BeanFactory</p>
+<ol start="2">
+<li>设置 BeanFactory 的两个配置属性：是否允许 Bean 覆盖、是否允许循环引用customizeBeanFactory();</li>
+</ol>
+<p><strong>3)</strong> <strong>加载</strong>loadBeanDefinitions();通过一个 XmlBeanDefinitionReader 实例来加载各个 Bean</p>
+<p><strong>4)</strong> <em><strong>解析</strong></em>parseBeanDefinitions(root, this.delegate)核心解析方法</p>
+<p><strong>5)</strong> <em><strong>注册</strong></em>registerBeanDefinition(String beanName, BeanDefinition beanDefinition)注册Bean，将beanName-BeanDefinition放到beanDefinitionMap中；把beanName添加到ArrayList&lt;&gt; beanDefinitionNames中</p>
+<ol start="6">
+<li>发送注册事件</li>
+</ol>
+</li>
+<li><p>准备Bean容器prepareBeanFactory(beanFactory); </p>
+<ol>
+<li><p>设置 BeanFactory 的类加载器</p>
+</li>
+<li><p>添加****ApplicationContextAwareProcessor*<em><strong>，如果bean在初始化时实现了</strong></em>*Aware接口****，这个processor负责回调，回调ApplicationContextAware、EnvironmentAware、ResourceLoaderAware 等（导出项目中，EventConsumer实现了ApplicationContextAware接口，来获取ApplicationContext，从中获取EventHandler中的所有bean）</p>
+</li>
+<li><p>添加ApplicationListenerDetector，用来注册监听事件，如果bean实例化后，是ApplicationListener 的子类，那么将其添加到 listener 列表中</p>
+</li>
+<li><p>注册几个有用的bean：environment、systemProperties、systemEnvironment</p>
+</li>
+</ol>
+</li>
+<li><p>postProcessBeanFactory(beanFactory); 提供给子类的扩展点，此时所有的 Bean 都加载、注册完成了，但是都还没有初始化，子类可以在这里定义自己的BeanFactoryPostProcessor实现类</p>
+</li>
+<li><p>调用 <em><strong>*BeanFactoryPostProcessor*</strong></em> 各个实现类的 postProcessBeanFactory() 方法invokeBeanFactoryPostProcessors(beanFactory); </p>
+</li>
+<li><p>注册自定义的<em><strong>*BeanPostProcessor*</strong></em> ，registerBeanPostProcessors(beanFactory);，这个接口包含两个方法，分别在Bean初始化前、后执行</p>
+</li>
+<li><p>初始化国际化initMessageSource();初始化当前 ApplicationContext 的 MessageSource </p>
+</li>
+<li><p>初始化当前 ApplicationContext 的事件广播器initApplicationEventMulticaster();</p>
+</li>
+<li><p>onRefresh();典型的模板方法(钩子方法)，具体的子类可以在这里初始化一些特殊的 Bean（在初始化 singleton beans 之前）</p>
+</li>
+<li><p>registerListeners();注册事件监听器，监听器需要实现 ApplicationListener 接口</p>
+</li>
+</ol>
+<p><strong>11.</strong> <em><strong>*初始化所有的*</strong></em> <em><strong>*singleton bean*</strong></em> ：finishBeanFactoryInitialization(beanFactory); </p>
+<p>​    </p>
+<ol start="12">
+<li>finishRefresh();广播事件，ApplicationContext 初始化完成</li>
+</ol>
+<p><em><strong>*createBeanInstance*</strong></em>(beanName, mbd, args)</p>
+<p>作用：实例化指定的类</p>
+<ol>
+<li><p>确保已经加载了此 class</p>
+</li>
+<li><p>校验一下这个类的访问权限</p>
+</li>
+<li><p>如果是FactoryBean，则采用工厂方法实例化；否则继续</p>
+</li>
+<li><p>根据args，调用无参构造函数、或者有参构造函数创建实例</p>
+</li>
+</ol>
+<p><em><strong>*initializeBean*</strong></em>(beanName, exposedObject, mbd);</p>
+<p>处理各种回调；init方法</p>
+<ol>
+<li><p>如果 bean 实现了 <em><strong>BeanNameAware</strong></em>、BeanClassLoaderAware 或 BeanFactoryAware 接口，回调</p>
+</li>
+<li><p>**** <em><strong>BeanPostProcessor</strong></em> 的 postProcessBeforeInitialization 回调</p>
+</li>
+<li><p>处理 bean 中定义的 ****init-method****，或者如果 bean 实现了 InitializingBean 接口，调用 afterPropertiesSet() 方法</p>
+</li>
+</ol>
+<p><strong>4.</strong> <em><strong>BeanPostProcessor</strong></em> 的 postProcessAfterInitialization 回调</p>
+<h3 id="Java-Config方式"><a href="#Java-Config方式" class="headerlink" title="Java Config方式"></a>Java Config方式</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_35190492/article/details/110383213">https://blog.csdn.net/qq_35190492/article/details/110383213</a></p>
+<p>如何设计一个IOC容器：</p>
+<ol>
+<li><p>提供入口AnnotationConfigApplicationContext，供用户使用，然后初始化一些工具组件，如下：</p>
+</li>
+<li><p>bean工厂（DefaultListableBeanFactory），用来生成bean对象</p>
+</li>
+<li><p>注解配置读取器（AnnotatedBeanDefinitionReader），对加了特定注解比如@Service、@Repository的类读取转化为BeanDefinition对象</p>
+</li>
+<li><p>路径扫描器（ClassPathBeanDefinitionScanner），对用户指定的包目录进行扫描查找 bean 对象</p>
+</li>
+<li></li>
+</ol>
+<p><img src="/2021/09/10/Spring/Spring%E5%AE%B9%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/Spring%E5%AE%B9%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/wps18.png" alt="img"> </p>
+<p>第一步：new AnnotationConfigApplicationContext() 创建Spring容器，有参的构造方法如下，分为三步：</p>
+<ol>
+<li><p>通过this()调用无参构造方法，分为三步</p>
+<ol>
+<li><p>先执行父类GenericApplicationContext的初始化方法，实例化一个DefaultListableBeanFactory</p>
+</li>
+<li><p>实例化AnnotatedBeanDefinitionReader，registerAnnotationConfigProcessors()</p>
+</li>
+</ol>
+<p>① 向容器中添加2个beanFactory后置处理器</p>
+<ol>
+<li><p>ConfigurationClassPostProcessor: 一个 beanFactory 后置处理器，用来完成 bean 的扫描与注入工作</p>
+</li>
+<li><p>EventListenerMethodProcessor</p>
+</li>
+</ol>
+<p>② 向容器中添加2个bean后置处理器</p>
+<ol>
+<li><p>AutowiredAnnotationBeanPostProcessor：一个 bean 后置处理器，用来完成 @AutoWired 自动注入</p>
+</li>
+<li><p>CommonAnnotationBeanPostProcessor</p>
+</li>
+</ol>
+<p>③ 向容器中添加普通组件：DefaultEventListenerFactory</p>
+<ol start="3">
+<li>实例化ClassPathBeanDefinitionScanner</li>
+</ol>
+</li>
+<li><p>调用register(componentClasses); 注册传入的配置类，可以是多个类。最终调用doRegisterBean()，用来解析用户传入的 Spring 配置类，解析成一个 BeanDefinition 然后注册到容器中。</p>
+</li>
+</ol>
+<p>\3. 调用refresh() 容器刷新，这是spring的核心方法</p>
+<p>刷新流程</p>
+<ol>
+<li><p>prepareRefresh() 刷新前预处理</p>
+</li>
+<li><p>obtainFreashBeanFactory（）获取beanFactory，前面已经初始化过</p>
+</li>
+<li><p>prepareBeanFactory() 预处理beanFactory，向容器中添加一些组件</p>
+</li>
+<li><p>postProcessBeanFactory() 子类重写这个方法，可以在beanFactor</p>
+</li>
+<li><p>执行BeanFactoryPostProcessor方法</p>
+</li>
+<li><p>向容器中注册bean后置处理器</p>
+</li>
+<li><p>初始化MessageSource组件：国际化、消息绑定与解析</p>
+</li>
+<li><p>初始化事件派发器，在注册监听时会用到</p>
+</li>
+<li><p>onRefresh() 留给子类重写，在容器刷新时，可以自定义逻辑，web场景下会用到</p>
+</li>
+<li><p>registerListeners() 注册监听器，派发之前产生的一些事件</p>
+</li>
+<li><p>初始化所有bean</p>
+</li>
+<li><p>finishRefresh() 刷新完成，发布容器</p>
+</li>
+</ol>
+<p>public AnnotationConfigApplicationContext(Class&lt;?&gt;… componentClasses) {</p>
+<p>​        this();</p>
+<p>​        register(componentClasses);</p>
+<p>​        refresh();</p>
+<p>​    }</p>
+<h3 id="测试demo"><a href="#测试demo" class="headerlink" title="测试demo"></a>测试demo</h3><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/52b988e02c37">https://www.jianshu.com/p/52b988e02c37</a></p>
+<p><em><strong>*配置*</strong></em></p>
+<p><em><strong>*XML方式：*</strong></em></p>
+<p>&lt;context:component-scan base-package=”com.me.xml”/&gt;</p>
+<p>@Component</p>
+<p>public class OneBean {</p>
+<p>}</p>
+<p>public static void main(String[] args) {</p>
+<p>  ApplicationContext context </p>
+<p>= new ClassPathXmlApplicationContext(“applicationContext.xml”);</p>
+<p>  OneBean bean = context.getBean(“oneBean”,OneBean.class);</p>
+<p>  System.out.println(bean);</p>
+<p>}</p>
+<p><em><strong>*Java*</strong></em> <em><strong>*Config*</strong></em></p>
+<p>@Configuration：标注了该注解的类是一个Spring的配置类,等价于原先的applicationContext.xml</p>
+<p>@ComponentScan ：启动该注解，表明开启Spring的注解自动扫描 , 默认情况下,扫描当前类所在包及其子包</p>
+<p>代码如下：</p>
+<p>@Configuration </p>
+<p>@ComponentScan </p>
+<p>public class Config {</p>
+<p>}</p>
+<p>public static void main(String[] args) {</p>
+<p>  ApplicationContext context = new AnnotationConfigApplicationContext(Config.class);</p>
+<p>  OneBean oneBean = context.getBean(OneBean.class);</p>
+<p>  System.out.println(oneBean);</p>
+<p>}</p>
+<p>创建bean</p>
+<bean id="oneBena" class="com.me.xml.OneBean">
+
+<p>@Configuration</p>
+<p>public class Config {</p>
+<p>  @Bean // 表明这是一个Spring 管理的bean</p>
+<p>  public OneBean oneBean() {</p>
+<p>​    // 显然,这个Bean的CLass 是OneBean.class</p>
+<p>​    // 在spring 中,bean的 id 是不能重复的,而现在使用java config来代替xml配置</p>
+<p>​    // 在java config 方法名就是这个bean的id</p>
+<p>​    return new OneBean();</p>
+<p>  }</p>
+<p>}</p>
+</bean> 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/09/10/Spring/Spring%E5%AE%B9%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/09/10/Spring/Spring%E4%B8%AD%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Spring中的设计模式
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/09/10/Spring/Spring%20Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Spring Bean的生命周期</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2021
+        <i class="ri-heart-fill heart_icon"></i> fyr
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/my.jpg" alt="Fanfan"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/life">生活</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+  </div>
+</body>
+
+</html>

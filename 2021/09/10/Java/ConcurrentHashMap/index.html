@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>ConcurrentHashMap |  Fanfan</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <!-- mermaid -->
+      
+    <link rel="alternate" href="/atom.xml" title="Fanfan" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Java/ConcurrentHashMap"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  ConcurrentHashMap
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/10/Java/ConcurrentHashMap/" class="article-date">
+  <time datetime="2021-09-10T03:05:21.000Z" itemprop="datePublished">2021-09-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java/">Java</a> / <a class="article-category-link" href="/categories/Java/%E9%9B%86%E5%90%88%E5%AE%B9%E5%99%A8/">集合容器</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="1-底层数据结构"><a href="#1-底层数据结构" class="headerlink" title="1. 底层数据结构"></a>1. 底层数据结构</h3><p><strong>JDK1.7</strong>： segment数组+HashEntry数组+链表</p>
+<p><strong>JDK1.8</strong>：Node数组+链表/红黑树，当链表长度达到一定长度时，转为红黑树。</p>
+<p>volatile Node&lt;K,V&gt;[] table;</p>
+<p>  static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {</p>
+<p>​    final int hash;</p>
+<p>​    final K key;</p>
+<p>​    volatile V val;</p>
+<p>​    volatile Node&lt;K,V&gt; next;</p>
+<h3 id="2-1-7如何实现线程安全"><a href="#2-1-7如何实现线程安全" class="headerlink" title="2. 1.7如何实现线程安全"></a>2. 1.7如何实现线程安全</h3><ol>
+<li><p>数据结构：segment数组+HashEntry数组+链表</p>
+</li>
+<li><p>初始化：依次对segment数组和HashEntry数组进行初始化</p>
+</li>
+<li><p>put：</p>
+<p>① 两次hash映射去定位数据存储的位置。第一次hash过程，定位segment位置；第二次hash过程，定位HashEntry位置</p>
+<p>② Segment继承ReentrantLock，在数据插入指定的HashEntry过程的时候会尝试调用ReentrantLock的tryLock方法获取锁，如果获取成功就直接插入相应位置，如果已有线程获得该Segment的锁，当前线程就会以自旋方式去继续调用tryLock方法去获取锁，超过指定次数就挂起，等待唤醒。</p>
+</li>
+<li><p>get：两次hash映射过程，相对于put，少了加锁过程</p>
+</li>
+<li><p>size：即计算ConcurrentHashMap的大小，有两种方案：</p>
+<p>① 给每个Segment都加上锁(相当于给整个Map加上锁)，然后计算size返回</p>
+<p>② 不加锁的模式，尝试多次计算ConcurrentHashMap的size，最多三次，比较前后计算的结果，结果一致就认为当前没有元素加入，计算结果是准确的</p>
+</li>
+</ol>
+<h3 id="3-1-8如何实现线程安全"><a href="#3-1-8如何实现线程安全" class="headerlink" title="3. 1.8如何实现线程安全"></a>3. 1.8如何实现线程安全</h3><p>put：synchronized+CAS自旋</p>
+<p>get：volatile</p>
+<p>initTable：CAS自旋+volatile</p>
+<h4 id="put"><a href="#put" class="headerlink" title="put()"></a>put()</h4><p>执行过程：</p>
+<ol>
+<li><p>如果key或value为Null，抛出NullPointerException结束（ConCurrentHashMap不允许存放null型的key和value，这点和HashMap也不同）</p>
+</li>
+<li><p>如果数组为null或为空，调用initTable()初始化</p>
+</li>
+<li><p>根据key计算hash值，根据hash值计算下标位置，如果该位置为空，利用CAS尝试写入元素，如果失败，通过自旋保证写入成功</p>
+</li>
+<li><p>判断是否需要扩容，如果是，则执行helpTransfer方法</p>
+</li>
+<li><p>如果下标位置有值，则利用synchronized锁来写入元素，分为写入链表或红黑树</p>
+</li>
+</ol>
+<p>\6. 最后，调用addCount函数，执行CAS操作，更新数组大小；并判断是否需要扩容</p>
+<p>如何保证线程安全：CAS+synchronized</p>
+<h4 id="get"><a href="#get" class="headerlink" title="get()"></a>get()</h4><ol>
+<li><p>根据key计算hash值</p>
+</li>
+<li><p>查找到指定位置，如果该位置非空，则下一步</p>
+</li>
+<li><p>如果头节点就是要找的，直接返回它的 value，否则，下一步</p>
+</li>
+<li><p>如果头节点 hash 值小于 0 ，说明正在扩容或者是红黑树，则在树中查找后直接返回；否则下一步</p>
+</li>
+<li><p>到这一步只能遍历链表，依次查找</p>
+</li>
+</ol>
+<p>如何保证线程安全：volatile</p>
+<h3 id="size"><a href="#size" class="headerlink" title="size()*"></a>size()*</h3><p><em><strong>*size*</strong>***</em>*()****<em><strong>*方法是加锁实现的吗？不是*</strong></em></p>
+<p>核心方法<em><strong>*sumCount*</strong></em>()：</p>
+<p>当数组counterCells为空时直接返回baseCount</p>
+<p>当数组counterCells不为空时遍历它并累加到baseCount中</p>
+<p>****baseCount****是一个volatile变量</p>
+<p>在put方法最后调用的addCount()方法中：</p>
+<ol>
+<li><p>首先对baseCount做CAS自增操作</p>
+</li>
+<li><p>如果并发导致了baseCount的CAS失败了，则使用counterCells进行CAS</p>
+</li>
+<li><p>如果counterCells的CAS也失败了，那么则进入fullAddCount()方法，fullAddCount()方法中会进入死循环，直到成功为止。</p>
+</li>
+</ol>
+<p><strong>CountCell</strong></p>
+<p>CounterCell数组的每个元素，都存储一个元素个数，调用size方法就是通过循环累加元素个数来得到。</p>
+<p>一个使用了 @sun.misc.Contended 标记的类，内部一个 volatile 变量。</p>
+<p>@sun.misc.Contended 这个注解是为了防止“伪共享”。</p>
+<p>这样设计的****原因****：</p>
+<p>一般的集合大小直接定义一个size的成员变量，当出现改变的时候只要更新这个变量就行。ConcurrentHashMap是并发集合，如果用一个成员变量来统计元素个数的话，为了保证并发情况下共享变量的的安全，势必会需要通过加锁或者自旋来实现，如果竞争比较激烈的情况下，size的设置上会出现比较大的冲突反而影响了性能，所以在ConcurrentHashMap采用了分片的方法来记录大小。</p>
+<p>伪共享：</p>
+<p>缓存系统中是以缓存行为单位存储的。缓存行是2的整数幂个连续字节，一般为32-256个字节（常见64）。当多线程修改互相独立的变量时，如果这些变量共享同一个缓存行，就会无意中影响彼此的性能，这就是伪共享。所以伪共享对性能危害极大。JDK1.8之后使用拼接来解决这个问题，把缓存行加满，让缓存之间的修改互不影响。</p>
+<p>public int size() {</p>
+<p>  long n = <em><strong>*sumCount*</strong></em>();</p>
+<p>  return ((n &lt; 0L) ? 0 :</p>
+<p>​      (n &gt; (long)Integer.MAX_VALUE) ? Integer.MAX_VALUE :</p>
+<p>​      (int)n);</p>
+<p>}</p>
+<p>final long <em><strong>*sumCount*</strong></em>() {</p>
+<p>  CounterCell[] as = counterCells; CounterCell a;</p>
+<p>  long sum = baseCount;</p>
+<p>  if (as != null) {</p>
+<p>​    for (int i = 0; i &lt; as.length; ++i) {</p>
+<p>​      if ((a = as[i]) != null)</p>
+<p>​        sum += a.value;</p>
+<p>​    }</p>
+<p>  }</p>
+<p>  return sum;</p>
+<p>}</p>
+<p>@sun.misc.Contended static final class <em><strong>*CounterCell*</strong></em> {</p>
+<p>  volatile long value;</p>
+<p>  CounterCell(long x) { value = x; }</p>
+<p>}</p>
+<h4 id="initTable"><a href="#initTable" class="headerlink" title="initTable()"></a>initTable()</h4><p>调用时机：与HashMap相似，使用懒加载，在使用之前发现tab == null || (n = tab.length) == 0时调用initTable().</p>
+<p>变量private transient volatile int sizeCtl;，数组初始化和扩容的控制，在多线程情况下避免多次初始化，初始默认值为0：</p>
+<ol>
+<li><p>-1 表示正在初始化</p>
+</li>
+<li><p>-(1+N) 表示有N个线程正在进行扩容</p>
+</li>
+<li><p>正数且table没有初始化，表示table初始化大小</p>
+</li>
+<li><p>正数且table已被初始化，表示table下一次resize的阈值</p>
+</li>
+</ol>
+<p>执行过程：</p>
+<ol>
+<li><p>如果当前数组是空的，下一步</p>
+</li>
+<li><p>判断当前sizeCtl是否小于0，如果是，Thread.yield()让出CPU使用权；否则，下一步</p>
+</li>
+<li><p>使用CAS操作，将sizeCtl置为-1，表示正在初始化</p>
+</li>
+<li><p>如果sizeCtl&gt;0，初始化大小为sizeCtl，否则初始化为16</p>
+</li>
+<li><p>初始化table</p>
+</li>
+</ol>
+<p>如何保证线程安全： CAS自旋+volatile</p>
+<h4 id="为什么get-为何无需加锁"><a href="#为什么get-为何无需加锁" class="headerlink" title="为什么get()为何无需加锁"></a>为什么get()为何无需加锁</h4><p>ConcurrentHashMap的get操作并没有像put操作一样有CAS和synchronized锁。get操作不需要加锁，因为 Node 的元素 value 和指针 next 是用 volatile 修饰的，所以在多线程的环境下，即便value的值被修改了，在线程之间也是可见的。</p>
+<h3 id="4-1-8中弃用分段锁的原因"><a href="#4-1-8中弃用分段锁的原因" class="headerlink" title="4. 1.8中弃用分段锁的原因"></a>4. 1.8中弃用分段锁的原因</h3><ol>
+<li><p>加入多个分段锁浪费内存空间</p>
+</li>
+<li><p>生产环境中， map 在放入时竞争同一个锁的概率非常小，分段锁反而会造成更新等操作的长时间等待</p>
+</li>
+<li><p>为了提高 GC 的效率</p>
+</li>
+</ol>
+<p>摘自：</p>
+<p><a href="#/docs/java/collection/ConcurrentHashMap%E6%BA%90%E7%A0%81+%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90">https://snailclimb.gitee.io/javaguide/#/docs/java/collection/ConcurrentHashMap%E6%BA%90%E7%A0%81+%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zycxnanwang/article/details/105424734">https://blog.csdn.net/zycxnanwang/article/details/105424734</a></p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/09/10/Java/ConcurrentHashMap/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/09/10/Java/%E5%B8%B8%E7%94%A8%E7%9A%84%E9%9B%86%E5%90%88%E6%80%BB%E7%BB%93/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            常用的集合总结
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/09/10/Java/HashMap/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">HashMap</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2021
+        <i class="ri-heart-fill heart_icon"></i> fyr
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/my.jpg" alt="Fanfan"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/life">生活</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-CN">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>缓存与数据库一致性问题 |  Fanfan</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css"
+      />
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+       
+ 
+
+      <!-- mermaid -->
+      
+    <link rel="alternate" href="/atom.xml" title="Fanfan" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-MySQL/缓存与数据库一致性问题"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  缓存与数据库一致性问题
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/" class="article-date">
+  <time datetime="2021-09-10T01:50:53.000Z" itemprop="datePublished">2021-09-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/MySQL/">MySQL</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">4.6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">15 分钟</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>[TOC]</p>
+<h3 id="1-为什么引入缓存"><a href="#1-为什么引入缓存" class="headerlink" title="1.为什么引入缓存"></a>1.为什么引入缓存</h3><p>如果你的业务处于起步阶段，流量非常小，那无论是读请求还是写请求，直接操作数据库即可。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo1NdGKV0ptDl4ZsCXKfwXLl1Kp35aOG1Iku9K2EJ8Y7v5bM91jK5NLQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>随着业务量的增长，你的项目请求量越来越大，这时如果每次都从数据库中读数据，那肯定会有<strong>性能问题</strong>。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo3lYxFg1icDgHngialHe8ibUDKCvfib4DmTMo36wJv0FeZ5ex0kId1LTOpw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>当下优秀的缓存中间件，当属 <strong>Redis</strong> 莫属，它不仅<u>性能非常高，还提供了很多友好的数据类型</u>，可以很好地满足我们的业务需求。</p>
+<h3 id="2-缓存怎么存"><a href="#2-缓存怎么存" class="headerlink" title="2.缓存怎么存"></a>2.缓存怎么存</h3><p>最简单直接的方案是「全量数据刷到缓存中」：</p>
+<ul>
+<li>数据库的数据，全量刷入缓存（不设置失效时间）</li>
+<li>写请求只更新数据库，不更新缓存</li>
+<li>启动一个定时任务，定时把数据库的数据，更新到缓存中</li>
+</ul>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo0jeBz8G4Kwr7ZgicicEQARCTuaFibHOf1pKzVnicVbiaxzGtKukzrEqGOOA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><strong>优点：</strong></p>
+<p>所有读请求都可以直接「命中」缓存，不需要再查数据库，性能非常高。</p>
+<p><strong>缺点：</strong></p>
+<ol>
+<li><strong>缓存利用率低</strong>：不经常访问的数据，还一直留在缓存中</li>
+<li><strong>数据不一致</strong>：因为是「定时」刷新缓存，缓存和数据库存在不一致（取决于定时任务的执行频率）</li>
+</ol>
+<p>所以，这种方案一般更适合业务「体量小」，且对数据一致性要求不高的业务场景。</p>
+<h3 id="3-缓存利用率和一致性问题"><a href="#3-缓存利用率和一致性问题" class="headerlink" title="3.缓存利用率和一致性问题"></a>3.缓存利用率和一致性问题</h3><p>优化方法：</p>
+<ul>
+<li>写请求依旧只写数据库</li>
+<li>读请求先读缓存，如果缓存不存在，则从数据库读取，并重建缓存</li>
+<li>同时，写入缓存中的数据，都设置失效时间</li>
+</ul>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo8ic8WbuqDQcJ2bVyia7t9rOu9CGyJnCkWQs16WNibAwdV0GbH3q0K6ZMw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>这样一来，缓存中不经常访问的数据，随着时间的推移，都会逐渐「过期」淘汰掉，最终缓存中保留的，都是经常被访问的「热数据」，缓存利用率得以最大化。</p>
+<p><strong>数据库和缓存都更新，又存在先后问题，那对应的方案就有 2 个：</strong></p>
+<ol>
+<li>先更新缓存，后更新数据库</li>
+<li>先更新数据库，后更新缓存</li>
+</ol>
+<p><strong>1) 先更新缓存，后更新数据库</strong></p>
+<p>如果缓存更新成功了，但数据库更新失败，那么此时缓存中是最新值，但数据库中是「旧值」。</p>
+<p>虽然此时读请求可以命中缓存，拿到正确的值，但是，一旦缓存「失效」，就会从数据库中读取到「旧值」，重建缓存也是这个旧值。</p>
+<p>这时用户会发现自己之前修改的数据又「变回去」了，对业务造成影响。</p>
+<p><strong>2) 先更新数据库，后更新缓存</strong></p>
+<p>如果数据库更新成功了，但缓存更新失败，那么此时数据库中是最新值，缓存中是「旧值」。</p>
+<p>之后的读请求读到的都是旧数据，只有当缓存「失效」后，才能从数据库中得到正确的值。</p>
+<p>这时用户会发现，自己刚刚修改了数据，但却看不到变更，一段时间过后，数据才变更过来，对业务也会有影响。</p>
+<p>可见，无论谁先谁后，但凡后者发生异常，就会对业务造成影响。那怎么解决这个问题呢？</p>
+<p>别急，后面我会详细给出对应的解决方案。</p>
+<p>我们继续分析，除了操作失败问题，还有什么场景会影响数据一致性？</p>
+<p>这里我们还需要重点关注：<strong>并发问题</strong>。</p>
+<h4 id="并发引发的一致性问题"><a href="#并发引发的一致性问题" class="headerlink" title="并发引发的一致性问题"></a>并发引发的一致性问题</h4><p>假设我们采用「先更新数据库，再更新缓存」的方案，并且两步都可以「成功执行」的前提下，如果存在并发，情况会是怎样的呢？</p>
+<p>有线程 A 和线程 B 两个线程，需要更新「同一条」数据，会发生这样的场景：</p>
+<ol>
+<li>线程 A 更新数据库（X = 1）</li>
+<li>线程 B 更新数据库（X = 2）</li>
+<li>线程 B 更新缓存（X = 2）</li>
+<li>线程 A 更新缓存（X = 1）</li>
+</ol>
+<p>最终 X 的值在缓存中是 1，在数据库中是 2，发生不一致。</p>
+<p>也就是说，A 虽然先于 B 发生，但 B 操作数据库和缓存的时间，却要比 A 的时间短，执行时序发生「错乱」，最终这条数据结果是不符合预期的。</p>
+<blockquote>
+<p>同样地，采用「先更新缓存，再更新数据库」的方案，也会有类似问题，这里不再详述。</p>
+</blockquote>
+<h4 id="删除缓存可以保证一致性吗？"><a href="#删除缓存可以保证一致性吗？" class="headerlink" title="删除缓存可以保证一致性吗？"></a>删除缓存可以保证一致性吗？</h4><p>删除缓存对应的方案也有 2 种：</p>
+<ol>
+<li>先删除缓存，后更新数据库</li>
+<li>先更新数据库，后删除缓存</li>
+</ol>
+<p>经过前面的分析我们已经得知，但凡「第二步」操作失败，都会导致数据不一致。</p>
+<p>这里我不再详述具体场景，你可以按照前面的思路推演一下，就可以看到依旧存在数据不一致的情况。</p>
+<p>这里我们重点来看「并发」问题。</p>
+<p><strong>1) 先删除缓存，后更新数据库</strong></p>
+<p>如果有 2 个线程要并发「读写」数据，可能会发生以下场景：</p>
+<ol>
+<li>线程 A 要更新 X = 2（原值 X = 1）</li>
+<li>线程 A 先删除缓存</li>
+<li>线程 B 读缓存，发现不存在，从数据库中读取到旧值（X = 1）</li>
+<li>线程 A 将新值写入数据库（X = 2）</li>
+<li>线程 B 将旧值写入缓存（X = 1）</li>
+</ol>
+<p>最终 X 的值在缓存中是 1（旧值），在数据库中是 2（新值），发生不一致。</p>
+<p>可见，先删除缓存，后更新数据库，当发生「读+写」并发时，还是存在数据不一致的情况。</p>
+<p><strong>2) 先更新数据库，后删除缓存</strong></p>
+<p>依旧是 2 个线程并发「读写」数据：</p>
+<ol>
+<li>缓存中 X 不存在（数据库 X = 1）</li>
+<li>线程 A 读取数据库，得到旧值（X = 1）</li>
+<li>线程 B 更新数据库（X = 2)</li>
+<li>线程 B 删除缓存</li>
+<li>线程 A 将旧值写入缓存（X = 1）</li>
+</ol>
+<p>最终 X 的值在缓存中是 1（旧值），在数据库中是 2（新值），也发生不一致。</p>
+<p>这种情况「理论」来说是可能发生的，但实际真的有可能发生吗？</p>
+<p>其实概率「很低」，这是因为它必须满足 3 个条件：</p>
+<ol>
+<li>缓存刚好已失效</li>
+<li>读请求 + 写请求并发</li>
+<li>更新数据库 + 删除缓存的时间（步骤 3-4），要比读数据库 + 写缓存时间短（步骤 2 和 5）</li>
+</ol>
+<p>仔细想一下，条件 3 发生的概率其实是非常低的。</p>
+<p>因为写数据库一般会先「加锁」，所以写数据库，通常是要比读数据库的时间更长的。</p>
+<p>这么来看，「先更新数据库 + 再删除缓存」的方案，是可以保证数据一致性的。</p>
+<p>所以，我们应该采用这种方案，来操作数据库和缓存。</p>
+<p>好，解决了并发问题，我们继续来看前面遗留的，<strong>第二步执行「失败」导致数据不一致的问题</strong>。</p>
+<h4 id="如何保证两步都执行成功？"><a href="#如何保证两步都执行成功？" class="headerlink" title="如何保证两步都执行成功？"></a>如何保证两步都执行成功？</h4><p>前面我们分析到，无论是更新缓存还是删除缓存，只要第二步发生失败，那么就会导致数据库和缓存不一致。</p>
+<p><strong>保证第二步成功执行，就是解决问题的关键。</strong></p>
+<p>想一下，程序在执行过程中发生异常，最简单的解决办法是什么？</p>
+<p>答案是：<strong>重试</strong>。</p>
+<p>是的，其实这里我们也可以这样做。</p>
+<p>无论是先操作缓存，还是先操作数据库，但凡后者执行失败了，我们就可以发起重试，尽可能地去做「补偿」。</p>
+<p>那这是不是意味着，只要执行失败，我们「无脑重试」就可以了呢？</p>
+<p>答案是否定的。现实情况往往没有想的这么简单，失败后立即重试的问题在于：</p>
+<ul>
+<li>立即重试很大概率「还会失败」</li>
+<li>「重试次数」设置多少才合理？</li>
+<li>重试会一直「占用」这个线程资源，无法服务其它客户端请求</li>
+</ul>
+<p>看到了么，虽然我们想通过重试的方式解决问题，但这种「同步」重试的方案依旧不严谨。</p>
+<p>那更好的方案应该怎么做？</p>
+<p>答案是：<strong>异步重试</strong>。什么是异步重试？</p>
+<p>其实就是把重试请求写到<u>「消息队列」中，然后由专门的消费者来重试，直到成功。</u></p>
+<p>或者更直接的做法，为了避免第二步执行失败，我们可以把<u>操作缓存这一步，直接放到消息队列中，由消费者来操作缓存。</u></p>
+<p>到这里你可能会问，写消息队列也有可能会失败啊？而且，引入消息队列，这又增加了更多的维护成本，这样做值得吗？</p>
+<p>这个问题很好，但我们思考这样一个问题：如果在执行失败的线程中一直重试，还没等执行成功，此时如果项目「重启」了，那这次重试请求也就「丢失」了，那这条数据就一直不一致了。</p>
+<p>所以，这里我们必须把重试或第二步操作放到另一个「服务」中，这个服务用「消息队列」最为合适。这是因为消息队列的特性，正好符合我们的需求：</p>
+<ul>
+<li><strong>消息队列保证可靠性</strong>：写到队列中的消息，成功消费之前不会丢失（重启项目也不担心）</li>
+<li><strong>消息队列保证消息成功投递</strong>：下游从队列拉取消息，成功消费后才会删除消息，否则还会继续投递消息给消费者（符合我们重试的场景）</li>
+</ul>
+<p>至于写队列失败和消息队列的维护成本问题：</p>
+<ul>
+<li><strong>写队列失败</strong>：操作缓存和写消息队列，「同时失败」的概率其实是很小的</li>
+<li><strong>维护成本</strong>：我们项目中一般都会用到消息队列，维护成本并没有新增很多</li>
+</ul>
+<p>所以，引入消息队列来解决这个问题，是比较合适的。这时架构模型就变成了这样：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCoNNyZnraolIYC8NntRZu8R0VpQp0iaXsohT5gjf4QpV0biah4iaRiaHOcyw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>那如果你确实不想在应用中去写消息队列，是否有更简单的方案，同时又可以保证一致性呢？</p>
+<p>方案还是有的，这就是近几年比较流行的解决方案：<strong>订阅数据库变更日志，再操作缓存</strong>。</p>
+<p>具体来讲就是，我们的业务应用在修改数据时，「只需」修改数据库，无需操作缓存。</p>
+<p>那什么时候操作缓存呢？这就和数据库的「变更日志」有关了。</p>
+<p>拿 MySQL 举例<u>，当一条数据发生修改时，MySQL 就会产生一条变更日志（Binlog），我们可以订阅这个日志，拿到具体操作的数据，然后再根据这条数据，去删除对应的缓存</u>。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCowjAarwD2g3lIfCPsvhEHGaohPHVa47GR9d1GUgj0Eta1ketClKZjfw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>订阅变更日志，目前也有了比较成熟的开源中间件，例如阿里的 canal，使用这种方案的优点在于：</p>
+<ul>
+<li><strong>无需考虑写消息队列失败情况</strong>：只要写 MySQL 成功，Binlog 肯定会有</li>
+<li><strong>自动投递到下游队列</strong>：canal 自动把数据库变更日志「投递」给下游的消息队列</li>
+</ul>
+<p>当然，与此同时，我们需要投入精力去维护 canal 的高可用和稳定性。</p>
+<blockquote>
+<p>如果你有留意观察很多数据库的特性，就会发现其实很多数据库都逐渐开始提供「订阅变更日志」的功能了，相信不远的将来，我们就不用通过中间件来拉取日志，自己写程序就可以订阅变更日志了，这样可以进一步简化流程。</p>
+</blockquote>
+<p>至此，我们可以得出结论，想要保证数据库和缓存一致性，<strong>推荐采用「先更新数据库，再删除缓存」方案，并配合「消息队列」或「订阅变更日志」的方式来做</strong>。</p>
+<h4 id="主从库延迟和延迟双删问题"><a href="#主从库延迟和延迟双删问题" class="headerlink" title="主从库延迟和延迟双删问题"></a>主从库延迟和延迟双删问题</h4><p>到这里，还有 2 个问题，是我们没有重点分析过的。</p>
+<p><strong>第一个问题</strong>，还记得前面讲到的「先删除缓存，再更新数据库」方案，导致不一致的场景么？</p>
+<p>这里我再把例子拿过来让你复习一下：</p>
+<p>2 个线程要并发「读写」数据，可能会发生以下场景：</p>
+<ol>
+<li>线程 A 要更新 X = 2（原值 X = 1）</li>
+<li>线程 A 先删除缓存</li>
+<li>线程 B 读缓存，发现不存在，从数据库中读取到旧值（X = 1）</li>
+<li>线程 A 将新值写入数据库（X = 2）</li>
+<li>线程 B 将旧值写入缓存（X = 1）</li>
+</ol>
+<p>最终 X 的值在缓存中是 1（旧值），在数据库中是 2（新值），发生不一致。</p>
+<p><strong>第二个问题</strong>：是关于「读写分离 + 主从复制延迟」情况下，缓存和数据库一致性的问题。</p>
+<p>在「先更新数据库，再删除缓存」方案下，「读写分离 + 主从库延迟」其实也会导致不一致：</p>
+<ol>
+<li>线程 A 更新主库 X = 2（原值 X = 1）</li>
+<li>线程 A 删除缓存</li>
+<li>线程 B 查询缓存，没有命中，查询「从库」得到旧值（从库 X = 1）</li>
+<li>从库「同步」完成（主从库 X = 2）</li>
+<li>线程 B 将「旧值」写入缓存（X = 1）</li>
+</ol>
+<p>最终 X 的值在缓存中是 1（旧值），在主从库中是 2（新值），也发生不一致。</p>
+<p>看到了么？这 2 个问题的核心在于：<strong>缓存都被回种了「旧值」</strong>。</p>
+<p>那怎么解决这类问题呢？</p>
+<p>最有效的办法就是，<strong>把缓存删掉</strong>。</p>
+<p>但是，不能立即删，而是需要「延迟删」，这就是业界给出的方案：<strong>缓存延迟双删策略</strong>。</p>
+<p>按照延时双删策略，这 2 个问题的解决方案是这样的：</p>
+<p><strong>解决第一个问题</strong>：在线程 A 删除缓存、更新完数据库之后，先「休眠一会」，再「删除」一次缓存。</p>
+<p><strong>解决第二个问题</strong>：线程 A 可以生成一条「延时消息」，写到消息队列中，消费者延时「删除」缓存。</p>
+<p>这两个方案的目的，都是为了把缓存清掉，这样一来，下次就可以从数据库读取到最新值，写入缓存。</p>
+<p>但问题来了，这个「延迟删除」缓存，延迟时间到底设置要多久呢？</p>
+<ul>
+<li>问题1：延迟时间要大于「主从复制」的延迟时间</li>
+<li>问题2：延迟时间要大于线程 B 读取数据库 + 写入缓存的时间</li>
+</ul>
+<p>但是，<strong>这个时间在分布式和高并发场景下，其实是很难评估的****。</strong></p>
+<p>很多时候，我们都是凭借经验大致估算这个延迟时间，例如延迟 1-5s，只能尽可能地降低不一致的概率。</p>
+<p>所以你看，采用这种方案，也只是尽可能保证一致性而已，极端情况下，还是有可能发生不一致。</p>
+<p>所以实际使用中，我还是建议你采用「先更新数据库，再删除缓存」的方案，同时，要尽可能地保证「主从复制」不要有太大延迟，降低出问题的概率。</p>
+<h4 id="可以做到强一致吗？"><a href="#可以做到强一致吗？" class="headerlink" title="可以做到强一致吗？"></a>可以做到强一致吗？</h4><p>看到这里你可能会想，这些方案还是不够完美，我就想让缓存和数据库「强一致」，到底能不能做到呢？</p>
+<p>其实很难。</p>
+<p>要想做到强一致，最常见的方案是 2PC、3PC、Paxos、Raft 这类一致性协议，但它们的性能往往比较差，而且这些方案也比较复杂，还要考虑各种容错问题。</p>
+<p>相反，这时我们换个角度思考一下，我们引入缓存的目的是什么？</p>
+<p>没错，<strong>性能</strong>。</p>
+<p>一旦我们决定使用缓存，那必然要面临一致性问题。性能和一致性就像天平的两端，无法做到都满足要求。</p>
+<p>而且，就拿我们前面讲到的方案来说，当操作数据库和缓存完成之前，只要有其它请求可以进来，都有可能查到「中间状态」的数据。</p>
+<p>所以如果非要追求强一致，那必须要求所有更新操作完成之前期间，不能有「任何请求」进来。</p>
+<p>虽然我们可以通过加「分布锁」的方式来实现，但我们要付出的代价，很可能会超过引入缓存带来的性能提升。</p>
+<p>所以，既然决定使用缓存，就必须容忍「一致性」问题，我们只能尽可能地去降低问题出现的概率。</p>
+<p>同时我们也要知道，缓存都是有「失效时间」的，就算在这期间存在短期不一致，我们依旧有失效时间来兜底，这样也能达到最终一致。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>1、想要提高应用的性能，可以引入「缓存」来解决</p>
+<p>2、引入缓存后，需要考虑缓存和数据库一致性问题，可选的方案有：「更新数据库 + 更新缓存」、「更新数据库 + 删除缓存」</p>
+<p>3、更新数据库 + 更新缓存方案，在「并发」场景下无法保证缓存和数据一致性，且存在「缓存资源浪费」和「机器性能浪费」的情况发生</p>
+<p>4、在更新数据库 + 删除缓存的方案中，「先删除缓存，再更新数据库」在「并发」场景下依旧有数据不一致问题，解决方案是「延迟双删」，但这个延迟时间很难评估，所以推荐用「先更新数据库，再删除缓存」的方案</p>
+<p>5、在「先更新数据库，再删除缓存」方案下，为了保证两步都成功执行，需配合「消息队列」或「订阅变更日志」的方案来做，本质是通过「重试」的方式保证数据一致性</p>
+<p>6、在「先更新数据库，再删除缓存」方案下，「读写分离 + 主从库延迟」也会导致缓存和数据库不一致，缓解此问题的方案是「延迟双删」，凭借经验发送「延迟消息」到队列中，延迟删除缓存，同时也要控制主从库延迟，尽可能降低不一致发生的概率</p>
+<p>原文连接：</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/D4Ik6lTA_ySBOyD3waNj1w">https://mp.weixin.qq.com/s/D4Ik6lTA_ySBOyD3waNj1w</a></p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          打赏
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>版权声明： </strong>
+          
+          本博客所有文章除特别声明外，著作权归作者所有。转载请注明出处！
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%93%E5%AD%98/" rel="tag">缓存</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            怎么解决MySQL的死锁问题
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/09/04/%E7%BC%96%E7%A8%8B%E7%BB%83%E4%B9%A0/%E9%A1%BA%E6%97%B6%E9%92%88%E6%97%8B%E8%BD%AC%E7%9F%A9%E9%98%B5/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">顺时针旋转矩阵</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2021
+        <i class="ri-heart-fill heart_icon"></i> fyr
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        由 <a href="https://hexo.io" target="_blank">Hexo</a> 强力驱动
+        <span class="division">|</span>
+        主题 - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>访问人数:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>浏览次数:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/my.jpg" alt="Fanfan"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/life">生活</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="搜索">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+  </div>
+</body>
+
+</html>
