@@ -174,7 +174,400 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <p>[TOC]</p>
+<h3 id="1-IOC是什么"><a href="#1-IOC是什么" class="headerlink" title="1. IOC是什么"></a>1. IOC是什么</h3><p>Inversion of control，控制反转，是一种设计思想。在Java开发中，IoC意味着将设计好的对象交由容器控制，而不是传统的在你的对象内部控制。从以下几个方面理解IoC:</p>
+<ol>
+<li><p>谁控制谁？ IoC容器控制对象</p>
+</li>
+<li><p>控制什么？控制了外部资源的获取（对象、文件）</p>
+</li>
+<li><p>为什么是反转？传统应用程序是由我们自己在对象中主动控制去直接获取依赖对象，即正转；这里的反转是指由容器帮我们查找及注入依赖对象，对象只是被动的接收依赖对象。</p>
+</li>
+<li><p>反转了什么？依赖对象的获取被反转了。</p>
+</li>
+</ol>
+<h3 id="2-Spring中的IOC"><a href="#2-Spring中的IOC" class="headerlink" title="2. Spring中的IOC"></a>2. <em>Spring中的IOC</em></h3><p>IoC是Spring的核心。对于Spring来说，IoC就是Spring来负责控制对象的生命周期和对象间的关系。Spring倡导的开发方式是：所有的类在Spring容器中登记，告诉Spring你是什么，需要什么，然后Spring会在系统运行到适当的时候，把你需要的东西交给你。所有类的创建、销毁都是由Spring来控制，而不是引用它的对象。</p>
+<p>​    IoC的重点是：在系统运行中，动态的向某个对象提供它所需要的其他对象。这是通过DI来实现的。而DI是通过反射实现的。</p>
+<h3 id="3-DI-IOC"><a href="#3-DI-IOC" class="headerlink" title="3. DI IOC"></a>3. DI IOC</h3><p>dependency injection依赖注入。</p>
+<p>IOC容器动态地将某个对象注入应用程序中，这个对象是应用程序依赖的对象。</p>
+<p>由IOC容器动态的将某个依赖关系注入到组件之中。通过依赖注入机制，我们只需要通过简单的配置，而无需任何代码就可指定目标需要的资源，完成自身的业务逻辑，而不需要关心具体的资源来自何处，由谁实现。从以下几个方面理解DI：</p>
+<ol>
+<li><p>谁依赖谁？应用程序依赖IoC容器</p>
+</li>
+<li><p>为什么需要依赖？应用程序需要IoC容器提供对象需要的外部资源</p>
+</li>
+<li><p>谁注入谁？IoC容器注入应用程序某个对象，即应用程序依赖的对象</p>
+</li>
+<li><p>注入了什么？注入了应用程序需要的外部资源（对象、资源、常量数据）</p>
+</li>
+</ol>
+<p>DI和IoC的关系：是对同一个概念不同角度的描述。由于控制反转概念比较含糊，之后又提出了新的名字：“依赖注入”，相对IoC 而言，“依赖注入”明确描述了“被注入对象依赖IoC容器配置依赖对象”。</p>
+<p>IoC描述了容器控制对象这一层面，DI描述了被注入对象依赖IoC容器配置依赖对象。</p>
+<h3 id="4-IOC作用"><a href="#4-IOC作用" class="headerlink" title="4. IOC作用"></a>4. IOC作用</h3><p>好处：解耦，便于测试，利于功能复用，整个体系结构灵活</p>
+<p>IoC对于编程从思想上，发生了主从换位的变化，应用程序原本是最大的，即要获取什么资源都是应用程序主动去获取的，但是在IoC的思想中，应用程序变成了被动，被动的等待IoC容器注入它需要的资源。</p>
+<h3 id="5-Spring-IoC的循环依赖问题"><a href="#5-Spring-IoC的循环依赖问题" class="headerlink" title="5. Spring IoC的循环依赖问题"></a>5. Spring IoC的循环依赖问题</h3><h4 id="是什么："><a href="#是什么：" class="headerlink" title="是什么："></a><em>是什么：</em></h4><p>循环依赖其实是循环引用，也就是两个或则两个以上的 bean 互相持有对方，最终形成闭环。比如A依赖于B，B依赖于C，C又依赖于A。</p>
+<h4 id="产生循环依赖的三种场景："><a href="#产生循环依赖的三种场景：" class="headerlink" title="产生循环依赖的三种场景："></a>产生循环依赖的三种场景：</h4><ol>
+<li><p>构造器的循环依赖：项目启动时报错some of beans in the application context form a circle</p>
+</li>
+<li><p>field 属性的循环依赖prototype：同上</p>
+</li>
+<li><p>field 属性的循环依赖：项目启动成功，尽管有循环依赖，但bean 可以被成功初始化</p>
+</li>
+</ol>
+<h4 id="单例bean如何解决循环依赖问题："><a href="#单例bean如何解决循环依赖问题：" class="headerlink" title="单例bean如何解决循环依赖问题："></a>单例bean如何解决循环依赖问题：</h4><p>解决办法：<em><strong>三级缓存</strong></em></p>
+<p>具体来说：</p>
+<p>假设A中注入属性B，B中注入属性A：</p>
+<ol>
+<li><p>初始化A：A第一次初始化缓存中没有，使用反射初始化，此时并不会触发B的初始化</p>
+</li>
+<li><p>将初始化完成，但尚未填充属性的A加入三级缓存</p>
+</li>
+<li><p>开始A的属性填充，获取B的bean，触发B的初始化</p>
+</li>
+<li><p>初始化B：B第一次初始化缓存中没有，使用反射初始化</p>
+</li>
+<li><p>将初始化完成，但尚未填充属性的B加入三级缓存</p>
+</li>
+<li><p>开始B的属性填充，获取A的bean</p>
+</li>
+<li><p>A属于第二次初始化，直接从三级缓存中拿到之前存储的值，直接返回</p>
+</li>
+</ol>
+<h4 id="为什么构造器无法解决循环依赖问题"><a href="#为什么构造器无法解决循环依赖问题" class="headerlink" title="为什么构造器无法解决循环依赖问题"></a>为什么构造器无法解决循环依赖问题</h4><p>单例的bean：反射初始化bean-写入三级缓存-填充属性</p>
+<p>Prototype、构造器：在写入缓存之前执行构造方法，进行初始化，导致并没有存入三级缓存，发生死循环，spring抛出异常。</p>
+<h4 id="为什么prototype无法解决"><a href="#为什么prototype无法解决" class="headerlink" title="为什么prototype无法解决"></a>为什么prototype无法解决</h4><p>prototypeBean会在创建之前将正在创建的Bean Name放入一个Set中，在循环依赖时检查beanName是否处于创建状态。</p>
+<h4 id="如何检查循环依赖的"><a href="#如何检查循环依赖的" class="headerlink" title="如何检查循环依赖的"></a>如何检查循环依赖的</h4><p>根据Bean的状态给Bean进行mark，无论是构造注入还是属性值注入，第二次进入初始化同一个bean时（即调用getBean(A)方法时），如果发现bean当时正在创建中，那么抛出循环依赖的异常即可。</p>
+<h4 id="三级缓存是什么？"><a href="#三级缓存是什么？" class="headerlink" title="三级缓存是什么？"></a><em>三级缓存是什么？</em></h4><p>一级缓存Map&lt;String, Object&gt; singletonObjects：保存所有的singletonBean的实例</p>
+<p>二级缓存Map&lt;String, Object&gt; earlySingletonObjects：保存所有早期创建的Bean对象，这个Bean还没有完成依赖注入 </p>
+<p>三级缓存Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories： singletonBean的生产工厂</p>
+<p>Set<String> registeredSingletons：保存所有已经完成初始化的Bean的名字</String></p>
+<p>Set<String> singletonsCurrentlyInCreation：标识指定name的Bean对象是否处于创建状态  </String></p>
+<h4 id="Bean依赖注入的过程："><a href="#Bean依赖注入的过程：" class="headerlink" title="Bean依赖注入的过程："></a><em>Bean依赖注入的过程：</em></h4><ol>
+<li><p>Bean实例化，即调用对象的构造方法进行实例化，使用反射和cglib</p>
+</li>
+<li><p>填充属性，设置bean对象的依赖关系，对依赖对象进行填充</p>
+</li>
+</ol>
+<p>具体报错如下：</p>
+<ol>
+<li><p>构造器的循环依赖</p>
+<p>代码：</p>
+<p>@Service</p>
+<p>public class A {</p>
+<p>  public A(B b) {  }</p>
+<p>}</p>
+<p>@Service</p>
+<p>public class B {</p>
+<p>  public B(C c) {</p>
+<p>  }</p>
+<p>}</p>
+<p>@Service</p>
+<p>public class C {</p>
+<p>  public C(A a) {  }</p>
+<p>}</p>
+<p>报错：some of beans in the application context form a circle.</p>
+<p><img src="/2021/09/10/Spring/Spring%20IOC/IOC/wps12.png" alt="img"> </p>
+</li>
+<li><p>Field属性的循环依赖</p>
+<p>代码：</p>
+<p>@Service</p>
+<p>public class A1 {</p>
+<p>  @Autowired</p>
+<p>  private B1 b1;</p>
+<p>}</p>
+<p>@Service</p>
+<p>public class B1 {</p>
+<p>  @Autowired</p>
+<p>  public C1 c1;</p>
+<p>}</p>
+<p>@Service</p>
+<p>public class C1 {</p>
+<p>  @Autowired  public A1 a1;</p>
+<p>}</p>
+<p>结果：项目启动成功</p>
+</li>
+<li><p>Field属性注入循环依赖prototype</p>
+<p>代码：</p>
+<p>@Service</p>
+<p>@Scope(“prototype”)</p>
+<p>public class A1 {</p>
+<p>  @Autowired</p>
+<p>  private B1 b1;</p>
+<p>}</p>
+<p>@Service</p>
+<p>@Scope(“prototype”)</p>
+<p>public class B1 {</p>
+<p>  @Autowired</p>
+<p>  public C1 c1;</p>
+<p>}</p>
+<p>@Service</p>
+<p>@Scope(“prototype”)</p>
+<p>public class C1 {</p>
+<p>  @Autowired  public A1 a1;</p>
+<p>}</p>
+<p>结果：项目启动失败，发现了一个cycle。同第一种。</p>
+</li>
+</ol>
+<p>总结：构造器注入和prototype类型的属性注入都会初始化Bean失败，但单例的属性注入是可以成功的。</p>
+<h3 id="6-bean-依赖注入方式（xml）"><a href="#6-bean-依赖注入方式（xml）" class="headerlink" title="6. bean 依赖注入方式（xml）"></a>6. bean 依赖注入方式（xml）</h3><p>在Spring中，共有四种方式为bean的属性注入值，分别是：</p>
+<p>构造器、 set方法、静态工厂、实例工厂</p>
+<h4 id="构造器注入："><a href="#构造器注入：" class="headerlink" title="构造器注入："></a><em>构造器注入：</em></h4><p>通过<strong>constructor-arg标签</strong>为构造器传入参数值</p>
+<p>public class Car {</p>
+<p>  String name;</p>
+<p>  String brand;</p>
+<p>  public void setName(String name) {</p>
+<p>​    this.name = name;</p>
+<p>  }</p>
+<p>  public void setBrand(String brand) {</p>
+<p>​    this.brand = brand;</p>
+<p>  }</p>
+<p>  public Car() {</p>
+<p>  }</p>
+<p>  public Car(String name, String brand) {</p>
+<p>​    this.name = name;</p>
+<p>​    this.brand = brand;</p>
+<p>  }</p>
+<p>  public void drive() {</p>
+<p>​    System.out.println(brand + “ “ + name + “ is running”);</p>
+<p>  }</p>
+<p>}   </p>
+<p>定义bean.xml文件：</p>
+<bean id="car" class="com.juliajiang.aopdemo.bean.Car">
+
+<p>​    <constructor-arg name="brand" value="BMW"></constructor-arg></p>
+<p>​    <constructor-arg name="name" value="Jack"></constructor-arg></p>
+  </bean>
+
+<p>测试：</p>
+<p>  @Test</p>
+<p>  void testCar() {</p>
+<p>​    ApplicationContext context = new ClassPathXmlApplicationContext(“bean.xml”);</p>
+<p>​    Car car = (Car)context.getBean(“car”);</p>
+<p>​    car.drive();</p>
+<p>  }</p>
+<p>输出：</p>
+<p>BMW Jack is running</p>
+<h4 id="set方法注入："><a href="#set方法注入：" class="headerlink" title="set方法注入："></a>set方法注入：</h4><p>Spring容器就是通过调用<strong>bean的set方法为属性注入值</strong>的。而在xml文件中，使用set注入的方式就是通过<strong>property标签</strong>。</p>
+  <bean id="car2" class="com.juliajiang.aopdemo.bean.Car">
+
+<p>​    <property name="brand" value="aodi"></property></p>
+<p>​    <property name="name" value="julia"></property></p>
+  </bean>
+
+<p>  @Test</p>
+<p>  void testCar2() {</p>
+<p>​    ApplicationContext context = new ClassPathXmlApplicationContext(“bean.xml”);</p>
+<p>​    Car car = (Car)context.getBean(“car2”);</p>
+<p>​    car.drive();</p>
+<p>  }</p>
+<p>输出：</p>
+<p>aodi julia is running</p>
+<h4 id="静态工厂注入"><a href="#静态工厂注入" class="headerlink" title="静态工厂注入"></a><em>静态工厂注入</em></h4><p>编写一个静态的工厂方法，这个工厂方法会返回一个我们需要的值，然后在配置文件中，我们指定使用这个工厂方法（<strong>factory-method标签</strong>）创建bean</p>
+<p>public class CarFactory {</p>
+<p>  public static Car staticCreateCar(){</p>
+<p>​    return new Car(“benchi”, “jennie”);</p>
+<p>  }</p>
+<p>}</p>
+  <bean id="car3" class="com.juliajiang.aopdemo.bean.CarFactory" factory-method="staticCreateCar">
+
+  </bean>
+
+<p>  @Test</p>
+<p>  void testCar3() {</p>
+<p>​    ApplicationContext context = new ClassPathXmlApplicationContext(“bean.xml”);</p>
+<p>​    Car car = (Car)context.getBean(“car3”);</p>
+<p>​    car.drive();</p>
+<p>  }</p>
+<h4 id="实例工厂注入"><a href="#实例工厂注入" class="headerlink" title="实例工厂注入"></a><strong><strong>实例工厂注入</strong></strong></h4><p><strong>需要有一个实例对象</strong>，才能调用它的工厂方法</p>
+<p>public class CarFactory {</p>
+<p>  public Car createCar(){</p>
+<p>​    return new Car(“benchi”, “jennie”);</p>
+<p>  }</p>
+<p>}</p>
+<p>  <bean id="carFactory" class="com.juliajiang.aopdemo.bean.CarFactory"></bean></p>
+<p>  <bean id="car4" factory-bean="carFactory" factory-method="createCar"></bean></p>
+<p>  @Test</p>
+<p>  void testCar4() {</p>
+<p>​    ApplicationContext context = new ClassPathXmlApplicationContext(“bean.xml”);</p>
+<p>​    Car car = (Car)context.getBean(“car4”);</p>
+<p>​    car.drive();</p>
+<p>  }</p>
+<h3 id="7-bean-依赖注入方式（Java-Config）"><a href="#7-bean-依赖注入方式（Java-Config）" class="headerlink" title="7. bean 依赖注入方式（Java Config）"></a>7. bean 依赖注入方式（Java Config）</h3><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/52b988e02c37">https://www.jianshu.com/p/52b988e02c37</a></p>
+<p>通过Java Config创建bean有以下几种方式：</p>
+<ol>
+<li><p>构造器</p>
+</li>
+<li><p>静态工厂</p>
+</li>
+<li><p>实例工厂</p>
+</li>
+<li><p>通过FactoryBean创建</p>
+</li>
+</ol>
+<p>Spring自动扫描组件：</p>
+<p><em><strong>@Configuration</strong></em> </p>
+<p>//标注了该注解的类是一个Spring的配置类,等价于原先的applicationContext.xml</p>
+<p><em><strong>@ComponentScan</strong></em> </p>
+<p>//开启Spring的注解自动扫描 , 默认情况下,扫描当前类所在包及其子包</p>
+<p>public class Config {</p>
+<p>}public static void main(String[] args) {</p>
+<p>  ApplicationContext context </p>
+<p>= new ClassPathXmlApplicationContext(“applicationContext.xml”);</p>
+<p>  OneBean bean = context.getBean(“oneBean”,OneBean.class);</p>
+<p>  System.out.println(bean);</p>
+<p>}</p>
+<p>public static void main(String[] args) {</p>
+<p>  ApplicationContext context = new AnnotationConfigApplicationContext(Config.class);</p>
+<p>  OneBean oneBean = context.getBean(OneBean.class);</p>
+<p>  System.out.println(oneBean);</p>
+<p>}</p>
+<p><em><strong>构造器创建bean</strong></em></p>
+<p>@Configuration</p>
+<p>public class Config {</p>
+<p>  <em><strong>@Bean</strong></em></p>
+<p>  public OneBean oneBean() {</p>
+<p>​    // 显然,这个Bean的CLass 是OneBean.class</p>
+<p>​    // 在spring 中,bean的 id 是不能重复的,而现在使用java config来代替xml配置</p>
+<p>​    // 在java config 方法名就是这个bean的id</p>
+<p>​    return new OneBean();</p>
+<p>  }</p>
+<p>}</p>
+<p><em><strong>静态工厂</strong></em></p>
+<p>public class OneBeanFactory {</p>
+<p>  public static OneBean getOneBean() {</p>
+<p>​    return new OneBean();</p>
+<p>  }</p>
+<p>}</p>
+<p>@Configuration</p>
+<p>public class Config {</p>
+<p>  <em><strong>@Bean</strong></em></p>
+<p>  public OneBean oneBean1() {</p>
+<p>​    return <em><strong>*OneBeanFactory.getOneBean();*</strong></em></p>
+<p>  }</p>
+<p>}</p>
+<p><em><strong>实例工厂</strong></em></p>
+<p>public class OneBeanFactory {</p>
+<p>  public OneBean getOneBean() {</p>
+<p>​    return new OneBean();</p>
+<p>  }</p>
+<p>}</p>
+<p>@Configuration</p>
+<p>public class Config {</p>
+<p>  <em><strong>@Bean</strong></em></p>
+<p>  public OneBean oneBean2() {</p>
+<p>​    return <em><strong>*new OneBeanFactory().getOneBean();*</strong></em></p>
+<p>  }</p>
+<p>}</p>
+<p><em><strong>通过</strong>***</em>FactoryBean***<em><strong>创建</strong></em></p>
+<p>public class OneBeanFactory implements <em><strong>*FactoryBean<OneBean>*</OneBean></strong></em> {</p>
+<p>  @Override</p>
+<p>  public OneBean getObject() throws Exception {</p>
+<p>​    return new OneBean();</p>
+<p>  }</p>
+<p>  @Override</p>
+<p>  public Class&lt;?&gt; getObjectType() {</p>
+<p>​    return OneBean.class;</p>
+<p>  }</p>
+<p>  @Override</p>
+<p>  public boolean isSingleton() {</p>
+<p>​    return true;</p>
+<p>  }</p>
+<p>}</p>
+<p>@Configuration</p>
+<p>public class Config {</p>
+<p>  /**</p>
+<p>   * OneBeanFactory 类实现了 Spring的 FactoryBean 接口,</p>
+<p>   * Spring 知道这个类是用来创建 OneBean 对象的,</p>
+<p>   * <em><strong>*方法虽然返回了 OneBeanFactory , 但是Spring 会帮我们用这个类来创建 OneBean*</strong></em></p>
+<p>   */</p>
+<p>  <em><strong>*@Bean*</strong></em></p>
+<p>  public OneBeanFactory oneBean() {</p>
+<p>​    return <em><strong>*new OneBeanFactory();*</strong></em></p>
+<p>  }</p>
+<p>  public static void main(String[] args) {</p>
+<p>​    ApplicationContext context = new AnnotationConfigApplicationContext(Config.class);</p>
+<p>​    OneBean oneBean = context.getBean(“oneBean”, OneBean.class);</p>
+<p>​    System.out.println(oneBean);</p>
+<p>​    // 通过 “&amp;”的方式获取对应的Factory</p>
+<p>​    OneBeanFactory oneBeanFactory </p>
+<p>= context.getBean(“<em><strong>*&amp;oneBean*</strong></em>“, OneBeanFactory.class);</p>
+<p>​    System.out.println(oneBeanFactory);</p>
+<p>  }</p>
+<p>}</p>
+<h3 id="8-bean的作用域"><a href="#8-bean的作用域" class="headerlink" title="8. bean的作用域"></a>8. bean的作用域</h3><ol>
+<li><p>singleton : 唯一 bean 实例，Spring 中的 bean 默认都是单例的</p>
+</li>
+<li><p>prototype : 每次请求都会创建一个新的 bean 实例</p>
+</li>
+<li><p>request : 每一次HTTP请求都会产生一个新的bean，该bean仅在当前HTTP request内有效</p>
+</li>
+<li><p>session : 每一次HTTP请求都会产生一个新的 bean，该bean仅在当前 HTTP session 内有效</p>
+</li>
+<li><p>global-session： 全局session作用域，仅仅在基于portlet的web应用中才有意义，Spring5已经没有了。Portlet是能够生成语义代码(例如：HTML)片段的小型Java Web插件。它们基于portlet容器，可以像servlet一样处理HTTP请求。但是，与 servlet 不同，每个 portlet 都有不同的会话</p>
+</li>
+</ol>
+<h3 id="9-单例-Bean的线程安全问题"><a href="#9-单例-Bean的线程安全问题" class="headerlink" title="9. 单例 Bean的线程安全问题"></a>9. 单例 Bean的线程安全问题</h3><p>的确是存在安全问题的。因为，当多个线程操作同一个对象的时候，对这个对象的成员变量的写操作会存在线程安全问题。</p>
+<p>但是，一般情况下，我们常用的 Controller、Service、Dao 这些 Bean 是无状态的。无状态的 Bean 不能保存数据，因此是线程安全的。</p>
+<p><strong>常见的有 2 种解决办法：</strong></p>
+<ol>
+<li><p>在类中定义一个 <strong>ThreadLocal</strong> 成员变量，将需要的可变成员变量保存在 ThreadLocal 中（推荐的一种方式）</p>
+</li>
+<li><p>改变 Bean 的作用域为 “<strong>prototype</strong>”：每次请求都会创建一个新的 bean 实例，自然不会存在线程安全问题。</p>
+</li>
+</ol>
+<h3 id="10-Component-Bean"><a href="#10-Component-Bean" class="headerlink" title="10. @Component  @Bean"></a>10. @Component  @Bean</h3><ol>
+<li><p>作用对象不同: @Component 注解作用于类，而@Bean注解作用于方法</p>
+</li>
+<li><p>作用不同：</p>
+</li>
+<li><p>@Component通常是通过类路径扫描来自动侦测以及自动装配到Spring容器中（我们可以使用 @ComponentScan 注解定义要扫描的路径从中找出标识了需要装配的类自动装配到 Spring 的 bean 容器中）。</p>
+</li>
+<li><p>@Bean 注解通常是我们在标有该注解的方法中定义产生这个 bean,@Bean告诉了Spring这是某个类的实例，当我需要用它的时候还给我</p>
+</li>
+<li><p>@Bean 注解比 Component 注解的自定义性更强，而且很多地方我们只能通过 @Bean 注解来注册bean。比如当我们引用第三方库中的类需要装配到 Spring容器时，则只能通过 @Bean来实现。</p>
+</li>
+</ol>
+<h3 id="11-注入的接口有多个实现类"><a href="#11-注入的接口有多个实现类" class="headerlink" title="11. 注入的接口有多个实现类"></a>11. 注入的接口有多个实现类</h3><p>在TestController中注入接口testRepository：</p>
+<p>@Controller</p>
+<p>public class TestController {</p>
+<p>  @Autowired</p>
+<p>  TestRepository testRepository;</p>
+<p>}</p>
+<p>但接口testRepository有两个实现类：TestRepositoryImpl1 TestRepositoryImpl2</p>
+<p>启动项目时会报错：</p>
+<p>Field testRepository in com.juliajiang.aopdemo.employee.controller.TestController required a single bean, but 2 were found:</p>
+<p>​    - testRepositoryImp2: defined in file [E:… repository\impl\TestRepositoryImp2.class]</p>
+<p>​    - testRepositoryImpl1: defined in file [E:… repository\impl\TestRepositoryImpl1.class]</p>
+<p><strong>@Autowired 的注入方式是 byType</strong> 注入， 当要注入的类型在容器中存在多个时，Spring是不知道要引入哪个实现类的，所以会报错。</p>
+<p>这种场景下，只能通过 <strong>byName 注入</strong>的方式：</p>
+<ol>
+<li><p><strong>@Resource 默认是按照 byName</strong> 的方式注入的， 如果通过 byName 的方式匹配不到，再按 byType 的方式去匹配。name参数指定@Service注解中标定的名字，如果不指定会将testRepository作为类名，这样会报错找不到。</p>
+<p>@Controller</p>
+<p>public class TestController {</p>
+<p>  <em><strong>@Resource(name = “testRepositoryImpl1”)</strong></em></p>
+<p>  TestRepository testRepository;</p>
+<p>}</p>
+</li>
+<li><p><strong>@Qualifier和@Autowired</strong>配合使用</p>
+<p>@Controller</p>
+<p>public class TestController {</p>
+<p>  @Autowired</p>
+<p>  @Qualifier(“testRepositoryImp2”)</p>
+<p>  TestRepository testRepository;</p>
+<p>}</p>
+</li>
+</ol>
+<p>摘自：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xdp-gacl/p/4249939.html">https://www.cnblogs.com/xdp-gacl/p/4249939.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/52b988e02c37">https://www.jianshu.com/p/52b988e02c37</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -218,7 +611,39 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="1-什么是Spring"><a href="#1-什么是Spring" class="headerlink" title="1. 什么是Spring"></a>1. <em><strong>什么是Spring</strong></em></h3><p>Spring 是一种轻量级开发框架，旨在提高开发人员的开发效率以及系统的可维护性。Spring 官网：<a target="_blank" rel="noopener" href="https://spring.io/%E3%80%82">https://spring.io/。</a></p>
+<p>我们一般说 Spring 框架指的都是 Spring Framework，它是很多模块的集合，使用这些模块可以很方便地协助我们进行开发。这些模块是：核心容器、数据访问/集成,、Web、AOP（面向切面编程）、工具、消息和测试模块。比如：Core Container 中的 Core 组件是Spring 所有组件的核心，Beans 组件和 Context 组件是实现IOC和依赖注入的基础，AOP组件用来实现面向切面编程。</p>
+<p>Spring 官网列出的 Spring 的 6 个特征:</p>
+<ol>
+<li><p>核心技术 ：依赖注入(DI)，AOP，事件(events)，资源，i18n，验证，数据绑定，类型转换，SpEL。</p>
+</li>
+<li><p>测试 ：模拟对象，TestContext框架，Spring MVC 测试，WebTestClient</p>
+</li>
+<li><p>数据访问 ：事务，DAO支持，JDBC，ORM，编组XML</p>
+</li>
+<li><p>Web支持 : Spring MVC和Spring WebFlux Web框架</p>
+</li>
+<li><p>集成 ：远程处理，JMS，JCA，JMX，电子邮件，任务，调度，缓存</p>
+</li>
+<li><p>语言 ：Kotlin，Groovy，动态语言。</p>
+</li>
+</ol>
+<h3 id="2-Spring的重要模块"><a href="#2-Spring的重要模块" class="headerlink" title="2. Spring的重要模块"></a><em><strong>2. Spring的重要模块</strong></em></h3><p>Spring Core： 基础,可以说 Spring 其他所有的功能都需要依赖于该类库。主要提供 IoC 依赖注入功能。</p>
+<p>Spring Aspects ： 该模块为与AspectJ的集成提供支持。</p>
+<p>Spring AOP ：提供了面向切面的编程实现。</p>
+<p>Spring JDBC : Java数据库连接。</p>
+<p>Spring JMS ：Java消息服务。</p>
+<p>Spring ORM : 用于支持Hibernate等ORM工具。</p>
+<p>Spring Web : 为创建Web应用程序提供支持。</p>
+<p>Spring Test : 提供了对 JUnit 和 TestNG 测试的支持。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -262,7 +687,107 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <p>[TOC]</p>
+<h3 id="1-面向对象-面向过程"><a href="#1-面向对象-面向过程" class="headerlink" title="1. 面向对象 面向过程"></a>1. 面向对象 面向过程</h3><h4 id="（1）面向对象"><a href="#（1）面向对象" class="headerlink" title="（1）面向对象"></a>（1）面向对象</h4><p>面向对象：编程范式</p>
+<p>类和对象作为组织代码的基本单元</p>
+<p><strong>四大特性：</strong></p>
+<ol>
+<li><p>封装：类通过暴露有限的访问接口，授权外部仅通过类提供的函数来访问内部数据。</p>
+<p>作用：保护数据不被随意修改，提高可维护性；仅暴露有限接口，提高类的易用性</p>
+</li>
+<li><p>抽象：隐藏方法的具体实现，使用者只需要关心方法提供了哪些功能，不需要知道这些功能如何实现</p>
+<p>作用：代码可维护性，修改实现不需要改变定义；过滤不需要关注的信息</p>
+</li>
+<li><p>继承</p>
+<p>作用：代码复用</p>
+</li>
+<li><p>多态：父类的引用指向子类的实例</p>
+</li>
+</ol>
+<p><strong>优点：</strong></p>
+<ol>
+<li><p>模块化：提供一个更清晰的模块化结构，使得程序可以更好地定义抽象数据类型，抽象数据类型隐藏了实现细节并且提供了清晰的接口</p>
+</li>
+<li><p>可伸缩：将开发者加到项目往往很容易，因为他们不需要理解整个项目的代码，只需要理解与他们工作相关的那些代码。增加硬件资源可以被更有效地利用，因为你可以为每个模块分配不同的资源</p>
+</li>
+<li><p>可维护：可以更容易地维护和修改现有代码，因为新对象可以与现有对象有些许不同</p>
+</li>
+<li><p>可拓展：提供一个更好的框架来通过库拓展项目，而这些组件可以很容易地被程序员修改和调整，这在用户界面和图形界面开发中尤其有用</p>
+</li>
+<li><p>代码可复用：各模块与其他模块相互独立，这可以让你提取出一个功能，比如用户登录，在其他项目中使用</p>
+</li>
+</ol>
+<p><strong>缺点：</strong></p>
+<ol>
+<li><p>现实世界很难被完整地划分为类和子类</p>
+</li>
+<li><p>有时候多个对象会以复杂地形式交互，甚至在写程序地时候都无法预期到</p>
+</li>
+<li><p>对于小项目或只需要几个简单任务地项目来说，会徒增代码量和复杂度</p>
+</li>
+<li><p>性能下降，这是最激烈地讨论之一，虽然一个设计良好地面向过程站点性能会比设计良好地面向对象站点高，但是仍然有许多因素需要考虑，这不应该是你主要关心地问题</p>
+</li>
+</ol>
+<h4 id="（2）面向过程"><a href="#（2）面向过程" class="headerlink" title="（2）面向过程"></a>（2）面向过程</h4><p><strong>优点</strong>：</p>
+<ol>
+<li><p>功能通过一个个函数编写，小程序可以很简单地实现</p>
+</li>
+<li><p>易于维护，每一个过程和函数可以被单独调试</p>
+</li>
+<li><p>如果是为一个非常特定地目的编写代码，常常可以使程序获得更高地效率和性能</p>
+</li>
+<li><p>代码更加灵活，你可以随意更改整个程序中地特定部分</p>
+</li>
+</ol>
+<p><strong>缺点</strong>：</p>
+<ol>
+<li><p>代码量变大时，面向过程地代码越来越难以维护</p>
+</li>
+<li><p>当项目变大，全局变量会越来越多，会带来严重的后果，特别是多个程序员在一个大项目中协同作业时</p>
+</li>
+<li><p>代码相互依赖，导致代码无法在其他程序复用，而面向对象编程却可以</p>
+</li>
+<li><p>与现实世界中的对象没有关联</p>
+</li>
+<li><p>改动一块代码会牵连到其他代码</p>
+</li>
+<li><p>代码量变大时，会更加难易理解和修改</p>
+</li>
+<li><p>难以将代码迁移到其他程序</p>
+</li>
+</ol>
+<h4 id="（3）-什么时候面向对象"><a href="#（3）-什么时候面向对象" class="headerlink" title="（3） 什么时候面向对象"></a>（3） 什么时候面向对象</h4><p>当程序代码量很小时，面向过程编程可以更快更简洁地实现，并且可维护性和可阅读性都不错。</p>
+<p>而当程序为一个代码量大且复杂的模块化项目，并且有多个程序员或团队协同作业时，使用面向对象编程可以让你更好地划分和组织代码，在让程序更快、更简洁的同时，也能保持可维护性和可阅读性。</p>
+<p><strong>面向对象编程最适合在以下情况使用：</strong></p>
+<ol>
+<li><p>你有多个程序员并且各自不需要了解每个组件</p>
+</li>
+<li><p>有许多复用和共享地代码</p>
+</li>
+<li><p>项目经常变动并且之后不断新增功能</p>
+</li>
+<li><p>不同模块服务于不同数据源或硬件</p>
+</li>
+</ol>
+<p><strong>面向过程编程最适合在以下情况使用</strong>：</p>
+<ol>
+<li><p>一个非常复杂的操作包括几个相互依赖的操作并且需要不同程序间的状态清晰可见，通常是程序的启动和关闭</p>
+</li>
+<li><p>程序非常特殊，并且由几个元素共享</p>
+</li>
+<li><p>程序是静态的，并且之后不会经常改动</p>
+</li>
+<li><p>项目结束后没有或只有很少的一些功能需要添加到项目中</p>
+</li>
+</ol>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -306,7 +831,159 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <p>[TOC]</p>
+<h3 id="1-什么是集合？特点？"><a href="#1-什么是集合？特点？" class="headerlink" title="1.什么是集合？特点？"></a>1.<strong>什么是集合？特点？</strong></h3><p>集合是：用于存储对象的容器。</p>
+<p>集合框架是为表示和操作集合而规定的一种统一的标准的统一结构。任何集合框架都包含三部分内容：对外的接口、接口的实现、对集合运算的算法。</p>
+<p>特点：</p>
+<ol>
+<li><p>集合用于存储对象</p>
+</li>
+<li><p>可变长度，对象个数不确定时使用集合，确定时可使用数组</p>
+</li>
+</ol>
+<h3 id="2-集合和数组的区别？"><a href="#2-集合和数组的区别？" class="headerlink" title="2.集合和数组的区别？"></a>2.<em><strong>集合和数组的区别？</strong></em></h3><ol>
+<li><p>长度是否固定</p>
+</li>
+<li><p>数组可存储基本数据类型、引用数据类型；集合只能存储引用数据类型（如果存储基本类型，可以直接存，系统会自动装箱变成包装器类型）</p>
+</li>
+<li><p>数组中存储的元素必须是同一数据类型；集合可以是不同的（定义List<Object>，所有类都继承Object）</Object></p>
+</li>
+</ol>
+<h3 id="3-常用的集合类"><a href="#3-常用的集合类" class="headerlink" title="3.常用的集合类"></a>3.<em><strong>常用的集合类</strong></em></h3><p>Map和Collection是所有集合框架的父接口。</p>
+<ol>
+<li><p>Collection接口的子接口包括：Set、List、Queue</p>
+</li>
+<li><p>List接口的实现类：ArrayList、LinkedList、Vector、Stack</p>
+</li>
+<li><p>Set接口的实现类：HashSet、TreeSet、LinkedHashSet</p>
+</li>
+<li><p>Queue接口的实现类：ArrayDeque；Queue接口的子接口：Deque</p>
+</li>
+<li><p>Map接口的实现类：HashMap、TreeMap、HashTable、ConcurrentHashMap</p>
+</li>
+</ol>
+<h3 id="4-List，Set，Map三者的区别？"><a href="#4-List，Set，Map三者的区别？" class="headerlink" title="4.List，Set，Map三者的区别？"></a>4.<em><strong>List，Set，Map三者的区别？</strong></em></h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/bingocoder/article/details/80258683">https://blog.csdn.net/bingocoder/article/details/80258683</a></p>
+<ol>
+<li><p>List：（注重顺序存储）特点：有序，可重复</p>
+</li>
+<li><p>Set：不同的实现类有不同的特性：</p>
+<p>① HashSet：无序，不可重复</p>
+<p>② TreeSet：保证元素的自然顺序，也可自定义排序</p>
+<p>③ LinkedHashSet：保证元素的添加顺序</p>
+</li>
+<li><p>Map：（键值对，key搜索快）特点：键值对存储，key是无序、不可重复的，value是无序、可重复的</p>
+</li>
+</ol>
+<h3 id="5-底层数据结构总结"><a href="#5-底层数据结构总结" class="headerlink" title="5.底层数据结构总结"></a>5.<em><strong>底层数据结构总结</strong></em></h3><ol>
+<li><p>List</p>
+<p><strong>1)</strong> ****ArrayList****：Object[] 数组    线程不安全</p>
+<ol start="2">
+<li><p>Vector：Object[] 数组 线程安全 古老</p>
+</li>
+<li><p>Stack：Object[] 数组，继承了Vector</p>
+</li>
+<li><p>LinkedList</p>
+</li>
+</ol>
+<p>i. 底层数据结构：双端链表。实现List和Deque接口。</p>
+<p>ii. 自定义Node节点，其中包含next和prev节点。</p>
+<p>private static class Node<E> {</E></p>
+<p>​    E item;</p>
+<p>​    Node<E> next;</E></p>
+<p>​    Node<E> prev;</E></p>
+<p>iii. 自定义属性  transient Node<E> first;和transient Node<E> last;指定链表头结点和尾结点。</E></E></p>
+</li>
+<li><p>Set</p>
+<ol>
+<li>HashSet</li>
+</ol>
+<p>i. 底层数据结构：基于HashMap实现的，底层使用HashMap来存储元素</p>
+<p>ii. 在HashSet中，元素都存到HashMap键值对的Key上面，而Value是一个虚拟的Object对象，并且是static final的。</p>
+<p>iii. 可存储null值</p>
+<ol start="2">
+<li><p>LinkedHashSet：HashSet的子类，内部通过LinkedHashMap实现，支持添加顺序访问。</p>
+</li>
+<li><p>TreeSet：红黑树（自平衡的排序二叉树），可按照添加顺序访问，支持自然排序和定制排序</p>
+</li>
+</ol>
+</li>
+<li><p>Map</p>
+<ol>
+<li><p><em>HashMap</em>：数组+链表/红黑树 详解</p>
+</li>
+<li><p>LinkedHashMap：继承HashMap，底层在数组+链表/红黑树的基础上，增加了双向链表，保证插入的顺序。</p>
+</li>
+<li><p>HashTable：数组+链表</p>
+</li>
+<li><p>TreeMap：红黑树（自平衡的排序二叉树）</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="6-ArrayList"><a href="#6-ArrayList" class="headerlink" title="6. ArrayList"></a>6. <em><strong>ArrayList</strong></em></h3><h4 id="底层数据结构"><a href="#底层数据结构" class="headerlink" title="底层数据结构"></a>底层数据结构</h4><p>transient Object[] elementData; //Object数组存储数据</p>
+<p>默认初始容量10</p>
+<h4 id="add"><a href="#add" class="headerlink" title="add()"></a>add()</h4><ol>
+<li><p>先调用ensureCapacityInternal方法：ensureCapacityInternal(size + 1)</p>
+<ol>
+<li><p>获取默认容量和size+1较大值，作为最小需要容量</p>
+</li>
+<li><p>modCount++</p>
+</li>
+<li><p>如果最小容量大于数组长度，调用grow()进行扩容</p>
+</li>
+</ol>
+</li>
+<li><p>为数组赋值：elementData[size++] = e</p>
+</li>
+</ol>
+<h3 id="7-LinkedList"><a href="#7-LinkedList" class="headerlink" title="7. LinkedList"></a>7. <em><strong>LinkedList</strong></em></h3><p>双向链表，可以被当作堆栈、队列或双端队列进行操作。</p>
+<p>定义head、tail节点，指向链表的首尾节点。</p>
+<p>自定义带有pre、next的Node节点，存储数据。</p>
+<p>添加元素，添加到last节点之后。</p>
+<p>  public boolean add(E e) {</p>
+<p>​    linkLast(e);</p>
+<p>​    return true;</p>
+<p>  }</p>
+<h3 id="8-ArrayList和LinkedList的区别"><a href="#8-ArrayList和LinkedList的区别" class="headerlink" title="8. ArrayList和LinkedList的区别"></a>8. <em><strong>ArrayList和LinkedList的区别</strong></em></h3><ol>
+<li><p>底层数据结构：Arraylist 底层使用的是 Object 数组；LinkedList 底层使用双向链表</p>
+</li>
+<li><p>是否支持快速随机访问：LinkedList 不支持高效的随机元素访问，而 ArrayList 支持</p>
+</li>
+<li><p>直接插入或删除add(E e)：ArrayList 默认在将指定的元素追加末尾O(1)；LinkedList为O(1)</p>
+</li>
+<li><p>指定位置插入或删除add(int index, E element)：ArrayList为O(n) LinkedList为O(n)</p>
+</li>
+<li><p>内存空间占用：ArrayList 的空间浪费主要体现在在 list 列表的结尾会预留一定的容量空间，而 LinkedList 的空间花费则体现在它的每一个元素都需要消耗比 ArrayList 更多的空间（因为要存放直接后继和直接前驱以及数据）</p>
+</li>
+<li><p>是否保证线程安全： ArrayList 和 LinkedList 都不是线程安全；可以使用Collections类的List list=Collections.synchronizedList(new LinkedList(…));</p>
+</li>
+</ol>
+<h3 id="9-CopyOnWriteArrayList"><a href="#9-CopyOnWriteArrayList" class="headerlink" title="9. CopyOnWriteArrayList"></a>9. <em><strong>CopyOnWriteArrayList</strong></em></h3><p>CopyOnWriteArrayList是ArrayList的线程安全版本，JUC下的一个类。</p>
+<p>有写操作的时候会copy一份数据，然后写完再设置成新的数据。</p>
+<p>适用于读多写少的并发场景</p>
+<p>CopyOnWriteArraySet是线程安全版本的Set实现，它的内部通过一个CopyOnWriteArrayList来代理读写等操作。</p>
+<p>如何保证线程安全：</p>
+<p>数据存储在Object[]中，定义为volatile保证可见性。</p>
+<p>使用了ReentrantLock来支持并发操作，当add元素时，先加lock，保证只有一个线程修改数组数据。然后拷贝当前数据，在最后一个位置插入数据。最后将新的数组赋值给原数组，返回即可。</p>
+<p>get(i)时直接返回对应下标的数据，因为有volatile保证可见性。</p>
+<h3 id="10-RandomAccess接口"><a href="#10-RandomAccess接口" class="headerlink" title="10. RandomAccess接口"></a>10. <em><strong>RandomAccess接口</strong></em></h3><ol>
+<li><p>查看源码我们发现实际上 RandomAccess 接口中什么都没有定义。</p>
+</li>
+<li><p>作用：标识实现这个接口的类具有随机访问功能。而不是说因为实现了RandomAccess接口而具有随机访问的特性。</p>
+</li>
+<li><p>应用：在Collections的binarySearch方法中，它要判断传入的 list 是否 RamdomAccess 的实例，如果是，调用indexedBinarySearch()方法，如果不是，那么调用iteratorBinarySearch()方法。</p>
+</li>
+<li><p>ArrayList 实现了 RandomAccess 接口， 而 LinkedList 没有实现。</p>
+</li>
+</ol>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -352,7 +1029,150 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="1-底层数据结构"><a href="#1-底层数据结构" class="headerlink" title="1. 底层数据结构"></a>1. 底层数据结构</h3><p><strong>JDK1.7</strong>： segment数组+HashEntry数组+链表</p>
+<p><strong>JDK1.8</strong>：Node数组+链表/红黑树，当链表长度达到一定长度时，转为红黑树。</p>
+<p>volatile Node&lt;K,V&gt;[] table;</p>
+<p>  static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {</p>
+<p>​    final int hash;</p>
+<p>​    final K key;</p>
+<p>​    volatile V val;</p>
+<p>​    volatile Node&lt;K,V&gt; next;</p>
+<h3 id="2-1-7如何实现线程安全"><a href="#2-1-7如何实现线程安全" class="headerlink" title="2. 1.7如何实现线程安全"></a>2. 1.7如何实现线程安全</h3><ol>
+<li><p>数据结构：segment数组+HashEntry数组+链表</p>
+</li>
+<li><p>初始化：依次对segment数组和HashEntry数组进行初始化</p>
+</li>
+<li><p>put：</p>
+<p>① 两次hash映射去定位数据存储的位置。第一次hash过程，定位segment位置；第二次hash过程，定位HashEntry位置</p>
+<p>② Segment继承ReentrantLock，在数据插入指定的HashEntry过程的时候会尝试调用ReentrantLock的tryLock方法获取锁，如果获取成功就直接插入相应位置，如果已有线程获得该Segment的锁，当前线程就会以自旋方式去继续调用tryLock方法去获取锁，超过指定次数就挂起，等待唤醒。</p>
+</li>
+<li><p>get：两次hash映射过程，相对于put，少了加锁过程</p>
+</li>
+<li><p>size：即计算ConcurrentHashMap的大小，有两种方案：</p>
+<p>① 给每个Segment都加上锁(相当于给整个Map加上锁)，然后计算size返回</p>
+<p>② 不加锁的模式，尝试多次计算ConcurrentHashMap的size，最多三次，比较前后计算的结果，结果一致就认为当前没有元素加入，计算结果是准确的</p>
+</li>
+</ol>
+<h3 id="3-1-8如何实现线程安全"><a href="#3-1-8如何实现线程安全" class="headerlink" title="3. 1.8如何实现线程安全"></a>3. 1.8如何实现线程安全</h3><p>put：synchronized+CAS自旋</p>
+<p>get：volatile</p>
+<p>initTable：CAS自旋+volatile</p>
+<h4 id="put"><a href="#put" class="headerlink" title="put()"></a>put()</h4><p>执行过程：</p>
+<ol>
+<li><p>如果key或value为Null，抛出NullPointerException结束（ConCurrentHashMap不允许存放null型的key和value，这点和HashMap也不同）</p>
+</li>
+<li><p>如果数组为null或为空，调用initTable()初始化</p>
+</li>
+<li><p>根据key计算hash值，根据hash值计算下标位置，如果该位置为空，利用CAS尝试写入元素，如果失败，通过自旋保证写入成功</p>
+</li>
+<li><p>判断是否需要扩容，如果是，则执行helpTransfer方法</p>
+</li>
+<li><p>如果下标位置有值，则利用synchronized锁来写入元素，分为写入链表或红黑树</p>
+</li>
+</ol>
+<p>\6. 最后，调用addCount函数，执行CAS操作，更新数组大小；并判断是否需要扩容</p>
+<p>如何保证线程安全：CAS+synchronized</p>
+<h4 id="get"><a href="#get" class="headerlink" title="get()"></a>get()</h4><ol>
+<li><p>根据key计算hash值</p>
+</li>
+<li><p>查找到指定位置，如果该位置非空，则下一步</p>
+</li>
+<li><p>如果头节点就是要找的，直接返回它的 value，否则，下一步</p>
+</li>
+<li><p>如果头节点 hash 值小于 0 ，说明正在扩容或者是红黑树，则在树中查找后直接返回；否则下一步</p>
+</li>
+<li><p>到这一步只能遍历链表，依次查找</p>
+</li>
+</ol>
+<p>如何保证线程安全：volatile</p>
+<h3 id="size"><a href="#size" class="headerlink" title="size()*"></a>size()*</h3><p><em><strong>*size*</strong>***</em>*()****<em><strong>*方法是加锁实现的吗？不是*</strong></em></p>
+<p>核心方法<em><strong>*sumCount*</strong></em>()：</p>
+<p>当数组counterCells为空时直接返回baseCount</p>
+<p>当数组counterCells不为空时遍历它并累加到baseCount中</p>
+<p>****baseCount****是一个volatile变量</p>
+<p>在put方法最后调用的addCount()方法中：</p>
+<ol>
+<li><p>首先对baseCount做CAS自增操作</p>
+</li>
+<li><p>如果并发导致了baseCount的CAS失败了，则使用counterCells进行CAS</p>
+</li>
+<li><p>如果counterCells的CAS也失败了，那么则进入fullAddCount()方法，fullAddCount()方法中会进入死循环，直到成功为止。</p>
+</li>
+</ol>
+<p><strong>CountCell</strong></p>
+<p>CounterCell数组的每个元素，都存储一个元素个数，调用size方法就是通过循环累加元素个数来得到。</p>
+<p>一个使用了 @sun.misc.Contended 标记的类，内部一个 volatile 变量。</p>
+<p>@sun.misc.Contended 这个注解是为了防止“伪共享”。</p>
+<p>这样设计的****原因****：</p>
+<p>一般的集合大小直接定义一个size的成员变量，当出现改变的时候只要更新这个变量就行。ConcurrentHashMap是并发集合，如果用一个成员变量来统计元素个数的话，为了保证并发情况下共享变量的的安全，势必会需要通过加锁或者自旋来实现，如果竞争比较激烈的情况下，size的设置上会出现比较大的冲突反而影响了性能，所以在ConcurrentHashMap采用了分片的方法来记录大小。</p>
+<p>伪共享：</p>
+<p>缓存系统中是以缓存行为单位存储的。缓存行是2的整数幂个连续字节，一般为32-256个字节（常见64）。当多线程修改互相独立的变量时，如果这些变量共享同一个缓存行，就会无意中影响彼此的性能，这就是伪共享。所以伪共享对性能危害极大。JDK1.8之后使用拼接来解决这个问题，把缓存行加满，让缓存之间的修改互不影响。</p>
+<p>public int size() {</p>
+<p>  long n = <em><strong>*sumCount*</strong></em>();</p>
+<p>  return ((n &lt; 0L) ? 0 :</p>
+<p>​      (n &gt; (long)Integer.MAX_VALUE) ? Integer.MAX_VALUE :</p>
+<p>​      (int)n);</p>
+<p>}</p>
+<p>final long <em><strong>*sumCount*</strong></em>() {</p>
+<p>  CounterCell[] as = counterCells; CounterCell a;</p>
+<p>  long sum = baseCount;</p>
+<p>  if (as != null) {</p>
+<p>​    for (int i = 0; i &lt; as.length; ++i) {</p>
+<p>​      if ((a = as[i]) != null)</p>
+<p>​        sum += a.value;</p>
+<p>​    }</p>
+<p>  }</p>
+<p>  return sum;</p>
+<p>}</p>
+<p>@sun.misc.Contended static final class <em><strong>*CounterCell*</strong></em> {</p>
+<p>  volatile long value;</p>
+<p>  CounterCell(long x) { value = x; }</p>
+<p>}</p>
+<h4 id="initTable"><a href="#initTable" class="headerlink" title="initTable()"></a>initTable()</h4><p>调用时机：与HashMap相似，使用懒加载，在使用之前发现tab == null || (n = tab.length) == 0时调用initTable().</p>
+<p>变量private transient volatile int sizeCtl;，数组初始化和扩容的控制，在多线程情况下避免多次初始化，初始默认值为0：</p>
+<ol>
+<li><p>-1 表示正在初始化</p>
+</li>
+<li><p>-(1+N) 表示有N个线程正在进行扩容</p>
+</li>
+<li><p>正数且table没有初始化，表示table初始化大小</p>
+</li>
+<li><p>正数且table已被初始化，表示table下一次resize的阈值</p>
+</li>
+</ol>
+<p>执行过程：</p>
+<ol>
+<li><p>如果当前数组是空的，下一步</p>
+</li>
+<li><p>判断当前sizeCtl是否小于0，如果是，Thread.yield()让出CPU使用权；否则，下一步</p>
+</li>
+<li><p>使用CAS操作，将sizeCtl置为-1，表示正在初始化</p>
+</li>
+<li><p>如果sizeCtl&gt;0，初始化大小为sizeCtl，否则初始化为16</p>
+</li>
+<li><p>初始化table</p>
+</li>
+</ol>
+<p>如何保证线程安全： CAS自旋+volatile</p>
+<h4 id="为什么get-为何无需加锁"><a href="#为什么get-为何无需加锁" class="headerlink" title="为什么get()为何无需加锁"></a>为什么get()为何无需加锁</h4><p>ConcurrentHashMap的get操作并没有像put操作一样有CAS和synchronized锁。get操作不需要加锁，因为 Node 的元素 value 和指针 next 是用 volatile 修饰的，所以在多线程的环境下，即便value的值被修改了，在线程之间也是可见的。</p>
+<h3 id="4-1-8中弃用分段锁的原因"><a href="#4-1-8中弃用分段锁的原因" class="headerlink" title="4. 1.8中弃用分段锁的原因"></a>4. 1.8中弃用分段锁的原因</h3><ol>
+<li><p>加入多个分段锁浪费内存空间</p>
+</li>
+<li><p>生产环境中， map 在放入时竞争同一个锁的概率非常小，分段锁反而会造成更新等操作的长时间等待</p>
+</li>
+<li><p>为了提高 GC 的效率</p>
+</li>
+</ol>
+<p>摘自：</p>
+<p><a href="#/docs/java/collection/ConcurrentHashMap%E6%BA%90%E7%A0%81+%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90">https://snailclimb.gitee.io/javaguide/#/docs/java/collection/ConcurrentHashMap%E6%BA%90%E7%A0%81+%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zycxnanwang/article/details/105424734">https://blog.csdn.net/zycxnanwang/article/details/105424734</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -396,7 +1216,277 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <p>[TOC]</p>
+<p>HashMap 主要用来存放<strong>键值对</strong>，它基于哈希表的 Map 接口实现，是常用的 Java 集合之一，是非线程安全的。</p>
+<p><code>HashMap</code> 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个。</p>
+<h3 id="1-底层数据结构"><a href="#1-底层数据结构" class="headerlink" title="1.底层数据结构"></a>1.底层数据结构</h3><h4 id="JDK1-7-：数组-链表"><a href="#JDK1-7-：数组-链表" class="headerlink" title="JDK1.7 ：数组+链表"></a>JDK1.7 ：数组+链表</h4><p>HashMap 通过 key 的 hashCode 经过扰动函数处理过后得到 hash 值，然后通过 <code>(n - 1) &amp; hash</code> 判断当前元素存放的位置（这里的 n 指的是数组的长度），如果当前位置存在元素的话，就判断该元素与要存入的元素的 hash 值以及 key 是否相同，如果相同的话，直接覆盖，不相同就通过<strong>拉链法</strong>解决冲突。</p>
+<p> <strong>“拉链法”</strong> 就是：将链表和数组相结合。也就是说创建一个链表数组，数组中每一格就是一个链表。若遇到哈希冲突，则将冲突的值加到链表中即可。</p>
+<p><img src="https://camo.githubusercontent.com/aa7cb4f75f247d974819c750e8f9ca530a5ee83f1e7b162eebc64a506f38ae92/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d372f6a646b312e382545342542392538422545352538392538442545372539412538342545352538362538352545392538332541382545372542422539332545362539452538342e706e67" alt="jdk1.8之前的内部结构"></p>
+<h4 id="JDK1-8-：数组-链表-红黑树"><a href="#JDK1-8-：数组-链表-红黑树" class="headerlink" title="JDK1.8 ：数组+链表/红黑树"></a>JDK1.8 ：数组+链表/红黑树</h4><p>当链表长度大于阈值（默认为 8）时，会首先调用 <code>treeifyBin()</code>方法。这个方法会根据 HashMap 数组来决定是否转换为红黑树。只有当<strong>数组长度大于或者等于 64</strong> 的情况下，才会执行转换红黑树操作，以减少搜索时间。否则，就是只是执行 <code>resize()</code> 方法对数组扩容。相关源码这里就不贴了，重点关注 <code>treeifyBin()</code>方法即可！</p>
+<p><img src="https://camo.githubusercontent.com/95fe53625bad15529f73f6e15e74a6937e464c3863903dcfd136ec3113c906ce/68747470733a2f2f6f7363696d672e6f736368696e612e6e65742f6f73636e65742f75702d62626132383332323836393364616537346537386461316566376139613034633638342e706e67" alt="img"></p>
+<h3 id="2-put"><a href="#2-put" class="headerlink" title="2.put()"></a>2.put()</h3><p>put方法中调用了putVal()，putVal并未提供给用户使用。</p>
+<p>putVal()方法的过程：</p>
+<ol>
+<li><p>table是否为null或者为空：是，resize；否，第2步</p>
+</li>
+<li><p>使用hash计算数组下标(n - 1) &amp; hash，判断对应下标是否有值：如果没有，newNode后直接插入数组；如果有，第3步</p>
+</li>
+<li><p>如果数组对应位置已经有值且key值相等，直接覆盖；如果key值不相同，产生哈希冲突，第4步</p>
+</li>
+<li><p>判断该位置节点是否为树节点TreeNode，如果是，放入树中；如果不是，第5步</p>
+</li>
+<li><p>那么该位置节点必定是链表节点，在链表尾部插入新节点。判断此时链表长度是否大于TREEIFY_THRESHOLD=8，如果大于，第6步</p>
+</li>
+<li><p>如果大于8，执行treeifyBin 方法转为红黑树</p>
+</li>
+<li><p>所有步骤的最后一步：++size，并判断数组长度是否超过threshold=64，如果大于调用resize进行扩容</p>
+</li>
+</ol>
+<h3 id="3-get"><a href="#3-get" class="headerlink" title="3.get()"></a>3.get()</h3><ol>
+<li><p>判断数组table非null非空</p>
+</li>
+<li><p>根据hash计算下标，找出该位置的第一个元素first = tab[(n - 1) &amp; hash]</p>
+</li>
+<li><p>如果两者hash相同且key相同，返回first；否则说明数组该位置不止一个节点，下一步</p>
+</li>
+<li><p>判断是否为树节点TreeNode，在树中get；如果不是，下一步</p>
+</li>
+<li><p>遍历链表，找出hash相同且key相同的值返回。</p>
+</li>
+</ol>
+<h3 id="4-reisze"><a href="#4-reisze" class="headerlink" title="4.reisze()"></a>4.reisze()</h3><ol>
+<li><p>若threshold（阈值）不为空，table的首次初始化大小为阈值，否则初始化为缺省值大小16</p>
+</li>
+<li><p>当size（元素总数）大于threshold（阈值），就会扩容，扩容后的table大小变为原来的两倍。即扩容前的table大小为2的N次方，扩容后为2的N+1次方。那么该元素的table索引值由这N+1位确定，比原来多了一位</p>
+</li>
+<li><p>rehashing，节点分为三种情况：</p>
+<ol>
+<li><p>该索引位置没有冲突，没有链表，直接newTab[e.hash &amp; (newCap - 1)] = e;</p>
+</li>
+<li><p>有冲突，是红黑树节点，调用split方法，重建树</p>
+</li>
+<li><p>有冲突，有链表。如果hash值第N+1位为0，则表示不需要调整该链表节点位置；如果为1，表示需要调整到原索引的两倍位置（原因如下）</p>
+</li>
+</ol>
+</li>
+<li><p>扩容或初始化完成后，resize方法返回新的table</p>
+</li>
+</ol>
+<h3 id="5-HashMap1-8中的hash函数（扰动函数）"><a href="#5-HashMap1-8中的hash函数（扰动函数）" class="headerlink" title="5.HashMap1.8中的hash函数（扰动函数）"></a>5.HashMap1.8中的hash函数（扰动函数）</h3><p>扰动函数的目的：避免一些比较差的hashCode方法，减少碰撞。</p>
+<p>  static final int hash(Object key) {</p>
+<p>​    int h;</p>
+<p>​    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);</p>
+<p>  }</p>
+<p>为什么hash函数要这样设计？</p>
+<p>首先，hash函数也称为扰动函数，这个函数的最终返回值会用来计算数组的下标，即源码中的 (n - 1) &amp; hash。 </p>
+<p>HashMap的数组长度要取2的整次幂，这样的话，n-1 正好相当于一个低位掩码。在经过与操作之后，hash值的高位全部归零，只保留低位值，用来做数组的下标。</p>
+<p>但是，这就存在一个问题：就算散列值分布再松散，只取最后几位的话，碰撞也会很严重。</p>
+<p>这时候扰动函数的价值就体现出来了，扰动函数的源码中将key的hashCode高16位和低16位进行异或，目的是：混合原始哈希码的高位和低位，以此来加大低位的随机性；并且，混合后的低位掺杂了高位的部分特征，这样高位的信息也被变相保存下来了。</p>
+<p>在Java1.8中，做了一次扰动，之前做四次，多了可能边际效用也不大，所谓为了效率考虑就改成一次了。</p>
+<h3 id="6-为什么数组长度要取2的整次幂"><a href="#6-为什么数组长度要取2的整次幂" class="headerlink" title="6. 为什么数组长度要取2的整次幂*"></a>6. 为什么数组长度要取2的整次幂*</h3><p>HashMap的数组长度要取2的整次幂，这样的话，n-1 正好相当于一个低位掩码。在经过与操作之后，hash值的高位全部归零，只保留低位值，用来做数组的下标。</p>
+<p>如何保证？</p>
+<p>HashMap 中的<em><strong>*tableSizeFor()方法*</strong></em></p>
+<p>  static final int tableSizeFor(int cap) {</p>
+<p>​    int n = cap - 1;</p>
+<p>​    n |= n &gt;&gt;&gt; 1;</p>
+<p>​    n |= n &gt;&gt;&gt; 2;</p>
+<p>​    n |= n &gt;&gt;&gt; 4;</p>
+<p>​    n |= n &gt;&gt;&gt; 8;</p>
+<p>​    n |= n &gt;&gt;&gt; 16;</p>
+<p>​    return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;</p>
+<p>  }</p>
+<p>返回不小于cap的最接近2的整数幂的数，比如10返回16,25返回32。</p>
+<p>如何实现的？</p>
+<p>​    思路：将最高位1之后的所有位全部变为1，然后加1返回即可。</p>
+<p>​    右移1位，与或，前2位变为1；</p>
+<p>​    右移2位，与或，前4位变为1；</p>
+<p>​    右移4位，与或，前8位变为1；</p>
+<p>​    …依次类推</p>
+<p>​    将最终的结果+1，即为所求。</p>
+<p>一开始-1，是为了避免已经是给定容量的8这样2的幂次时，返回16，比预期的8更大。</p>
+<p>太强了…</p>
+<h3 id="7-几个HashMap的属性"><a href="#7-几个HashMap的属性" class="headerlink" title="7.几个HashMap的属性"></a>7.几个HashMap的属性</h3><p>\1. loadFactor默认加载因子=0.75f</p>
+<ol>
+<li><p>=数组存放数组个数/数组长度；loadFactor越大，数组存放越密；loadFactor越小，存放越稀疏</p>
+</li>
+<li><p>太大导致查找元素效率低，太小导致数组的利用率低，存放的数据会很分散。loadFactor 的默认值为 0.75f 是官方给出的一个比较好的临界值。</p>
+</li>
+<li><p>给定的默认容量为 16，负载因子为 0.75。使用过程中不断的往HashMap里面存放数据，当数量达到了 16 * 0.75 = 12 就需要将当前 16 的容量进行扩容</p>
+</li>
+</ol>
+<p>\2. threshold 临界值</p>
+<ol>
+<li>threshold = capacity * loadFactor，当 size&gt;=threshold的时候，那么就要考虑对数组的扩增了，衡量数组是否需要扩容的一个标准。</li>
+</ol>
+<h3 id="8-负载因子为什么是0-75？"><a href="#8-负载因子为什么是0-75？" class="headerlink" title="8.负载因子为什么是0.75？"></a>8.负载因子为什么是0.75？</h3><p>通常，加载因子需要在时间和空间成本上寻求一种折衷。</p>
+<p>加载因子过高，例如为1，虽然减少了空间开销，提高了空间利用率，但同时也增加了查询时间成本；</p>
+<p>加载因子过低，例如0.5，虽然可以减少查询时间成本，但是空间利用率很低，同时提高了rehash操作的次数。</p>
+<p>选择0.75作为默认的加载因子，完全是提高空间利用率和减少查询成本的折中，主要是泊松分布，0.75的话碰撞最小。</p>
+<h3 id="9-为什么是8时转为红黑树？"><a href="#9-为什么是8时转为红黑树？" class="headerlink" title="9.为什么是8时转为红黑树？"></a>9.为什么是8时转为红黑树？</h3><p>默认是链表长度达到 8 就转成红黑树，而当长度降到 6 就转换回去，这体现了时间和空间平衡的思想。</p>
+<p>最开始使用链表的时候，空间占用是比较少的，而且由于链表短，所以查询时间也没有太大的问题。可是当链表越来越长，需要用红黑树的形式来保证查询的效率。对于何时应该从链表转化为红黑树，需要确定一个阈值，这个阈值默认为 8，并且在源码中也对选择 8 这个数字做了说明：</p>
+<p>如果 hash 计算的结果离散好的话，那么红黑树这种形式是很少会被用到的。在理想情况下，链表长度符合泊松分布，当长度为 8 的时候，概率仅为 0.00000006，小于千万分之一的概率，通常我们的 Map 里面是不会存储这么多的数据的，所以通常情况下，并不会发生从链表向红黑树的转换。</p>
+<h3 id="10-HashMap为什么不安全"><a href="#10-HashMap为什么不安全" class="headerlink" title="10.HashMap为什么不安全**"></a>10.HashMap为什么不安全**</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/developer_chan/p/10450908.html">https://www.cnblogs.com/developer_chan/p/10450908.html</a></p>
+<p>HashMap是线程不安全的，其主要体现：</p>
+<ol>
+<li><p>在jdk1.7中，在多线程环境下，扩容resize时会造成环形链或数据丢失。</p>
+</li>
+<li><p>在jdk1.8中，在多线程环境下，put元素时会发生数据覆盖的情况。</p>
+</li>
+</ol>
+<h4 id="1-1-7死循环"><a href="#1-1-7死循环" class="headerlink" title="(1) 1.7死循环"></a>(1) 1.7死循环</h4><p><strong>出现在扩容的transfer函数中</strong></p>
+<p>在对table扩容到newTable后，需要将原来的数据转移到newTable当中，在转移过程中，使用的是头插法，环形链表就是在这里产生。</p>
+<p>举例：</p>
+<p>假设地址0处有元素A和B，这时需要添加C，发现需要扩容。</p>
+<p>线程1：读取到当前的hashmap情况，在准备扩容时，线程二介入</p>
+<p><img src="/2021/09/10/Java/HashMap/wps1.jpg" alt="img"> </p>
+<p>线程二：读取hashmap，进行扩容；扩容后变为B.next=A</p>
+<p><img src="/2021/09/10/Java/HashMap/wps2.jpg" alt="img"> </p>
+<p>线程一：继续执行，变为A.next=B，出现环</p>
+<p><img src="/2021/09/10/Java/HashMap/wps3.jpg" alt="img"></p>
+<h4 id="2-1-7数据丢失"><a href="#2-1-7数据丢失" class="headerlink" title="(2) 1.7数据丢失"></a>(2) 1.7数据丢失</h4><p>线程A、B操作如下HashMap：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps4.jpg" alt="img"> </p>
+<p>A执行：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps5.jpg" alt="img"> </p>
+<p>A的执行结果如下：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps6.jpg" alt="img"> </p>
+<p>A被挂起，B继续执行：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps7.jpg" alt="img"> </p>
+<p>B执行完了，所以现在java内存中newtable和table中的Entry都是B线程执行完的最新值即： newTable[1]=5 | 5.next=null | newTable[3]=3 | 3.next=7 | 7.next=null</p>
+<p>线程A继续执行：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps8.jpg" alt="img"> </p>
+<p>结果如下：</p>
+<p><img src="/2021/09/10/Java/HashMap/wps9.jpg" alt="img"> </p>
+<p>继续循环（此时e=5 由上次循环的代码可知）</p>
+<p><img src="/2021/09/10/Java/HashMap/wps10.jpg" alt="img"> </p>
+<p>至此e=null，循环结束</p>
+<p>结果如下：</p>
+<p>3元素丢失，并形成环形链表。并在后续操作hashmap时造成死循环。</p>
+<p><img src="/2021/09/10/Java/HashMap/wps11.jpg" alt="img"> </p>
+<p>  void transfer(Entry[] newTable, boolean rehash) {</p>
+<p>​    int newCapacity = newTable.length;</p>
+<p>​    for (Entry&lt;K,V&gt; e : table) {</p>
+<p>​      while(null != e) {</p>
+<p>​        Entry&lt;K,V&gt; next = e.next;</p>
+<p>​        if (rehash) {</p>
+<p>​          e.hash = null == e.key ? 0 : hash(e.key);</p>
+<p>​        }</p>
+<p>​        int i = indexFor(e.hash, newCapacity);</p>
+<p>​        e.next = newTable[i];</p>
+<p>​        <em><strong>*newTable[i] = e;*</strong></em></p>
+<p>​        e = next;</p>
+<p>​      }</p>
+<p>​    }</p>
+<p>  }</p>
+<h4 id="3-1-8-put时数据覆盖问题"><a href="#3-1-8-put时数据覆盖问题" class="headerlink" title="(3) 1.8 put时数据覆盖问题"></a>(3) 1.8 put时数据覆盖问题</h4><p>​    在jdk1.8中对HashMap进行了优化，在发生hash碰撞时，不再采用头插法方式，而是****尾插法*<em><strong>，因此不会出现环形链表的情况，但是在多线程的情况下会产生</strong>数据覆盖</em>*的问题。</p>
+<p>​    在putVal源码中，在判断没有哈希碰撞后，会直接插入元素。如果线程A和线程B同时进行put操作，插入的两个元素哈希值相同，且该位置为null。线程A判断后还未插入时被挂起，线程B正常执行，插入数据，然后线程A获得时间片，此时线程A不用进行判断，直接插入数据，这时，<strong>线程A就会覆盖线程B的数据</strong>。</p>
+<h3 id="11-与HashTable比较"><a href="#11-与HashTable比较" class="headerlink" title="11. 与HashTable比较"></a>11. 与HashTable比较</h3><ol>
+<li><p>线程是否安全： HashMap 是非线程安全的，HashTable 是线程安全的,因为 HashTable 内部的方法基本都经过synchronized 修饰，同一把锁效率低下。（如果你要保证线程安全的话就使用 ConcurrentHashMap 吧！）；</p>
+</li>
+<li><p>效率： 因为线程安全的问题，HashMap 要比 HashTable 效率高一点。另外，HashTable 基本被淘汰，不要在代码中使用它；</p>
+</li>
+<li><p>底层数据结构： JDK1.8 后 HashMap数组+链表/红黑树。Hashtable 数组+链表。</p>
+</li>
+<li><p>对 Null key 和 Null value 的支持： HashMap 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个；HashTable 不允许有 null 键和 null 值，否则会抛出 NullPointerException。</p>
+</li>
+<li><p>初始容量大小和每次扩充容量大小的不同 ： ① 创建时如果不指定容量初始值，Hashtable 默认的初始大小为 11，之后每次扩充，容量变为原来的 2n+1。HashMap 默认的初始化大小为 16。之后每次扩充，容量变为原来的 2 倍。② 创建时如果给定了容量初始值，那么 Hashtable 会直接使用你给定的大小，而 HashMap 会将其扩充为 2 的幂次方大小。</p>
+</li>
+</ol>
+<h3 id="12-与HashSet比较"><a href="#12-与HashSet比较" class="headerlink" title="12. 与HashSet比较"></a>12. 与HashSet比较</h3><ol>
+<li><p>底层基于HashMap实现，HashSet 的源码非常非常少，因为除了 clone()、writeObject()、readObject()是 HashSet 自己不得不实现之外，其他方法都是直接调用 HashMap 中的方法。</p>
+</li>
+<li><p>自定义属性private transient HashMap&lt;E,Object&gt; map;存储数据</p>
+</li>
+</ol>
+<p><strong>与HashMap区别：</strong></p>
+<ol>
+<li><p>HashSet</p>
+<ol>
+<li><p>实现Set接口</p>
+</li>
+<li><p>存储对象</p>
+</li>
+<li><p>调用add添加元素</p>
+</li>
+<li><p>使用对象值计算hashcode</p>
+</li>
+</ol>
+</li>
+<li><p>HashMap</p>
+<ol>
+<li><p>实现Map接口</p>
+</li>
+<li><p>存储键值对</p>
+</li>
+<li><p>调用put添加元素</p>
+</li>
+<li><p>使用key计算hashcode</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="13-与TreeMap"><a href="#13-与TreeMap" class="headerlink" title="13. 与TreeMap"></a>13. 与TreeMap</h3><p>TreeMap 和HashMap 都继承自AbstractMap ，但是需要注意的是TreeMap它还实现了NavigableMap接口和SortedMap 接口。</p>
+<p>实现 NavigableMap 接口让 TreeMap 有了对集合内元素的搜索的能力。</p>
+<p>实现SortMap接口让 TreeMap 有了对集合中的元素根据键排序的能力。默认是按 key 的升序排序，不过我们也可以指定排序的比较器。</p>
+<p>综上，相比于HashMap来说 TreeMap 主要多了对集合中的元素根据键排序的能力以及对集合内元素的搜索的能力。</p>
+<h3 id="14-与CurrentHashMap的区别"><a href="#14-与CurrentHashMap的区别" class="headerlink" title="14. 与CurrentHashMap的区别"></a>14. 与CurrentHashMap的区别</h3><ol>
+<li><p>HashMap线程不安全；CurrentHashMap线程安全</p>
+</li>
+<li><p>可以使用Collections.sychronizedMap(HashMap) 来包装HashMap作为同步容器，这时它的作用几乎与Hashtable一样,当每次对Map做修改操作的时候都会锁住这个Map对象，而ConcurrentHashMap基于CAS自旋+ volatile+synchronized实现线程安全。</p>
+</li>
+<li><p>ConcurrentHashMap在多线程环境下性能方面比做了同步的HashMap要好，但是在单线程环境下，HashMap会比ConcurrentHashMap好一点。</p>
+</li>
+<li><p>ConcurrentHashMap的key和value均不能为null，HashMap都可以</p>
+</li>
+</ol>
+<h3 id="15-HashMap的遍历方式"><a href="#15-HashMap的遍历方式" class="headerlink" title="15 .HashMap的遍历方式"></a>15 .HashMap的遍历方式</h3><p><strong>4类方式，可细分为7种：</strong></p>
+<ol>
+<li><p>迭代器Iterator</p>
+<ol>
+<li><p>迭代器的EntrySet</p>
+</li>
+<li><p>迭代器的KeySet</p>
+</li>
+</ol>
+</li>
+<li><p>For each</p>
+<ol>
+<li><p>EntrySet</p>
+</li>
+<li><p>KeySet</p>
+</li>
+</ol>
+</li>
+<li><p>Lambda</p>
+</li>
+<li><p>Stream API</p>
+<ol>
+<li><p>单线程方式</p>
+</li>
+<li><p>多线程方式</p>
+</li>
+</ol>
+</li>
+</ol>
+<p><strong>遍历比较性能：</strong></p>
+<p>​    EntrySet比KeySet性能高。原因：KeySet只是得到key值，之后还需要map.get(key)获取对应的value值，2n次操作。EntrySet得到的对象包括key和value，需要n次操作。</p>
+<p>安全性：</p>
+<p>​    <strong>迭代器</strong>直接调用iterator.remove();在遍历中删除元素；</p>
+<p>​    <strong>for each</strong>中删除map.remove(entry.getKey());抛出ConcurrentModificationException；</p>
+<p>​    <strong>Lambda</strong>删除map.remove(key);抛出ConcurrentModificationException；正确：使用        map.keySet().removeIf(key -&gt; key == 1);先删除错误数据，然后遍历。</p>
+<p>​    <strong>Stream</strong>删除map.remove(entry.getKey());抛出ConcurrentModificationException；正确：使用filter过滤不需要数据。</p>
+<p>综上，建议使用迭代器的EntrySet遍历HashMap.</p>
+<p>摘自：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/developer_chan/p/10450908.html">https://www.cnblogs.com/developer_chan/p/10450908.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bendandedaima/p/13259284.html">https://www.cnblogs.com/bendandedaima/p/13259284.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zQBN3UvJDhRTKP6SzcZFKw">https://mp.weixin.qq.com/s/zQBN3UvJDhRTKP6SzcZFKw</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -440,7 +1530,19 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="1-联合索引"><a href="#1-联合索引" class="headerlink" title="1.联合索引"></a>1.联合索引</h3><p>联合索引又叫复合索引。<strong>两个或更多个列上的索引</strong>被称作复合索引。</p>
+<p>对于复合索引：<strong>Mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部分，但只能是最左侧部分。*<em>例如索引是key index （a,b,c）。可以支持a | a,b| a,b,c 3种组合进行查找，但不支持 b,c进行查找 。*</em> 当最左侧字段是常量引用时，索引就十分有效。</strong></p> 
+      <a class="article-more-link" href="/2021/09/10/MySQL/%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E3%80%81%E5%A4%B1%E6%95%88%E7%9A%84%E6%9D%A1%E4%BB%B6/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -486,7 +1588,19 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <p>[TOC]</p>
+<h3 id="1-什么是死锁"><a href="#1-什么是死锁" class="headerlink" title="1.什么是死锁"></a>1.什么是死锁</h3><p>两个及以上的事务，双方都在等待对方释放已经持有的锁或因为加锁顺序不一致造成<strong>循环等待</strong>锁资源，就会出现“死锁”。常见的报错信息为 <code>Deadlock found when trying to get lock...</code>。</p> 
+      <a class="article-more-link" href="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -532,7 +1646,21 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <p>[TOC]</p>
+<h3 id="1-为什么引入缓存"><a href="#1-为什么引入缓存" class="headerlink" title="1.为什么引入缓存"></a>1.为什么引入缓存</h3><p>如果你的业务处于起步阶段，流量非常小，那无论是读请求还是写请求，直接操作数据库即可。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo1NdGKV0ptDl4ZsCXKfwXLl1Kp35aOG1Iku9K2EJ8Y7v5bM91jK5NLQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>随着业务量的增长，你的项目请求量越来越大，这时如果每次都从数据库中读数据，那肯定会有<strong>性能问题</strong>。</p> 
+      <a class="article-more-link" href="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -578,7 +1706,22 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>有一个NxN整数矩阵，请编写一个算法，将矩阵顺时针旋转90度。</p>
+<p>给定一个NxN的矩阵，和矩阵的阶数N,请返回旋转后的NxN矩阵,保证N小于等于300。</p>
+<p><img src="/2021/09/04/%E7%BC%96%E7%A8%8B%E7%BB%83%E4%B9%A0/%E9%A1%BA%E6%97%B6%E9%92%88%E6%97%8B%E8%BD%AC%E7%9F%A9%E9%98%B5/image-20210904085736614.png" alt="image-20210904085736614"></p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>先转置再交换第i列和n-i-1列</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[][] rotateMatrix(<span class="keyword">int</span>[][] mat, <span class="keyword">int</span> n) &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)&#123;</span><br><span class="line">                <span class="keyword">int</span> temp=mat[i][j];</span><br><span class="line">                mat[i][j]=mat[j][i];</span><br><span class="line">                mat[j][i]=temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;n/<span class="number">2</span>;j++)&#123;</span><br><span class="line">                <span class="keyword">int</span> temp=mat[i][j];</span><br><span class="line">                mat[i][j]=mat[i][n-j-<span class="number">1</span>];</span><br><span class="line">                mat[i][n-j-<span class="number">1</span>]=temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mat;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     

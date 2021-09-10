@@ -103,6 +103,8 @@
 <h3 id="1-为什么引入缓存"><a href="#1-为什么引入缓存" class="headerlink" title="1.为什么引入缓存"></a>1.为什么引入缓存</h3><p>如果你的业务处于起步阶段，流量非常小，那无论是读请求还是写请求，直接操作数据库即可。</p>
 <p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo1NdGKV0ptDl4ZsCXKfwXLl1Kp35aOG1Iku9K2EJ8Y7v5bM91jK5NLQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
 <p>随着业务量的增长，你的项目请求量越来越大，这时如果每次都从数据库中读数据，那肯定会有<strong>性能问题</strong>。</p>
+<span id="more"></span>
+
 <p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo3lYxFg1icDgHngialHe8ibUDKCvfib4DmTMo36wJv0FeZ5ex0kId1LTOpw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
 <p>当下优秀的缓存中间件，当属 <strong>Redis</strong> 莫属，它不仅<u>性能非常高，还提供了很多友好的数据类型</u>，可以很好地满足我们的业务需求。</p>
 <h3 id="2-缓存怎么存"><a href="#2-缓存怎么存" class="headerlink" title="2.缓存怎么存"></a>2.缓存怎么存</h3><p>最简单直接的方案是「全量数据刷到缓存中」：</p>

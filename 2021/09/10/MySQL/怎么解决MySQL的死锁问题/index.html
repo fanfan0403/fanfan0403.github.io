@@ -101,6 +101,8 @@
        
   <p>[TOC]</p>
 <h3 id="1-什么是死锁"><a href="#1-什么是死锁" class="headerlink" title="1.什么是死锁"></a>1.什么是死锁</h3><p>两个及以上的事务，双方都在等待对方释放已经持有的锁或因为加锁顺序不一致造成<strong>循环等待</strong>锁资源，就会出现“死锁”。常见的报错信息为 <code>Deadlock found when trying to get lock...</code>。</p>
+<span id="more"></span>
+
 <p>从死锁的定义来看，MySQL 出现死锁的几个要素为：</p>
 <ol>
 <li>两个或者两个以上事务</li>

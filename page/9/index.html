@@ -174,7 +174,23 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/31/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E8%A7%A3%E7%A0%81%E6%96%B9%E6%B3%95/image-20210531094134693.png" alt="image-20210531094134693"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：动态规划"><a href="#方法一：动态规划" class="headerlink" title="方法一：动态规划"></a>方法一：动态规划</h4><p><strong>思路与算法</strong></p>
+<p><img src="/2021/05/31/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E8%A7%A3%E7%A0%81%E6%96%B9%E6%B3%95/image-20210531094213318.png" alt="image-20210531094213318"></p>
+<p><strong>代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">numDecodings</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = s.length();</span><br><span class="line">        <span class="keyword">int</span>[] f = <span class="keyword">new</span> <span class="keyword">int</span>[n + <span class="number">1</span>];</span><br><span class="line">        f[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i - <span class="number">1</span>) != <span class="string">&#x27;0&#x27;</span>) &#123;</span><br><span class="line">                f[i] += f[i - <span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (i &gt; <span class="number">1</span> &amp;&amp; s.charAt(i - <span class="number">2</span>) != <span class="string">&#x27;0&#x27;</span> &amp;&amp; ((s.charAt(i - <span class="number">2</span>) - <span class="string">&#x27;0&#x27;</span>) * <span class="number">10</span> + (s.charAt(i - <span class="number">1</span>) - <span class="string">&#x27;0&#x27;</span>) &lt;= <span class="number">26</span>)) &#123;</span><br><span class="line">                f[i] += f[i - <span class="number">2</span>];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f[n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p>时间复杂度：O(n)O(n)，其中 nn 是字符串 ss 的长度。</p>
+<p>空间复杂度：O(n)O(n) 或 O(1)O(1)。如果使用数组进行状态转移，空间复杂度为 O(n)O(n)；如果仅使用三个变量，空间复杂度为 O(1)O(1)。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -218,7 +234,21 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/31/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%AE%8C%E5%85%A8%E5%B9%B3%E6%96%B9%E6%95%B0/image-20210531091406973.png" alt="image-20210531091406973"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：动态规划"><a href="#方法一：动态规划" class="headerlink" title="方法一：动态规划"></a>方法一：动态规划</h4><p><img src="/2021/05/31/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%AE%8C%E5%85%A8%E5%B9%B3%E6%96%B9%E6%95%B0/image-20210531091506143.png" alt="image-20210531091506143"></p>
+<p><img src="/2021/05/31/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%AE%8C%E5%85%A8%E5%B9%B3%E6%96%B9%E6%95%B0/image-20210531091523823.png" alt="image-20210531091523823"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">numSquares</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> dp[] = <span class="keyword">new</span> <span class="keyword">int</span>[n + <span class="number">1</span>];</span><br><span class="line">    Arrays.fill(dp, Integer.MAX_VALUE);</span><br><span class="line">    <span class="comment">// bottom case</span></span><br><span class="line">    dp[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// pre-calculate the square numbers.</span></span><br><span class="line">    <span class="keyword">int</span> max_square_index = (<span class="keyword">int</span>) Math.sqrt(n) + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> square_nums[] = <span class="keyword">new</span> <span class="keyword">int</span>[max_square_index];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; max_square_index; ++i) &#123;</span><br><span class="line">      square_nums[i] = i * i;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; ++i) &#123;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> s = <span class="number">1</span>; s &lt; max_square_index; ++s) &#123;</span><br><span class="line">        <span class="keyword">if</span> (i &lt; square_nums[s])</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        dp[i] = Math.min(dp[i], dp[i - square_nums[s]] + <span class="number">1</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dp[n];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/31/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%AE%8C%E5%85%A8%E5%B9%B3%E6%96%B9%E6%95%B0/image-20210531091601585.png" alt="image-20210531091601585"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -262,7 +292,20 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/31/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%95%B4%E6%95%B0%E6%8B%86%E5%88%86/image-20210531083650429.png" alt="image-20210531083650429"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：动态规划"><a href="#方法一：动态规划" class="headerlink" title="方法一：动态规划"></a>方法一：动态规划</h4><p><img src="/2021/05/31/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%95%B4%E6%95%B0%E6%8B%86%E5%88%86/image-20210531083750652.png" alt="image-20210531083750652"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">integerBreak</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[n + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> curMax = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; i; j++) &#123;</span><br><span class="line">                curMax = Math.max(curMax, Math.max(j * (i - j), j * dp[i - j]));</span><br><span class="line">            &#125;</span><br><span class="line">            dp[i] = curMax;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/31/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%95%B4%E6%95%B0%E6%8B%86%E5%88%86/image-20210531083829052.png" alt="image-20210531083829052"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -306,7 +349,25 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%AD%89%E5%B7%AE%E6%95%B0%E5%88%97%E5%88%92%E5%88%86/image-20210528092443971.png" alt="image-20210528092443971"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：-暴力"><a href="#方法一：-暴力" class="headerlink" title="方法一： 暴力"></a>方法一： 暴力</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">numberOfArithmeticSlices</span><span class="params">(<span class="keyword">int</span>[] A)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> s = <span class="number">0</span>; s &lt; A.length - <span class="number">2</span>; s++) &#123;</span><br><span class="line">            <span class="keyword">int</span> d = A[s + <span class="number">1</span>] - A[s];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> e = s + <span class="number">2</span>; e &lt; A.length; e++) &#123;</span><br><span class="line">                <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">for</span> (i = s + <span class="number">1</span>; i &lt;= e; i++)</span><br><span class="line">                    <span class="keyword">if</span> (A[i] - A[i - <span class="number">1</span>] != d)</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">if</span> (i &gt; e)</span><br><span class="line">                    count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%AD%89%E5%B7%AE%E6%95%B0%E5%88%97%E5%88%92%E5%88%86/image-20210528092526709.png" alt="image-20210528092526709"></p>
+<h4 id="方法二：-动态规划"><a href="#方法二：-动态规划" class="headerlink" title="方法二： 动态规划"></a>方法二： 动态规划</h4><p><strong>算法</strong></p>
+<p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%AD%89%E5%B7%AE%E6%95%B0%E5%88%97%E5%88%92%E5%88%86/image-20210528092646390.png" alt="image-20210528092646390"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">numberOfArithmeticSlices</span><span class="params">(<span class="keyword">int</span>[] A)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[A.length];</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; dp.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (A[i] - A[i - <span class="number">1</span>] == A[i - <span class="number">1</span>] - A[i - <span class="number">2</span>]) &#123;</span><br><span class="line">                dp[i] = <span class="number">1</span> + dp[i - <span class="number">1</span>];</span><br><span class="line">                sum += dp[i];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%AD%89%E5%B7%AE%E6%95%B0%E5%88%97%E5%88%92%E5%88%86/image-20210528092717236.png" alt="image-20210528092717236"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -350,7 +411,22 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%8C%BA%E5%9F%9F%E5%92%8C%E6%A3%80%E7%B4%A2-%E6%95%B0%E7%BB%84%E4%B8%8D%E5%8F%AF%E5%8F%98/image-20210528085250220.png" alt="image-20210528085250220"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：前缀和"><a href="#方法一：前缀和" class="headerlink" title="方法一：前缀和"></a>方法一：前缀和</h4><p><strong>思路</strong></p>
+<p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%8C%BA%E5%9F%9F%E5%92%8C%E6%A3%80%E7%B4%A2-%E6%95%B0%E7%BB%84%E4%B8%8D%E5%8F%AF%E5%8F%98/image-20210528085323437.png" alt="image-20210528085323437"></p>
+<p><strong>代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NumArray</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>[] sums;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NumArray</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = nums.length;</span><br><span class="line">        sums = <span class="keyword">new</span> <span class="keyword">int</span>[n + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">            sums[i + <span class="number">1</span>] = sums[i] + nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">sumRange</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sums[j + <span class="number">1</span>] - sums[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%8C%BA%E5%9F%9F%E5%92%8C%E6%A3%80%E7%B4%A2-%E6%95%B0%E7%BB%84%E4%B8%8D%E5%8F%AF%E5%8F%98/image-20210528085411834.png" alt="image-20210528085411834"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -394,7 +470,21 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84/image-20210528083651458.png" alt="image-20210528083651458"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：动态规划"><a href="#方法一：动态规划" class="headerlink" title="方法一：动态规划"></a>方法一：动态规划</h4><p><strong>思路与算法</strong></p>
+<p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84/image-20210528083717923.png" alt="image-20210528083717923"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">uniquePaths</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[][] f = <span class="keyword">new</span> <span class="keyword">int</span>[m][n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m; ++i) &#123;</span><br><span class="line">            f[i][<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; ++j) &#123;</span><br><span class="line">            f[<span class="number">0</span>][j] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; m; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; n; ++j) &#123;</span><br><span class="line">                f[i][j] = f[i - <span class="number">1</span>][j] + f[i][j - <span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f[m - <span class="number">1</span>][n - <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84/image-20210528083748908.png" alt="image-20210528083748908"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -438,7 +528,20 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%9C%80%E5%B0%8F%E8%B7%AF%E5%BE%84%E5%92%8C/image-20210528082930254.png" alt="image-20210528082930254"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：动态规划"><a href="#方法一：动态规划" class="headerlink" title="方法一：动态规划"></a>方法一：动态规划</h4><p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%9C%80%E5%B0%8F%E8%B7%AF%E5%BE%84%E5%92%8C/image-20210528082954475.png" alt="image-20210528082954475"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minPathSum</span><span class="params">(<span class="keyword">int</span>[][] grid)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (grid == <span class="keyword">null</span> || grid.length == <span class="number">0</span> || grid[<span class="number">0</span>].length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> rows = grid.length, columns = grid[<span class="number">0</span>].length;</span><br><span class="line">        <span class="keyword">int</span>[][] dp = <span class="keyword">new</span> <span class="keyword">int</span>[rows][columns];</span><br><span class="line">        dp[<span class="number">0</span>][<span class="number">0</span>] = grid[<span class="number">0</span>][<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; rows; i++) &#123;</span><br><span class="line">            dp[i][<span class="number">0</span>] = dp[i - <span class="number">1</span>][<span class="number">0</span>] + grid[i][<span class="number">0</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; columns; j++) &#123;</span><br><span class="line">            dp[<span class="number">0</span>][j] = dp[<span class="number">0</span>][j - <span class="number">1</span>] + grid[<span class="number">0</span>][j];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; rows; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; columns; j++) &#123;</span><br><span class="line">                dp[i][j] = Math.min(dp[i - <span class="number">1</span>][j], dp[i][j - <span class="number">1</span>]) + grid[i][j];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[rows - <span class="number">1</span>][columns - <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/28/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%9C%80%E5%B0%8F%E8%B7%AF%E5%BE%84%E5%92%8C/image-20210528083030646.png" alt="image-20210528083030646"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -482,7 +585,20 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/27/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8DII/image-20210527091806357.png" alt="image-20210527091806357"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：动态规划"><a href="#方法一：动态规划" class="headerlink" title="方法一：动态规划"></a>方法一：动态规划</h4><p><img src="/2021/05/27/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8DII/image-20210527091839740.png" alt="image-20210527091839740"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">rob</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> length = nums.length;</span><br><span class="line">        <span class="keyword">if</span> (length == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> nums[<span class="number">0</span>];</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (length == <span class="number">2</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Math.max(nums[<span class="number">0</span>], nums[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Math.max(robRange(nums, <span class="number">0</span>, length - <span class="number">2</span>), robRange(nums, <span class="number">1</span>, length - <span class="number">1</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">robRange</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> first = nums[start], second = Math.max(nums[start], nums[start + <span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = start + <span class="number">2</span>; i &lt;= end; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> temp = second;</span><br><span class="line">            second = Math.max(first + nums[i], second);</span><br><span class="line">            first = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> second;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/27/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8DII/image-20210527091920719.png" alt="image-20210527091920719"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -526,7 +642,23 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/27/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D/image-20210527085942241.png" alt="image-20210527085942241"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：动态规划"><a href="#方法一：动态规划" class="headerlink" title="方法一：动态规划"></a>方法一：动态规划</h4><p><img src="/2021/05/27/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D/image-20210527090010450.png" alt="image-20210527090010450"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">rob</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> length = nums.length;</span><br><span class="line">        <span class="keyword">if</span> (length == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> nums[<span class="number">0</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[length];</span><br><span class="line">        dp[<span class="number">0</span>] = nums[<span class="number">0</span>];</span><br><span class="line">        dp[<span class="number">1</span>] = Math.max(nums[<span class="number">0</span>], nums[<span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; length; i++) &#123;</span><br><span class="line">            dp[i] = Math.max(dp[i - <span class="number">2</span>] + nums[i], dp[i - <span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[length - <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上述方法使用了数组存储结果。考虑到每间房屋的最高总金额只和该房屋的前两间房屋的最高总金额相关，因此可以使用滚动数组，在每个时刻只需要存储前两间房屋的最高总金额。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">rob</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> length = nums.length;</span><br><span class="line">        <span class="keyword">if</span> (length == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> nums[<span class="number">0</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> first = nums[<span class="number">0</span>], second = Math.max(nums[<span class="number">0</span>], nums[<span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; length; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> temp = second;</span><br><span class="line">            second = Math.max(first + nums[i], second);</span><br><span class="line">            first = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> second;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/27/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D/image-20210527090139366.png" alt="image-20210527090139366"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
@@ -570,7 +702,22 @@
   </div>
    
     </div>
+      
+    <div class="article-entry" itemprop="articleBody">
        
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/05/27/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%88%AC%E6%A5%BC%E6%A2%AF/image-20210527083449424.png" alt="image-20210527083449424"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：动态规划"><a href="#方法一：动态规划" class="headerlink" title="方法一：动态规划"></a>方法一：动态规划</h4><p><strong>思路和算法</strong></p>
+<p><img src="/2021/05/27/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%88%AC%E6%A5%BC%E6%A2%AF/image-20210527083529753.png" alt="image-20210527083529753"></p>
+<p><strong>代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">climbStairs</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> p = <span class="number">0</span>, q = <span class="number">0</span>, r = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; ++i) &#123;</span><br><span class="line">            p = q; </span><br><span class="line">            q = r; </span><br><span class="line">            r = p + q;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/05/27/%E5%8A%9B%E6%89%A3/%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%88%AC%E6%A5%BC%E6%A2%AF/image-20210527083604063.png" alt="image-20210527083604063"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
 
     <!-- copyright -->
     
