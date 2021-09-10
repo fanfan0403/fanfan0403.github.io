@@ -108,7 +108,7 @@
 <li><p>service()：拿到请求的时候要做什么；</p>
 </li>
 <li><p>destory()：处理完请求销毁的时候要做什么。</p>
-</li>
+<span id="more"></span></li>
 </ol>
 <p>所有实现 Servlet 的实现都是在这个规范的基础上进行开发。</p>
 <p>package javax.servlet;</p>
@@ -116,12 +116,12 @@
 <p>public interface Servlet {</p>
 <p>public void <em><strong>*init*</strong></em>(ServletConfig config) throws ServletException;</p>
 <pre><code>  public ServletConfig ***\*getServletConfig\****();
-
+  
   public void ***\*service\****(ServletRequest req, ServletResponse res)
 </code></pre>
 <p>​      throws ServletException, IOException;</p>
 <pre><code>  public String ***\*getServletInfo\****();
-
+  
   public void ***\*destroy\****();
 </code></pre>
 <p>}</p>

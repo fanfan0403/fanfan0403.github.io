@@ -1365,7 +1365,7 @@
 <li><p>service()：拿到请求的时候要做什么；</p>
 </li>
 <li><p>destory()：处理完请求销毁的时候要做什么。</p>
-</li>
+<span id="more"></span></li>
 </ol>
 <p>所有实现 Servlet 的实现都是在这个规范的基础上进行开发。</p>
 <p>package javax.servlet;</p>
@@ -1373,12 +1373,12 @@
 <p>public interface Servlet {</p>
 <p>public void <em><strong>*init*</strong></em>(ServletConfig config) throws ServletException;</p>
 <pre><code>  public ServletConfig ***\*getServletConfig\****();
-
+  
   public void ***\*service\****(ServletRequest req, ServletResponse res)
 </code></pre>
 <p>​      throws ServletException, IOException;</p>
 <pre><code>  public String ***\*getServletInfo\****();
-
+  
   public void ***\*destroy\****();
 </code></pre>
 <p>}</p>
@@ -2491,7 +2491,7 @@
     <title>Spring Bean的生命周期</title>
     <url>/2021/09/10/Spring/Spring%20Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</url>
     <content><![CDATA[<p>[TOC]</p>
-<h3 id="1-Spring创建bean的流程图"><a href="#1-Spring创建bean的流程图" class="headerlink" title="1. Spring创建bean的流程图"></a>1. <em>Spring创建bean的流程图</em></h3><p><img src="/2021/09/10/Spring/Spring%20Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/wps15.png" alt="img"> </p>
+<h3 id="1-Spring创建bean的流程图"><a href="#1-Spring创建bean的流程图" class="headerlink" title="1. Spring创建bean的流程图"></a>1. <em>Spring创建bean的流程图</em></h3><p>![img](Spring Bean的生命周期/wps15.png) </p>
 <span id="more"></span>
 
 <h3 id="2-Spring-Bean的生命周期"><a href="#2-Spring-Bean的生命周期" class="headerlink" title="2. Spring Bean的生命周期"></a>2. Spring Bean的生命周期</h3><p>四个阶段（在核心方法doCreateBean中）：</p>
@@ -2507,7 +2507,7 @@
 </ol>
 <p>初始化和销毁是用户能自定义扩展的两个阶段。</p>
 <p>加入扩展点的流程图：</p>
-<p><img src="/2021/09/10/Spring/Spring%20Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/wps16.jpg" alt="img"> </p>
+<p>![img]Spring Bean的生命周期/wps16.jpg) </p>
 <p>扩展点：</p>
 <ol>
 <li><p>Bean自身的方法，比如构造函数、getter/setter 以及 init-method 和 destory-method 所指定的方法等，对应这四个阶段</p>
@@ -2517,7 +2517,7 @@
 <li><p>Bean 级生命周期方法。比如 BeanNameAware、BeanFactoryAware、ApplicationContextAware、InitializingBean、DisposableBean 等方法，这些方法只对当前 Bean 生效。</p>
 </li>
 </ol>
-<p><img src="/2021/09/10/Spring/Spring%20Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/wps17.jpg" alt="img"> </p>
+<p>![img](Spring Bean的生命周期/wps17.jpg) </p>
 <p>摘自：</p>
 <p><a href="https://blog.csdn.net/riemann_/article/details/118500805">https://blog.csdn.net/riemann_/article/details/118500805</a></p>
 ]]></content>
