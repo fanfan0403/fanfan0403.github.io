@@ -5398,19 +5398,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>二叉查找树</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>实现Trie-前缀树</title>
-    <url>/2021/05/21/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/%E5%AE%9E%E7%8E%B0Trie-%E5%89%8D%E7%BC%80%E6%A0%91/</url>
-    <content><![CDATA[<p>[力扣]: </p>
-<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3>]]></content>
-      <categories>
-        <category>力扣</category>
-        <category>数据结构</category>
-        <category>树</category>
-        <category>二叉查找树</category>
       </categories>
   </entry>
   <entry>
@@ -5429,7 +5416,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>二叉查找树</category>
       </categories>
   </entry>
   <entry>
@@ -5457,7 +5443,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>二叉查找树</category>
       </categories>
   </entry>
   <entry>
@@ -5474,7 +5459,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>二叉查找树</category>
       </categories>
   </entry>
   <entry>
@@ -5491,7 +5475,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>二叉查找树</category>
       </categories>
   </entry>
   <entry>
@@ -5519,7 +5502,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>二叉查找树</category>
       </categories>
   </entry>
   <entry>
@@ -5545,7 +5527,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>二叉查找树</category>
       </categories>
   </entry>
   <entry>
@@ -5564,7 +5545,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>二叉查找树</category>
       </categories>
   </entry>
   <entry>
@@ -5585,7 +5565,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>二叉查找树</category>
       </categories>
   </entry>
   <entry>
@@ -5611,7 +5590,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>遍历</category>
       </categories>
   </entry>
   <entry>
@@ -5637,7 +5615,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>遍历</category>
       </categories>
   </entry>
   <entry>
@@ -5661,7 +5638,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>遍历</category>
       </categories>
   </entry>
   <entry>
@@ -5683,7 +5659,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>层次遍历</category>
       </categories>
   </entry>
   <entry>
@@ -5696,7 +5671,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5721,7 +5695,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5744,7 +5717,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5764,7 +5736,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5784,7 +5755,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5808,7 +5778,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5826,7 +5795,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5848,7 +5816,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5877,7 +5844,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5900,7 +5866,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5919,7 +5884,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5939,7 +5903,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5962,7 +5925,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
@@ -5987,7 +5949,6 @@
         <category>力扣</category>
         <category>数据结构</category>
         <category>树</category>
-        <category>递归</category>
       </categories>
   </entry>
   <entry>
