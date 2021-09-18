@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-09-10T06:35:35.053Z</updated>
+  <updated>2021-09-18T01:27:23.182Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,76 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>唐车项目的一些思考</title>
+    <link href="http://example.com/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%94%90%E8%BD%A6%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/"/>
+    <id>http://example.com/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%94%90%E8%BD%A6%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/</id>
+    <published>2021-09-18T01:11:50.000Z</published>
+    <updated>2021-09-18T01:27:23.182Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="1-改善提案模块的审批流"><a href="#1-改善提案模块的审批流" class="headerlink" title="1.改善提案模块的审批流"></a>1.改善提案模块的审批流</h3><p><strong>使用责任链模式</strong></p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义一个审批的父类，包括approve()和setNext()两个方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Approve</span></span>&#123;</span><br><span class="line"><span class="function"><span class="keyword">public</span> Response <span class="title">approve</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        <span class="comment">//审批逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Response <span class="title">setNext</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        <span class="comment">//设置下一个结点</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//每种审批类型去实现父类——解耦，扩展性好</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ApproveA</span> <span class="keyword">implements</span> <span class="title">Approve</span></span>&#123;</span><br><span class="line"><span class="function"><span class="keyword">public</span> Response <span class="title">approve</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Response <span class="title">setNext</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>改进：责任树模式</strong></p><p>启发来源于阿里的技术博客</p><p>就是将责任链和策略模式组合起来。。。</p><p>有兴趣可以看看 <a href="https://mp.weixin.qq.com/s/Wib0Ly45te00HMUnIG-tbg">https://mp.weixin.qq.com/s/Wib0Ly45te00HMUnIG-tbg</a></p><h3 id="2-表设计的不大好"><a href="#2-表设计的不大好" class="headerlink" title="2.表设计的不大好"></a>2.表设计的不大好</h3><p>（1）应该对员工表进行分表处理，把员工表分成基本信息表和职务相关信息表，不然搜索起来太慢了。。。</p><p>（2）该加索引的地方加上索引。。。</p><h3 id="3-微服务"><a href="#3-微服务" class="headerlink" title="3.微服务"></a>3.微服务</h3><p>每个模块做一个微服务，比如管理创新、改善提案、操作创新模块。一个模块挂了不至于影响其它的。。。</p><p>emmm,微服务还不会。。。慢慢学明白。。。</p><h3 id="4-技术该更新下了"><a href="#4-技术该更新下了" class="headerlink" title="4.技术该更新下了"></a>4.技术该更新下了</h3><p>（1）mybaties换成mybatis-plus(这个灰常好用)</p><p>（2）前后端应该分离了</p><p>做全栈，被迫营业哇，前后端都写。。。那个审批流结点(node.js)写恶心了…</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h3 id=&quot;1-改善提案模块的审批流&quot;&gt;&lt;a href=&quot;#1-改善提案模块的审批流&quot; class=&quot;headerlink&quot; title=&quot;1.改善提案模块的审批流&quot;&gt;&lt;/a&gt;1.改善提案模块的审批流&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;使用责任链模式&lt;/strong&gt;&lt;/p&gt;
+&lt;</summary>
+      
+    
+    
+    
+    <category term="项目实战" scheme="http://example.com/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>SQL注入问题</title>
+    <link href="http://example.com/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/"/>
+    <id>http://example.com/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/</id>
+    <published>2021-09-18T00:49:16.000Z</published>
+    <updated>2021-09-18T01:03:35.093Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="1-SQL注入的原因"><a href="#1-SQL注入的原因" class="headerlink" title="1. SQL注入的原因"></a>1. SQL注入的原因</h3><p>SQL注入漏洞，根本上讲，是由于错把外部输入当作SQL代码去执行。目前最佳的解决方案就是<strong>预编译</strong>的方式。</p><span id="more"></span><p><strong>SQL语句在执行过程中，需要经过以下三大基本步骤：</strong></p><ol><li>代码语义分析</li><li>制定执行计划</li><li>获得返回结果</li></ol><p>而一个SQL语句是由<strong>代码</strong>和<strong>数据</strong>两部分，如：</p><p>SELECT id, name, phone FROM userTable WHERE name = ‘xiaoming’; </p><p>SELECT id, name, phone FROM userTable WHERE name = 是代码，’xiaoming’是数据。</p><p>而预编译，以<strong>Mybatis为例，就是预先分析带有占位符的语义</strong>：</p><p>如SELECT id, name, phone FROM userTable WHERE id = #{name}; </p><p>然后再将数据’xiaoming’，传入到占位符。这样一来，错开来代码语义分析阶段，也就不会被误认为是代码的一部分了。</p><h3 id="2-直接使用Mybatis"><a href="#2-直接使用Mybatis" class="headerlink" title="2. 直接使用Mybatis"></a>2. 直接使用Mybatis</h3><p>Mybatis传入数据有两种占位符${}和#{}。${}和#{}。</p><p><strong>${}<strong>可以理解为语义分析前的</strong>字符串拼接</strong>，将传入的参数，原封不动地传入。</p><p>**#{}**占位符就不存在注入问题</p><p><strong>不能用#{}的场景：order by</strong></p><p>SELECT id, name, phone FROM userTable ORDER BY #{}; ，执行时会报错。</p><p>因为order by后的内容，是一个列名，属于代码语义的一部分。如果在语义分析部分没有确定下来，就相当于执行SELECT id, name, phone FROM userTable ORDER BY 。肯定会有语法错误。</p><p><strong>正确写法：</strong></p><p><strong>order by（group by）语句中使用${}</strong></p><p>（1）使用条件判断</p><p><img src="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/image-20210918090107908.png" alt="image-20210918090107908"></p><ol start="2"><li>使用全局过滤机制，限制order by后的变量内容只能是数字、字母、下划线。</li></ol><p>如使用正则过滤：</p><p><img src="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/image-20210918090140239.png" alt="image-20210918090140239"></p><p>摘自：</p><p><a href="https://mp.weixin.qq.com/s/mP49OCkwqSnamtop0cChdQ">https://mp.weixin.qq.com/s/mP49OCkwqSnamtop0cChdQ</a></p><p>大佬写的真不戳，有空再仔细拜读。。。</p>]]></content>
+    
+    
+    <summary type="html">&lt;h3 id=&quot;1-SQL注入的原因&quot;&gt;&lt;a href=&quot;#1-SQL注入的原因&quot; class=&quot;headerlink&quot; title=&quot;1. SQL注入的原因&quot;&gt;&lt;/a&gt;1. SQL注入的原因&lt;/h3&gt;&lt;p&gt;SQL注入漏洞，根本上讲，是由于错把外部输入当作SQL代码去执行。目前最佳的解决方案就是&lt;strong&gt;预编译&lt;/strong&gt;的方式。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="项目实战" scheme="http://example.com/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/"/>
+    
+    
+    <category term="— SQL" scheme="http://example.com/tags/%E2%80%94-SQL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>BIO、NIO、AIO</title>
+    <link href="http://example.com/2021/09/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/BIO%E3%80%81NIO%E3%80%81AIO/"/>
+    <id>http://example.com/2021/09/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/BIO%E3%80%81NIO%E3%80%81AIO/</id>
+    <published>2021-09-18T00:19:48.000Z</published>
+    <updated>2021-09-18T01:52:57.010Z</updated>
+    
+    <content type="html"><![CDATA[<p>[TOC]</p><h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><p><strong>同步与异步</strong></p><p>同步和异步关注的是<em><strong>消息通信机制</strong></em></p><ul><li><strong>同步：</strong> 同步就是发起一个调用后，被调用者未处理完请求之前，调用不返回。</li><li><strong>异步：</strong> 异步就是发起一个调用后，立刻得到被调用者的回应表示已接收到请求，但是被调用者并没有返回结果，此时我们可以处理其他的请求，被调用者通常依靠事件，回调等机制来通知调用者其返回结果。</li></ul><p>同步和异步的区别最大在于异步的话调用者不需要等待处理结果，被调用者会通过回调等机制来通知调用者其返回结果。</p><span id="more"></span><p><strong>阻塞和非阻塞</strong></p><p>阻塞和非阻塞关注的是<em><strong>程序在等待调用结果</strong></em>（消息，返回值）时的状态.</p><ul><li><strong>阻塞：</strong> 阻塞就是发起一个请求，调用者一直等待请求结果返回，也就是当前线程会被挂起，无法从事其他任务，只有当条件就绪才能继续。</li><li><strong>非阻塞：</strong> 非阻塞就是发起一个请求，调用者不用一直等着结果返回，可以先去干其他事情。</li></ul><p><strong>io操作分为两部分</strong>：</p><p>（1）发起io请求，</p><p>（2）和io数据读写。</p><p>阻塞、非阻塞主要是针对线程发起io请求后，是否立即返回来定义的，立即返回称为非阻塞io，否则称为阻塞io。</p><p>同步、异步主要针对io数据读写来定义的，读写数据过程中不阻塞线程称为异步io，否则，称为同步io。</p><h3 id="1-BIO（同步阻塞IO）"><a href="#1-BIO（同步阻塞IO）" class="headerlink" title="1.BIO（同步阻塞IO）"></a>1.BIO（同步阻塞IO）</h3><p>线程发起io请求后，一直阻塞(阻塞io)，直到数据就绪后，用户线程将数据写入socket空间，或从socket空间读取数据（同步）。</p><p><img src="https://static.oschina.net/uploads/space/2018/0512/175816_hKn8_859002.png" alt="img"></p><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>一个连接占用一个线程资源，线程资源不能充分利用。线程开销大，利用率不高。</p><h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><p>代码简单，逻辑清晰。</p><h3 id="2-NIO（同步非阻塞IO）"><a href="#2-NIO（同步非阻塞IO）" class="headerlink" title="2.NIO（同步非阻塞IO）"></a>2.NIO（同步非阻塞IO）</h3><p>NIO:线程发起io请求后，立即返回（非阻塞io）。用户线程不阻塞等待，但是，用户线程要<strong>定时轮询</strong>检查数据是否就绪，当数据就绪后，用户线程将数据从用户空间写入socket空间，或从socket空间读取数据到用户空间（同步）。</p><p><img src="https://static.oschina.net/uploads/space/2018/0512/175509_gUu5_859002.jpeg" alt="img"></p><h4 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h4><p>线程数减少</p><h4 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h4><p>需要自己扫描每个连接，需要O(n)时间复杂度调用</p><p>高频系统滴哦用，导致CPU消耗高。</p><p><strong>IO多路复用（NIO）</strong>：上述NIO实现中，需要用户线程<strong>定时轮训</strong>，去检查IO数据是否就绪，占用应用程序线程资源。IO多路复用模型中，将检查IO数据是否就绪的任务，交给系统级别的select或poll模型，由系统进行监控，减轻用户线程负担。</p><p>当用户线程发起io请求后，将socket连接及关注事件注册到selector（多路复用器，os级别线程）上，selector循环遍历socket连接，看是否有关注数据就绪，如果连接有数据就绪后，就通知应用程序，建立线程进行数据读写。同BIO对比，NIO中线程处理的都是有效连接（数据就绪），且一个线程可以分管处理多个连接上的就绪数据，节省线程资源开销。</p><p><strong>1)select</strong>:注册的socket事件由<strong>数组</strong>管理，长度有限制，轮询查找时需要遍历数组。</p><p><strong>2)poll:<strong>注册的socket事件由</strong>链表</strong>实现，数量没有限制，遍历链表轮询查找。</p><p><strong>3)epoll</strong>:基于<strong>事件驱动思想</strong>，采用reactor模式，通过事件回调，无需使用某种方式主动检查socket状态，被动接收就绪事件即可。</p><h3 id="3-AIO-异步非阻塞IO"><a href="#3-AIO-异步非阻塞IO" class="headerlink" title="3.AIO:(异步非阻塞IO)"></a>3.AIO:(异步非阻塞IO)</h3><p>AIO:线程发起io请求后，<strong>立即返回</strong>（非阻塞io），当数据读写完成后，<strong>OS通知用户线程</strong>（异步）。这里数据写入socket空间，或从socket空间读取数据到用户空间由OS完成，用户线程无需介入，所以也就不会阻塞用户线程，即异步。</p><p><img src="https://static.oschina.net/uploads/space/2018/0512/180751_roDU_859002.jpeg" alt="img"></p><p>AIO基于时间驱动思想，采用proactor模式。数据完成后，由os主动通知应用程序，通过epoll实现，节省了NIO中selector循环遍历检测数据就绪的资源开销。同时，数据copy操作（用户空间&lt;-&gt;socket空间）是由os完成的，无需应用程序参与，大大提高应用程序效率。</p><h4 id="优点-2"><a href="#优点-2" class="headerlink" title="优点"></a>优点</h4><p>封装好了任务调度，只关心任务处理。</p><h4 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h4><p>编码复杂</p><p>可能会出现并发问题</p><p><strong>摘自：</strong></p><p><a href="https://my.oschina.net/ljhlgj/blog/1811319">https://my.oschina.net/ljhlgj/blog/1811319</a></p><p>推荐：</p><p><a href="https://mp.weixin.qq.com/s/KgJFyEmZApF7l5UUJeWf8Q">https://mp.weixin.qq.com/s/KgJFyEmZApF7l5UUJeWf8Q</a></p><p>（阿里大佬写的，有代码，便于理解）</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;[TOC]&lt;/p&gt;
+&lt;h3 id=&quot;前置知识&quot;&gt;&lt;a href=&quot;#前置知识&quot; class=&quot;headerlink&quot; title=&quot;前置知识&quot;&gt;&lt;/a&gt;前置知识&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;同步与异步&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;同步和异步关注的是&lt;em&gt;&lt;strong&gt;消息通信机制&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;同步：&lt;/strong&gt; 同步就是发起一个调用后，被调用者未处理完请求之前，调用不返回。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;异步：&lt;/strong&gt; 异步就是发起一个调用后，立刻得到被调用者的回应表示已接收到请求，但是被调用者并没有返回结果，此时我们可以处理其他的请求，被调用者通常依靠事件，回调等机制来通知调用者其返回结果。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;同步和异步的区别最大在于异步的话调用者不需要等待处理结果，被调用者会通过回调等机制来通知调用者其返回结果。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="操作系统" scheme="http://example.com/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>其它知识点</title>
@@ -415,72 +485,6 @@
 &lt;li&gt;&lt;p&gt;模板模式&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Spring" scheme="http://example.com/categories/Spring/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Spring容器的启动流程</title>
-    <link href="http://example.com/2021/09/10/Spring/Spring%E5%AE%B9%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/"/>
-    <id>http://example.com/2021/09/10/Spring/Spring%E5%AE%B9%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/</id>
-    <published>2021-09-10T04:24:34.000Z</published>
-    <updated>2021-09-10T06:42:59.238Z</updated>
-    
-    <content type="html"><![CDATA[<p>[TOC]</p><h3 id="S-pring-容器的启动流程"><a href="#S-pring-容器的启动流程" class="headerlink" title="S***pring***容器的启动流程"></a><em><strong>S</strong>***</em>pring***<em><strong>容器的启动流程</strong></em></h3><p>spring容器的启动方式有很多种： </p><ol><li><p>xml的方式，入口为ClassPathXmlApplicationContext（从类路径中加载xml文件）或FileSystemXmlApplicationContext（从指定文件地址加载xml文件）</p></li><li><p>Java Config，基于注解中的方式，入口为AnnotationConfigApplicationContext</p></li></ol> <span id="more"></span><h3 id="xml方式（源码分析）"><a href="#xml方式（源码分析）" class="headerlink" title="xml方式（源码分析）"></a>xml方式（源码分析）</h3><p><a href="https://javadoop.com/post/spring-ioc">https://javadoop.com/post/spring-ioc</a></p><p>整个流程的大致过程：初始化BeanFactory；加载xml配置文件；将beanDefinition注册到beanFactory；创建bean（创建bean实例；属性填充；各种回调）</p><p>启动Spring容器，入口：</p><p>public static void main(String[] args) {</p><p>  ApplicationContext context </p><p>= new <em><strong>*ClassPathXmlApplicationContext*</strong></em>(“classpath:applicationfile.xml”);</p><p>}</p><p>maven中添加spring-context依赖，spring-context 会自动将 spring-core、spring-beans、spring-aop、spring-expression 这几个基础 jar 包带进来。</p><p>从ClassPathXmlApplicationContext构造方法开始：</p><ol><li><p>处理文件路径</p></li><li><p>refresh()</p></li></ol><p>refresh() 会将原来的 ApplicationContext 销毁，然后再重新执行一次初始化操作</p><ol><li><p>prepareRefresh() 做一些准备工作，比如记录下容器的启动时间、标记“已启动”状态、检验xml配置文件</p></li><li><p>初始化BeanFactory，加载配置文件，并解析为BeanDefinition，最后将这个beanDefinition注册到BeanFactory中，这一步并不会生成Bean实例。ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory()</p><p><strong>1)</strong> <em><strong>初始化</strong>***</em>BeanFactory***，DefaultListableBeanFactory，这基本上是最厉害的BeanFactory</p><ol start="2"><li>设置 BeanFactory 的两个配置属性：是否允许 Bean 覆盖、是否允许循环引用customizeBeanFactory();</li></ol><p><strong>3)</strong> <strong>加载</strong>loadBeanDefinitions();通过一个 XmlBeanDefinitionReader 实例来加载各个 Bean</p><p><strong>4)</strong> <em><strong>解析</strong></em>parseBeanDefinitions(root, this.delegate)核心解析方法</p><p><strong>5)</strong> <em><strong>注册</strong></em>registerBeanDefinition(String beanName, BeanDefinition beanDefinition)注册Bean，将beanName-BeanDefinition放到beanDefinitionMap中；把beanName添加到ArrayList&lt;&gt; beanDefinitionNames中</p><ol start="6"><li>发送注册事件</li></ol></li><li><p>准备Bean容器prepareBeanFactory(beanFactory); </p><ol><li><p>设置 BeanFactory 的类加载器</p></li><li><p>添加****ApplicationContextAwareProcessor*<em><strong>，如果bean在初始化时实现了</strong></em>*Aware接口****，这个processor负责回调，回调ApplicationContextAware、EnvironmentAware、ResourceLoaderAware 等（导出项目中，EventConsumer实现了ApplicationContextAware接口，来获取ApplicationContext，从中获取EventHandler中的所有bean）</p></li><li><p>添加ApplicationListenerDetector，用来注册监听事件，如果bean实例化后，是ApplicationListener 的子类，那么将其添加到 listener 列表中</p></li><li><p>注册几个有用的bean：environment、systemProperties、systemEnvironment</p></li></ol></li><li><p>postProcessBeanFactory(beanFactory); 提供给子类的扩展点，此时所有的 Bean 都加载、注册完成了，但是都还没有初始化，子类可以在这里定义自己的BeanFactoryPostProcessor实现类</p></li><li><p>调用 <em><strong>*BeanFactoryPostProcessor*</strong></em> 各个实现类的 postProcessBeanFactory() 方法invokeBeanFactoryPostProcessors(beanFactory); </p></li><li><p>注册自定义的<em><strong>*BeanPostProcessor*</strong></em> ，registerBeanPostProcessors(beanFactory);，这个接口包含两个方法，分别在Bean初始化前、后执行</p></li><li><p>初始化国际化initMessageSource();初始化当前 ApplicationContext 的 MessageSource </p></li><li><p>初始化当前 ApplicationContext 的事件广播器initApplicationEventMulticaster();</p></li><li><p>onRefresh();典型的模板方法(钩子方法)，具体的子类可以在这里初始化一些特殊的 Bean（在初始化 singleton beans 之前）</p></li><li><p>registerListeners();注册事件监听器，监听器需要实现 ApplicationListener 接口</p></li></ol><p><strong>11.</strong> <em><strong>*初始化所有的*</strong></em> <em><strong>*singleton bean*</strong></em> ：finishBeanFactoryInitialization(beanFactory); </p><p>​    </p><ol start="12"><li>finishRefresh();广播事件，ApplicationContext 初始化完成</li></ol><p><em><strong>*createBeanInstance*</strong></em>(beanName, mbd, args)</p><p>作用：实例化指定的类</p><ol><li><p>确保已经加载了此 class</p></li><li><p>校验一下这个类的访问权限</p></li><li><p>如果是FactoryBean，则采用工厂方法实例化；否则继续</p></li><li><p>根据args，调用无参构造函数、或者有参构造函数创建实例</p></li></ol><p><em><strong>*initializeBean*</strong></em>(beanName, exposedObject, mbd);</p><p>处理各种回调；init方法</p><ol><li><p>如果 bean 实现了 <em><strong>BeanNameAware</strong></em>、BeanClassLoaderAware 或 BeanFactoryAware 接口，回调</p></li><li><p>**** <em><strong>BeanPostProcessor</strong></em> 的 postProcessBeforeInitialization 回调</p></li><li><p>处理 bean 中定义的 ****init-method****，或者如果 bean 实现了 InitializingBean 接口，调用 afterPropertiesSet() 方法</p></li></ol><p><strong>4.</strong> <em><strong>BeanPostProcessor</strong></em> 的 postProcessAfterInitialization 回调</p><h3 id="Java-Config方式"><a href="#Java-Config方式" class="headerlink" title="Java Config方式"></a>Java Config方式</h3><p><a href="https://blog.csdn.net/qq_35190492/article/details/110383213">https://blog.csdn.net/qq_35190492/article/details/110383213</a></p><p>如何设计一个IOC容器：</p><ol><li><p>提供入口AnnotationConfigApplicationContext，供用户使用，然后初始化一些工具组件，如下：</p></li><li><p>bean工厂（DefaultListableBeanFactory），用来生成bean对象</p></li><li><p>注解配置读取器（AnnotatedBeanDefinitionReader），对加了特定注解比如@Service、@Repository的类读取转化为BeanDefinition对象</p></li><li><p>路径扫描器（ClassPathBeanDefinitionScanner），对用户指定的包目录进行扫描查找 bean 对象</p></li><li></li></ol><p><img src="/2021/09/10/Spring/Spring%E5%AE%B9%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/Spring%E5%AE%B9%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/wps18.png" alt="img"> </p><p>第一步：new AnnotationConfigApplicationContext() 创建Spring容器，有参的构造方法如下，分为三步：</p><ol><li><p>通过this()调用无参构造方法，分为三步</p><ol><li><p>先执行父类GenericApplicationContext的初始化方法，实例化一个DefaultListableBeanFactory</p></li><li><p>实例化AnnotatedBeanDefinitionReader，registerAnnotationConfigProcessors()</p></li></ol><p>① 向容器中添加2个beanFactory后置处理器</p><ol><li><p>ConfigurationClassPostProcessor: 一个 beanFactory 后置处理器，用来完成 bean 的扫描与注入工作</p></li><li><p>EventListenerMethodProcessor</p></li></ol><p>② 向容器中添加2个bean后置处理器</p><ol><li><p>AutowiredAnnotationBeanPostProcessor：一个 bean 后置处理器，用来完成 @AutoWired 自动注入</p></li><li><p>CommonAnnotationBeanPostProcessor</p></li></ol><p>③ 向容器中添加普通组件：DefaultEventListenerFactory</p><ol start="3"><li>实例化ClassPathBeanDefinitionScanner</li></ol></li><li><p>调用register(componentClasses); 注册传入的配置类，可以是多个类。最终调用doRegisterBean()，用来解析用户传入的 Spring 配置类，解析成一个 BeanDefinition 然后注册到容器中。</p></li></ol><p>\3. 调用refresh() 容器刷新，这是spring的核心方法</p><p>刷新流程</p><ol><li><p>prepareRefresh() 刷新前预处理</p></li><li><p>obtainFreashBeanFactory（）获取beanFactory，前面已经初始化过</p></li><li><p>prepareBeanFactory() 预处理beanFactory，向容器中添加一些组件</p></li><li><p>postProcessBeanFactory() 子类重写这个方法，可以在beanFactor</p></li><li><p>执行BeanFactoryPostProcessor方法</p></li><li><p>向容器中注册bean后置处理器</p></li><li><p>初始化MessageSource组件：国际化、消息绑定与解析</p></li><li><p>初始化事件派发器，在注册监听时会用到</p></li><li><p>onRefresh() 留给子类重写，在容器刷新时，可以自定义逻辑，web场景下会用到</p></li><li><p>registerListeners() 注册监听器，派发之前产生的一些事件</p></li><li><p>初始化所有bean</p></li><li><p>finishRefresh() 刷新完成，发布容器</p></li></ol><p>public AnnotationConfigApplicationContext(Class&lt;?&gt;… componentClasses) {</p><p>​        this();</p><p>​        register(componentClasses);</p><p>​        refresh();</p><p>​    }</p><h3 id="测试demo"><a href="#测试demo" class="headerlink" title="测试demo"></a>测试demo</h3><p><a href="https://www.jianshu.com/p/52b988e02c37">https://www.jianshu.com/p/52b988e02c37</a></p><p><em><strong>*配置*</strong></em></p><p><em><strong>*XML方式：*</strong></em></p><p>&lt;context:component-scan base-package=”com.me.xml”/&gt;</p><p>@Component</p><p>public class OneBean {</p><p>}</p><p>public static void main(String[] args) {</p><p>  ApplicationContext context </p><p>= new ClassPathXmlApplicationContext(“applicationContext.xml”);</p><p>  OneBean bean = context.getBean(“oneBean”,OneBean.class);</p><p>  System.out.println(bean);</p><p>}</p><p><em><strong>*Java*</strong></em> <em><strong>*Config*</strong></em></p><p>@Configuration：标注了该注解的类是一个Spring的配置类,等价于原先的applicationContext.xml</p><p>@ComponentScan ：启动该注解，表明开启Spring的注解自动扫描 , 默认情况下,扫描当前类所在包及其子包</p><p>代码如下：</p><p>@Configuration </p><p>@ComponentScan </p><p>public class Config {</p><p>}</p><p>public static void main(String[] args) {</p><p>  ApplicationContext context = new AnnotationConfigApplicationContext(Config.class);</p><p>  OneBean oneBean = context.getBean(OneBean.class);</p><p>  System.out.println(oneBean);</p><p>}</p><p>创建bean</p><bean id="oneBena" class="com.me.xml.OneBean"><p>@Configuration</p><p>public class Config {</p><p>  @Bean // 表明这是一个Spring 管理的bean</p><p>  public OneBean oneBean() {</p><p>​    // 显然,这个Bean的CLass 是OneBean.class</p><p>​    // 在spring 中,bean的 id 是不能重复的,而现在使用java config来代替xml配置</p><p>​    // 在java config 方法名就是这个bean的id</p><p>​    return new OneBean();</p><p>  }</p><p>}</p></bean>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;[TOC]&lt;/p&gt;
-&lt;h3 id=&quot;S-pring-容器的启动流程&quot;&gt;&lt;a href=&quot;#S-pring-容器的启动流程&quot; class=&quot;headerlink&quot; title=&quot;S***pring***容器的启动流程&quot;&gt;&lt;/a&gt;&lt;em&gt;&lt;strong&gt;S&lt;/strong&gt;***&lt;/em&gt;pring***&lt;em&gt;&lt;strong&gt;容器的启动流程&lt;/strong&gt;&lt;/em&gt;&lt;/h3&gt;&lt;p&gt;spring容器的启动方式有很多种： &lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;xml的方式，入口为ClassPathXmlApplicationContext（从类路径中加载xml文件）或FileSystemXmlApplicationContext（从指定文件地址加载xml文件）&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Java Config，基于注解中的方式，入口为AnnotationConfigApplicationContext&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Spring" scheme="http://example.com/categories/Spring/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Spring Bean的生命周期</title>
-    <link href="http://example.com/2021/09/10/Spring/Spring%20Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"/>
-    <id>http://example.com/2021/09/10/Spring/Spring%20Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</id>
-    <published>2021-09-10T04:20:53.000Z</published>
-    <updated>2021-09-10T06:59:56.092Z</updated>
-    
-    <content type="html"><![CDATA[<p>[TOC]</p><h3 id="1-Spring创建bean的流程图"><a href="#1-Spring创建bean的流程图" class="headerlink" title="1. Spring创建bean的流程图"></a>1. <em>Spring创建bean的流程图</em></h3><p>![img](Spring Bean的生命周期/wps15.png) </p><span id="more"></span><h3 id="2-Spring-Bean的生命周期"><a href="#2-Spring-Bean的生命周期" class="headerlink" title="2. Spring Bean的生命周期"></a>2. Spring Bean的生命周期</h3><p>四个阶段（在核心方法doCreateBean中）：</p><ol><li><p>实例化Instantiation，创建bean实例</p></li><li><p>属性赋值Populate</p></li><li><p>初始化Initialization，执行init方法</p></li><li><p>销毁Destruction</p></li></ol><p>初始化和销毁是用户能自定义扩展的两个阶段。</p><p>加入扩展点的流程图：</p><p>![img]Spring Bean的生命周期/wps16.jpg) </p><p>扩展点：</p><ol><li><p>Bean自身的方法，比如构造函数、getter/setter 以及 init-method 和 destory-method 所指定的方法等，对应这四个阶段</p></li><li><p>容器级的方法。主要是后处理器方法，比如下图的 InstantiationAwareBeanPostProcessor、BeanPostProcessor 接口方法。这些接口的实现类是独立于 Bean 的，并且会注册到 Spring 容器中。在 Spring 容器创建任何 Bean 的时候，这些后处理器都会发生作用</p></li><li><p>Bean 级生命周期方法。比如 BeanNameAware、BeanFactoryAware、ApplicationContextAware、InitializingBean、DisposableBean 等方法，这些方法只对当前 Bean 生效。</p></li></ol><p>![img](Spring Bean的生命周期/wps17.jpg) </p><p>摘自：</p><p><a href="https://blog.csdn.net/riemann_/article/details/118500805">https://blog.csdn.net/riemann_/article/details/118500805</a></p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;[TOC]&lt;/p&gt;
-&lt;h3 id=&quot;1-Spring创建bean的流程图&quot;&gt;&lt;a href=&quot;#1-Spring创建bean的流程图&quot; class=&quot;headerlink&quot; title=&quot;1. Spring创建bean的流程图&quot;&gt;&lt;/a&gt;1. &lt;em&gt;Spring创建bean的流程图&lt;/em&gt;&lt;/h3&gt;&lt;p&gt;![img](Spring Bean的生命周期/wps15.png) &lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Spring" scheme="http://example.com/categories/Spring/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Bean相关接口</title>
-    <link href="http://example.com/2021/09/10/Spring/Bean%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/"/>
-    <id>http://example.com/2021/09/10/Spring/Bean%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/</id>
-    <published>2021-09-10T04:17:53.000Z</published>
-    <updated>2021-09-10T06:37:22.324Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="1-BeanFactoryPostProcessor"><a href="#1-BeanFactoryPostProcessor" class="headerlink" title="1. BeanFactoryPostProcessor"></a>1. <em><strong>BeanFactoryPostProcessor</strong></em></h3><p>接口，只有一个方法postProcessBeanFactory</p><p>如果实现了此接口，那么会在所有的 Bean 都加载、注册到BeanFactory，但是都还没有初始化时，Spring 会负责调用里面的 postProcessBeanFactory 方法</p> <span id="more"></span><p>@FunctionalInterface</p><p>public interface BeanFactoryPostProcessor {</p><p>  void <em><strong>*postProcessBeanFactory*</strong></em>(ConfigurableListableBeanFactory var1) </p><p>throws BeansException;</p><p>}</p><h3 id="2-BeanPostProcessor"><a href="#2-BeanPostProcessor" class="headerlink" title="2. BeanPostProcessor"></a>2. <em><strong>BeanPostProcessor</strong></em></h3><p>此接口两个方法: postProcessBeforeInitialization 和 postProcessAfterInitialization</p><p>分别在 Bean 初始化之前和初始化之后得到执行</p><p>public interface BeanPostProcessor {</p><p>  @Nullable</p><p>  default Object <em><strong>*postProcessBeforeInitialization*</strong></em>(Object bean, String beanName) throws BeansException {</p><p>​    return bean;</p><p>  }</p><p>  @Nullable</p><p>  default Object <em><strong>*postProcessAfterInitialization*</strong></em>(Object bean, String beanName) throws BeansException {</p><p>​    return bean;</p><p>  }</p><p>}</p><h3 id="BeanDefinition"><a href="#BeanDefinition" class="headerlink" title="BeanDefinition"></a><em><strong>BeanDefinition</strong></em></h3><p>自己定义的各个 Bean 会转换成一个个 BeanDefinition 存在于 Spring 的 BeanFactory 中。</p><p>BeanDefinition 中保存了我们的 Bean 信息，比如这个 Bean 指向的是哪个类、是否是单例的、是否懒加载、这个 Bean 依赖了哪些 Bean 等等。</p><p>Bean是什么？Bean 在代码层面上可以简单认为是 BeanDefinition 的实例。</p><p>public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {</p><p>  // 我们可以看到，默认只提供 sington 和 prototype 两种，</p><p>  // 很多读者可能知道还有 request, session, globalSession, application, websocket 这几种，</p><p>  // 不过，它们属于基于 web 的扩展。</p><p>  String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;</p><p>  String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;</p><p>  // 设置父 Bean，这里涉及到 bean 继承，不是 java 继承。请参见附录的详细介绍</p><p>  // 一句话就是：继承父 Bean 的配置信息而已</p><p>  void setParentName(String parentName);</p><p>  // 获取父 Bean</p><p>  String getParentName();</p><p>  // 设置 Bean 的类名称，将来是要通过反射来生成实例的</p><p>  void setBeanClassName(String beanClassName);</p><p>  // 获取 Bean 的类名称</p><p>  String getBeanClassName();</p><p>  // 设置 bean 的 scope</p><p>  void setScope(String scope);</p><p>  // 设置是否懒加载</p><p>  void setLazyInit(boolean lazyInit);</p><p>  // 设置该 Bean 依赖的所有的 Bean，注意，这里的依赖不是指属性依赖(如 @Autowire 标记的)，</p><p>  // 是 depends-on=”” 属性设置的值。</p><p>  void setDependsOn(String… dependsOn);</p><p>  // 返回该 Bean 的所有依赖</p><p>  String[] getDependsOn();</p><p>  // 设置该 Bean 是否可以注入到其他 Bean 中，只对根据类型注入有效，</p><p>  // 如果根据名称注入，即使这边设置了 false，也是可以的</p><p>  void setAutowireCandidate(boolean autowireCandidate);</p><p>  // 该 Bean 是否可以注入到其他 Bean 中</p><p>  boolean isAutowireCandidate();</p><p>  // 主要的。同一接口的多个实现，如果不指定名字的话，Spring 会优先选择设置 primary 为 true 的 bean</p><p>  void setPrimary(boolean primary);</p><p>  // 是否是 primary 的</p><p>  boolean isPrimary();</p><p>  // 如果该 Bean 采用工厂方法生成，指定工厂名称。即有些实例不是用反射生成的，而是用工厂模式生成的</p><p>  void setFactoryBeanName(String factoryBeanName);</p><p>  // 获取工厂名称</p><p>  String getFactoryBeanName();</p><p>  // 指定工厂类中的 工厂方法名称</p><p>  void setFactoryMethodName(String factoryMethodName);</p><p>  // 获取工厂类中的 工厂方法名称</p><p>  String getFactoryMethodName();</p><p>  // 构造器参数</p><p>  ConstructorArgumentValues getConstructorArgumentValues();</p><p>  // Bean 中的属性值，后面给 bean 注入属性值的时候会说到</p><p>  MutablePropertyValues getPropertyValues();</p><p>  // 是否 singleton</p><p>  boolean isSingleton();</p><p>  // 是否 prototype</p><p>  boolean isPrototype();</p><p>  // 如果这个 Bean 是被设置为 abstract，那么不能实例化，</p><p>  // 常用于作为 父bean 用于继承，其实也很少用……</p><p>  boolean isAbstract();</p><p>  int getRole();</p><p>  String getDescription();</p><p>  String getResourceDescription();</p><p>  BeanDefinition getOriginatingBeanDefinition();</p><p>}</p>]]></content>
-    
-    
-    <summary type="html">&lt;h3 id=&quot;1-BeanFactoryPostProcessor&quot;&gt;&lt;a href=&quot;#1-BeanFactoryPostProcessor&quot; class=&quot;headerlink&quot; title=&quot;1. BeanFactoryPostProcessor&quot;&gt;&lt;/a&gt;1. &lt;em&gt;&lt;strong&gt;BeanFactoryPostProcessor&lt;/strong&gt;&lt;/em&gt;&lt;/h3&gt;&lt;p&gt;接口，只有一个方法postProcessBeanFactory&lt;/p&gt;
-&lt;p&gt;如果实现了此接口，那么会在所有的 Bean 都加载、注册到BeanFactory，但是都还没有初始化时，Spring 会负责调用里面的 postProcessBeanFactory 方法&lt;/p&gt;</summary>
     
     
     

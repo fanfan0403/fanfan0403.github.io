@@ -110,9 +110,9 @@
 <li>锁资源同时只能被同一个事务持有或者不兼容</li>
 <li>事务之间因为持有锁和申请锁导致彼此循环等待</li>
 </ol>
-<h3 id="2-InnoDB-锁类型"><a href="#2-InnoDB-锁类型" class="headerlink" title="2.InnoDB 锁类型"></a>2.InnoDB 锁类型</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicysIEia6kunTYUf3KQ6bxP2QCPByG7ctyoXl7hhAzicIJcqjxE6iaXiaxiaQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h3 id="2-InnoDB-锁类型"><a href="#2-InnoDB-锁类型" class="headerlink" title="2.InnoDB 锁类型"></a>2.InnoDB 锁类型</h3><p><img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p1.jpg" alt="图片"></p>
 <p>MySQL InnoDB 引擎实现了标准的<code>行级别锁：共享锁( S lock ) 和排他锁 ( X lock )</code></p>
-<p><img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/image-20210910102143091.png" alt="image-20210910102143091"></p>
+<p><img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p2.jpg" alt="image-20210910102143091"></p>
 <h4 id="间隙锁-gap-lock"><a href="#间隙锁-gap-lock" class="headerlink" title="间隙锁( gap lock )"></a>间隙锁( gap lock )</h4><p>间隙锁锁住一个间隙以防止插入。假设索引列有2, 4, 8 三个值，如果对 4 加锁，那么也会同时对(2,4)和(4,8)这两个间隙加锁。其他事务无法插入索引值在这两个间隙之间的记录。但是，间隙锁有个例外:</p>
 <blockquote>
 <ol>
@@ -132,18 +132,18 @@
 <li>意向排他锁( IX )：事务有意向对表中的某些行加排他锁</li>
 </ol>
 </blockquote>
-<p>由于 InnoDB 存储引擎支持的是<strong>行级别</strong>的锁，因此意向锁其实不会阻塞除全表扫描以外的任何请求。表级意向锁与行级锁的兼容性如下所示:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicrCcP1FwRFjey2TCeicMuZp2qLF90bibGD9el0lhIW6yPhjicMibibDlKk7A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>由于 InnoDB 存储引擎支持的是<strong>行级别</strong>的锁，因此意向锁其实不会阻塞除全表扫描以外的任何请求。表级意向锁与行级锁的兼容性如下所示:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p3.jpg" alt="图片"></p>
 <h4 id="插入意向锁-Insert-Intention-lock"><a href="#插入意向锁-Insert-Intention-lock" class="headerlink" title="插入意向锁( Insert Intention lock )"></a>插入意向锁( Insert Intention lock )</h4><p><strong>插入意向锁</strong>是在<u>插入一行记录操作之前设置的一种间隙锁</u>，这个锁释放了一种插入方式的信号，即多个事务在相同的索引间隙插入时如果不是插入间隙中相同的位置就不需要互相等待。假设某列有索引值2，6，只要两个事务插入位置不同(如事务 A 插入3，事务 B 插入4)，那么就可以同时插入。</p>
-<h4 id="锁模式兼容矩阵"><a href="#锁模式兼容矩阵" class="headerlink" title="锁模式兼容矩阵"></a>锁模式兼容矩阵</h4><p>横向是已持有锁，纵向是正在请求的锁：<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicpCcfaPq9s5d7uF4srTfQq1eWaka2RWVXDEblK2vicObfdCiagvaOicgKA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h4 id="锁模式兼容矩阵"><a href="#锁模式兼容矩阵" class="headerlink" title="锁模式兼容矩阵"></a>锁模式兼容矩阵</h4><p>横向是已持有锁，纵向是正在请求的锁：<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p4.jpg" alt="图片"></p>
 <h3 id="3-阅读死锁日志"><a href="#3-阅读死锁日志" class="headerlink" title="3.阅读死锁日志"></a>3.阅读死锁日志</h3><p>在进行具体案例分析之前，咱们先了解下如何去读懂死锁日志，尽可能地使用死锁日志里面的信息来帮助我们来解决死锁问题。</p>
 <p>后面测试用例的数据库场景如下:<code>MySQL 5.7 事务隔离级别为 RR</code></p>
 <p>表结构和数据如下:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicrYtObLuGncGtTOMW6G1TF0twtRc0PdtImtwomLSfKtAuI96icQX2cHA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
-<p>测试用例如下:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicER5sibmYUK4blLnmyWCLFEvJgtaVOPMtTs4tjOXLRz5qOfBOoY6xlhg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>测试用例如下:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p5.jpg" alt="图片"></p>
 <p>通过执行show engine innodb status 可以查看到最近一次死锁的日志。</p>
 <h4 id="日志分析如下"><a href="#日志分析如下" class="headerlink" title="日志分析如下"></a>日志分析如下</h4><ol>
 <li>***** (1) TRANSACTION: TRANSACTION 2322, ACTIVE 6 sec starting index read</li>
 </ol>
-<p>事务号为2322，活跃 6秒，starting index read 表示事务状态为根据索引读取数据。常见的其他状态有:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicibZ6TX3se2a5KWa78YzAICxKeocwdFyAkGEGRY5gIbCsk4pHxTqrRicQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>事务号为2322，活跃 6秒，starting index read 表示事务状态为根据索引读取数据。常见的其他状态有:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p6.jpg" alt="图片"></p>
 <p><code>mysql tables in use 1</code> 说明当前的事务使用一个表。</p>
 <p><code>locked 1</code> 表示表上有一个表锁，对于 DML 语句为 LOCK_IX</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOCK WAIT 2 lock struct(s), heap size 1136, 1 row lock(s)</span><br></pre></td></tr></table></figure>
@@ -172,13 +172,13 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RECORD LOCKS space id 11 page no 5 n bits 72 index idx_stuno of table cw****.****student trx id 2321 lock_mode X locks gap before rec insert intention waiting</span><br></pre></td></tr></table></figure>
 
 <p>表示事务 2 的 insert 语句正在等待插入意向锁 lock_mode X locks gap before rec insert intention waiting ( LOCK_X + LOCK_REC_gap )</p>
-<h3 id="4-经典案例分析"><a href="#4-经典案例分析" class="headerlink" title="4.经典案例分析"></a>4.经典案例分析</h3><h4 id="案例一-事务并发-insert-唯一键冲突"><a href="#案例一-事务并发-insert-唯一键冲突" class="headerlink" title="案例一:事务并发 insert 唯一键冲突"></a>案例一:事务并发 insert 唯一键冲突</h4><p>表结构和数据如下所示:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicw8EVmJ8BG8Khy2jYibfM5MwZMYpE5OXFlsQ9JD0rJveYJLTB8hT9Taw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"><img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicKAW3OPoFVWYoqnlzY7Kkwx6Tuib3P5jh88V1IZWMJ3nwjoU3kZx1bCA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">测试用例如下:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibich9nJAgXMicgAwhLiactz1dhbM8knHhptCQdAqNFia0LK19c6mGGpw7ic4w/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">日志分析如下:</p>
+<h3 id="4-经典案例分析"><a href="#4-经典案例分析" class="headerlink" title="4.经典案例分析"></a>4.经典案例分析</h3><h4 id="案例一-事务并发-insert-唯一键冲突"><a href="#案例一-事务并发-insert-唯一键冲突" class="headerlink" title="案例一:事务并发 insert 唯一键冲突"></a>案例一:事务并发 insert 唯一键冲突</h4><p>表结构和数据如下所示:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicw8EVmJ8BG8Khy2jYibfM5MwZMYpE5OXFlsQ9JD0rJveYJLTB8hT9Taw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"><img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p7.jpg" alt="图片">测试用例如下:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p8.jpg" alt="图片">日志分析如下:</p>
 <ol>
 <li>事务 T2 insert into t7(id,a) values (26,10) 语句 insert 成功，持有 a=10 的 <code>排他行锁( Xlocks rec but no gap )</code></li>
 <li>事务 T1 insert into t7(id,a) values (30,10), 因为T2的第一条 insert 已经插入 a=10 的记录,事务 T1 insert a=10 则发生唯一键冲突,需要申请对冲突的唯一索引加上S Next-key Lock( 即 lock mode S waiting ) 这是一个<code>间隙锁</code>会申请锁住(,10],(10,20]之间的 gap 区域。</li>
 <li>事务 T2 insert into t7(id,a) values (40，9)该语句插入的 a=9 的值在事务 T1 申请的 <code>gap 锁4-10之间</code>， 故需事务 T2 的第二条 insert 语句要等待事务 T1 的 <code>S-Next-key Lock 锁</code>释放,在日志中显示 lock_mode X locks gap before rec insert intention waiting 。</li>
 </ol>
-<h4 id="案例一-先-update-再-insert-的并发死锁问题"><a href="#案例一-先-update-再-insert-的并发死锁问题" class="headerlink" title="案例一:先 update 再 insert 的并发死锁问题"></a>案例一:先 update 再 insert 的并发死锁问题</h4><p>表结构如下，无数据:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicmQsgsOgYeUx4AC9hlfcXzRjFITIQ07yd3c1mbnO6f8pPHUSaDKFrKQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">测试用例如下:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicVWZujhIYpkiaFzorMic6jWsVYm2lENaIwAvQKGEIicGibELibRpuTRRcJoA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">死锁分析:<br>可以看到两个事务 update 不存在的记录，先后获得<code>间隙锁( gap 锁)</code>，gap 锁之间是兼容的所以在update环节不会阻塞。两者都持有 gap 锁，然后去竞争插入<code>意向锁</code>。当存在其他会话持有 gap 锁的时候，当前会话申请不了插入意向锁，导致死锁。</p>
+<h4 id="案例一-先-update-再-insert-的并发死锁问题"><a href="#案例一-先-update-再-insert-的并发死锁问题" class="headerlink" title="案例一:先 update 再 insert 的并发死锁问题"></a>案例一:先 update 再 insert 的并发死锁问题</h4><p>表结构如下，无数据:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p9.jpg" alt="图片">测试用例如下:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p10.jpg" alt="图片">死锁分析:<br>可以看到两个事务 update 不存在的记录，先后获得<code>间隙锁( gap 锁)</code>，gap 锁之间是兼容的所以在update环节不会阻塞。两者都持有 gap 锁，然后去竞争插入<code>意向锁</code>。当存在其他会话持有 gap 锁的时候，当前会话申请不了插入意向锁，导致死锁。</p>
 <h3 id="5-如何尽可能避免死锁"><a href="#5-如何尽可能避免死锁" class="headerlink" title="5.如何尽可能避免死锁"></a>5.如何尽可能避免死锁</h3><ol>
 <li>合理的设计索引，区分度高的列放到组合索引前面，使业务 SQL 尽可能通过索引<code>定位更少的行，减少锁竞争</code>。</li>
 <li>调整业务逻辑 SQL 执行顺序， 避免 update/delete 长时间持有锁的 SQL 在事务前面。</li>
@@ -439,6 +439,10 @@
     
     <li class="nav-item">
       <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/resource">资源推荐</a>
     </li>
     
   </ul>

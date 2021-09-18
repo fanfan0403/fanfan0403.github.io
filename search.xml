@@ -1,6 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>唐车项目的一些思考</title>
+    <url>/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%94%90%E8%BD%A6%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/</url>
+    <content><![CDATA[<h3 id="1-改善提案模块的审批流"><a href="#1-改善提案模块的审批流" class="headerlink" title="1.改善提案模块的审批流"></a>1.改善提案模块的审批流</h3><p><strong>使用责任链模式</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//定义一个审批的父类，包括approve()和setNext()两个方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Approve</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Response <span class="title">approve</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        <span class="comment">//审批逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Response <span class="title">setNext</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        <span class="comment">//设置下一个结点</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//每种审批类型去实现父类——解耦，扩展性好</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ApproveA</span> <span class="keyword">implements</span> <span class="title">Approve</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Response <span class="title">approve</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Response <span class="title">setNext</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>改进：责任树模式</strong></p>
+<p>启发来源于阿里的技术博客</p>
+<p>就是将责任链和策略模式组合起来。。。</p>
+<p>有兴趣可以看看 <a href="https://mp.weixin.qq.com/s/Wib0Ly45te00HMUnIG-tbg">https://mp.weixin.qq.com/s/Wib0Ly45te00HMUnIG-tbg</a></p>
+<h3 id="2-表设计的不大好"><a href="#2-表设计的不大好" class="headerlink" title="2.表设计的不大好"></a>2.表设计的不大好</h3><p>（1）应该对员工表进行分表处理，把员工表分成基本信息表和职务相关信息表，不然搜索起来太慢了。。。</p>
+<p>（2）该加索引的地方加上索引。。。</p>
+<h3 id="3-微服务"><a href="#3-微服务" class="headerlink" title="3.微服务"></a>3.微服务</h3><p>每个模块做一个微服务，比如管理创新、改善提案、操作创新模块。一个模块挂了不至于影响其它的。。。</p>
+<p>emmm,微服务还不会。。。慢慢学明白。。。</p>
+<h3 id="4-技术该更新下了"><a href="#4-技术该更新下了" class="headerlink" title="4.技术该更新下了"></a>4.技术该更新下了</h3><p>（1）mybaties换成mybatis-plus(这个灰常好用)</p>
+<p>（2）前后端应该分离了</p>
+<p>做全栈，被迫营业哇，前后端都写。。。那个审批流结点(node.js)写恶心了…</p>
+]]></content>
+      <categories>
+        <category>项目实战</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>SQL注入问题</title>
+    <url>/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h3 id="1-SQL注入的原因"><a href="#1-SQL注入的原因" class="headerlink" title="1. SQL注入的原因"></a>1. SQL注入的原因</h3><p>SQL注入漏洞，根本上讲，是由于错把外部输入当作SQL代码去执行。目前最佳的解决方案就是<strong>预编译</strong>的方式。</p>
+<span id="more"></span>
+
+<p><strong>SQL语句在执行过程中，需要经过以下三大基本步骤：</strong></p>
+<ol>
+<li>代码语义分析</li>
+<li>制定执行计划</li>
+<li>获得返回结果</li>
+</ol>
+<p>而一个SQL语句是由<strong>代码</strong>和<strong>数据</strong>两部分，如：</p>
+<p>SELECT id, name, phone FROM userTable WHERE name = ‘xiaoming’; </p>
+<p>SELECT id, name, phone FROM userTable WHERE name = 是代码，’xiaoming’是数据。</p>
+<p>而预编译，以<strong>Mybatis为例，就是预先分析带有占位符的语义</strong>：</p>
+<p>如SELECT id, name, phone FROM userTable WHERE id = #{name}; </p>
+<p>然后再将数据’xiaoming’，传入到占位符。这样一来，错开来代码语义分析阶段，也就不会被误认为是代码的一部分了。</p>
+<h3 id="2-直接使用Mybatis"><a href="#2-直接使用Mybatis" class="headerlink" title="2. 直接使用Mybatis"></a>2. 直接使用Mybatis</h3><p>Mybatis传入数据有两种占位符${}和#{}。${}和#{}。</p>
+<p><strong>${}<strong>可以理解为语义分析前的</strong>字符串拼接</strong>，将传入的参数，原封不动地传入。</p>
+<p>**#{}**占位符就不存在注入问题</p>
+<p><strong>不能用#{}的场景：order by</strong></p>
+<p>SELECT id, name, phone FROM userTable ORDER BY #{}; ，执行时会报错。</p>
+<p>因为order by后的内容，是一个列名，属于代码语义的一部分。如果在语义分析部分没有确定下来，就相当于执行SELECT id, name, phone FROM userTable ORDER BY 。肯定会有语法错误。</p>
+<p><strong>正确写法：</strong></p>
+<p><strong>order by（group by）语句中使用${}</strong></p>
+<p>（1）使用条件判断</p>
+<p><img src="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/image-20210918090107908.png" alt="image-20210918090107908"></p>
+<ol start="2">
+<li>使用全局过滤机制，限制order by后的变量内容只能是数字、字母、下划线。</li>
+</ol>
+<p>如使用正则过滤：</p>
+<p><img src="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/image-20210918090140239.png" alt="image-20210918090140239"></p>
+<p>摘自：</p>
+<p><a href="https://mp.weixin.qq.com/s/mP49OCkwqSnamtop0cChdQ">https://mp.weixin.qq.com/s/mP49OCkwqSnamtop0cChdQ</a></p>
+<p>大佬写的真不戳，有空再仔细拜读。。。</p>
+]]></content>
+      <categories>
+        <category>项目实战</category>
+      </categories>
+      <tags>
+        <tag>— SQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>BIO、NIO、AIO</title>
+    <url>/2021/09/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/BIO%E3%80%81NIO%E3%80%81AIO/</url>
+    <content><![CDATA[<p>[TOC]</p>
+<h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><p><strong>同步与异步</strong></p>
+<p>同步和异步关注的是<em><strong>消息通信机制</strong></em></p>
+<ul>
+<li><strong>同步：</strong> 同步就是发起一个调用后，被调用者未处理完请求之前，调用不返回。</li>
+<li><strong>异步：</strong> 异步就是发起一个调用后，立刻得到被调用者的回应表示已接收到请求，但是被调用者并没有返回结果，此时我们可以处理其他的请求，被调用者通常依靠事件，回调等机制来通知调用者其返回结果。</li>
+</ul>
+<p>同步和异步的区别最大在于异步的话调用者不需要等待处理结果，被调用者会通过回调等机制来通知调用者其返回结果。</p>
+<span id="more"></span>
+
+<p><strong>阻塞和非阻塞</strong></p>
+<p>阻塞和非阻塞关注的是<em><strong>程序在等待调用结果</strong></em>（消息，返回值）时的状态.</p>
+<ul>
+<li><strong>阻塞：</strong> 阻塞就是发起一个请求，调用者一直等待请求结果返回，也就是当前线程会被挂起，无法从事其他任务，只有当条件就绪才能继续。</li>
+<li><strong>非阻塞：</strong> 非阻塞就是发起一个请求，调用者不用一直等着结果返回，可以先去干其他事情。</li>
+</ul>
+<p><strong>io操作分为两部分</strong>：</p>
+<p>（1）发起io请求，</p>
+<p>（2）和io数据读写。</p>
+<p>阻塞、非阻塞主要是针对线程发起io请求后，是否立即返回来定义的，立即返回称为非阻塞io，否则称为阻塞io。</p>
+<p>同步、异步主要针对io数据读写来定义的，读写数据过程中不阻塞线程称为异步io，否则，称为同步io。</p>
+<h3 id="1-BIO（同步阻塞IO）"><a href="#1-BIO（同步阻塞IO）" class="headerlink" title="1.BIO（同步阻塞IO）"></a>1.BIO（同步阻塞IO）</h3><p>线程发起io请求后，一直阻塞(阻塞io)，直到数据就绪后，用户线程将数据写入socket空间，或从socket空间读取数据（同步）。</p>
+<p><img src="https://static.oschina.net/uploads/space/2018/0512/175816_hKn8_859002.png" alt="img"></p>
+<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>一个连接占用一个线程资源，线程资源不能充分利用。线程开销大，利用率不高。</p>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><p>代码简单，逻辑清晰。</p>
+<h3 id="2-NIO（同步非阻塞IO）"><a href="#2-NIO（同步非阻塞IO）" class="headerlink" title="2.NIO（同步非阻塞IO）"></a>2.NIO（同步非阻塞IO）</h3><p>NIO:线程发起io请求后，立即返回（非阻塞io）。用户线程不阻塞等待，但是，用户线程要<strong>定时轮询</strong>检查数据是否就绪，当数据就绪后，用户线程将数据从用户空间写入socket空间，或从socket空间读取数据到用户空间（同步）。</p>
+<p><img src="https://static.oschina.net/uploads/space/2018/0512/175509_gUu5_859002.jpeg" alt="img"></p>
+<h4 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h4><p>线程数减少</p>
+<h4 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h4><p>需要自己扫描每个连接，需要O(n)时间复杂度调用</p>
+<p>高频系统滴哦用，导致CPU消耗高。</p>
+<p><strong>IO多路复用（NIO）</strong>：上述NIO实现中，需要用户线程<strong>定时轮训</strong>，去检查IO数据是否就绪，占用应用程序线程资源。IO多路复用模型中，将检查IO数据是否就绪的任务，交给系统级别的select或poll模型，由系统进行监控，减轻用户线程负担。</p>
+<p>当用户线程发起io请求后，将socket连接及关注事件注册到selector（多路复用器，os级别线程）上，selector循环遍历socket连接，看是否有关注数据就绪，如果连接有数据就绪后，就通知应用程序，建立线程进行数据读写。同BIO对比，NIO中线程处理的都是有效连接（数据就绪），且一个线程可以分管处理多个连接上的就绪数据，节省线程资源开销。</p>
+<p><strong>1)select</strong>:注册的socket事件由<strong>数组</strong>管理，长度有限制，轮询查找时需要遍历数组。</p>
+<p><strong>2)poll:<strong>注册的socket事件由</strong>链表</strong>实现，数量没有限制，遍历链表轮询查找。</p>
+<p><strong>3)epoll</strong>:基于<strong>事件驱动思想</strong>，采用reactor模式，通过事件回调，无需使用某种方式主动检查socket状态，被动接收就绪事件即可。</p>
+<h3 id="3-AIO-异步非阻塞IO"><a href="#3-AIO-异步非阻塞IO" class="headerlink" title="3.AIO:(异步非阻塞IO)"></a>3.AIO:(异步非阻塞IO)</h3><p>AIO:线程发起io请求后，<strong>立即返回</strong>（非阻塞io），当数据读写完成后，<strong>OS通知用户线程</strong>（异步）。这里数据写入socket空间，或从socket空间读取数据到用户空间由OS完成，用户线程无需介入，所以也就不会阻塞用户线程，即异步。</p>
+<p><img src="https://static.oschina.net/uploads/space/2018/0512/180751_roDU_859002.jpeg" alt="img"></p>
+<p>AIO基于时间驱动思想，采用proactor模式。数据完成后，由os主动通知应用程序，通过epoll实现，节省了NIO中selector循环遍历检测数据就绪的资源开销。同时，数据copy操作（用户空间&lt;-&gt;socket空间）是由os完成的，无需应用程序参与，大大提高应用程序效率。</p>
+<h4 id="优点-2"><a href="#优点-2" class="headerlink" title="优点"></a>优点</h4><p>封装好了任务调度，只关心任务处理。</p>
+<h4 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h4><p>编码复杂</p>
+<p>可能会出现并发问题</p>
+<p><strong>摘自：</strong></p>
+<p><a href="https://my.oschina.net/ljhlgj/blog/1811319">https://my.oschina.net/ljhlgj/blog/1811319</a></p>
+<p>推荐：</p>
+<p><a href="https://mp.weixin.qq.com/s/KgJFyEmZApF7l5UUJeWf8Q">https://mp.weixin.qq.com/s/KgJFyEmZApF7l5UUJeWf8Q</a></p>
+<p>（阿里大佬写的，有代码，便于理解）</p>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+  </entry>
+  <entry>
     <title>其它知识点</title>
     <url>/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E5%85%B6%E5%AE%83%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<p>[TOC]</p>
@@ -3769,9 +3891,9 @@
 <li>锁资源同时只能被同一个事务持有或者不兼容</li>
 <li>事务之间因为持有锁和申请锁导致彼此循环等待</li>
 </ol>
-<h3 id="2-InnoDB-锁类型"><a href="#2-InnoDB-锁类型" class="headerlink" title="2.InnoDB 锁类型"></a>2.InnoDB 锁类型</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicysIEia6kunTYUf3KQ6bxP2QCPByG7ctyoXl7hhAzicIJcqjxE6iaXiaxiaQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h3 id="2-InnoDB-锁类型"><a href="#2-InnoDB-锁类型" class="headerlink" title="2.InnoDB 锁类型"></a>2.InnoDB 锁类型</h3><p><img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p1.jpg" alt="图片"></p>
 <p>MySQL InnoDB 引擎实现了标准的<code>行级别锁：共享锁( S lock ) 和排他锁 ( X lock )</code></p>
-<p><img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/image-20210910102143091.png" alt="image-20210910102143091"></p>
+<p><img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p2.jpg" alt="image-20210910102143091"></p>
 <h4 id="间隙锁-gap-lock"><a href="#间隙锁-gap-lock" class="headerlink" title="间隙锁( gap lock )"></a>间隙锁( gap lock )</h4><p>间隙锁锁住一个间隙以防止插入。假设索引列有2, 4, 8 三个值，如果对 4 加锁，那么也会同时对(2,4)和(4,8)这两个间隙加锁。其他事务无法插入索引值在这两个间隙之间的记录。但是，间隙锁有个例外:</p>
 <blockquote>
 <ol>
@@ -3791,18 +3913,18 @@
 <li>意向排他锁( IX )：事务有意向对表中的某些行加排他锁</li>
 </ol>
 </blockquote>
-<p>由于 InnoDB 存储引擎支持的是<strong>行级别</strong>的锁，因此意向锁其实不会阻塞除全表扫描以外的任何请求。表级意向锁与行级锁的兼容性如下所示:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicrCcP1FwRFjey2TCeicMuZp2qLF90bibGD9el0lhIW6yPhjicMibibDlKk7A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>由于 InnoDB 存储引擎支持的是<strong>行级别</strong>的锁，因此意向锁其实不会阻塞除全表扫描以外的任何请求。表级意向锁与行级锁的兼容性如下所示:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p3.jpg" alt="图片"></p>
 <h4 id="插入意向锁-Insert-Intention-lock"><a href="#插入意向锁-Insert-Intention-lock" class="headerlink" title="插入意向锁( Insert Intention lock )"></a>插入意向锁( Insert Intention lock )</h4><p><strong>插入意向锁</strong>是在<u>插入一行记录操作之前设置的一种间隙锁</u>，这个锁释放了一种插入方式的信号，即多个事务在相同的索引间隙插入时如果不是插入间隙中相同的位置就不需要互相等待。假设某列有索引值2，6，只要两个事务插入位置不同(如事务 A 插入3，事务 B 插入4)，那么就可以同时插入。</p>
-<h4 id="锁模式兼容矩阵"><a href="#锁模式兼容矩阵" class="headerlink" title="锁模式兼容矩阵"></a>锁模式兼容矩阵</h4><p>横向是已持有锁，纵向是正在请求的锁：<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicpCcfaPq9s5d7uF4srTfQq1eWaka2RWVXDEblK2vicObfdCiagvaOicgKA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<h4 id="锁模式兼容矩阵"><a href="#锁模式兼容矩阵" class="headerlink" title="锁模式兼容矩阵"></a>锁模式兼容矩阵</h4><p>横向是已持有锁，纵向是正在请求的锁：<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p4.jpg" alt="图片"></p>
 <h3 id="3-阅读死锁日志"><a href="#3-阅读死锁日志" class="headerlink" title="3.阅读死锁日志"></a>3.阅读死锁日志</h3><p>在进行具体案例分析之前，咱们先了解下如何去读懂死锁日志，尽可能地使用死锁日志里面的信息来帮助我们来解决死锁问题。</p>
 <p>后面测试用例的数据库场景如下:<code>MySQL 5.7 事务隔离级别为 RR</code></p>
 <p>表结构和数据如下:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicrYtObLuGncGtTOMW6G1TF0twtRc0PdtImtwomLSfKtAuI96icQX2cHA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
-<p>测试用例如下:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicER5sibmYUK4blLnmyWCLFEvJgtaVOPMtTs4tjOXLRz5qOfBOoY6xlhg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>测试用例如下:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p5.jpg" alt="图片"></p>
 <p>通过执行show engine innodb status 可以查看到最近一次死锁的日志。</p>
 <h4 id="日志分析如下"><a href="#日志分析如下" class="headerlink" title="日志分析如下"></a>日志分析如下</h4><ol>
 <li>***** (1) TRANSACTION: TRANSACTION 2322, ACTIVE 6 sec starting index read</li>
 </ol>
-<p>事务号为2322，活跃 6秒，starting index read 表示事务状态为根据索引读取数据。常见的其他状态有:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicibZ6TX3se2a5KWa78YzAICxKeocwdFyAkGEGRY5gIbCsk4pHxTqrRicQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>事务号为2322，活跃 6秒，starting index read 表示事务状态为根据索引读取数据。常见的其他状态有:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p6.jpg" alt="图片"></p>
 <p><code>mysql tables in use 1</code> 说明当前的事务使用一个表。</p>
 <p><code>locked 1</code> 表示表上有一个表锁，对于 DML 语句为 LOCK_IX</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LOCK WAIT 2 lock struct(s), heap size 1136, 1 row lock(s)</span><br></pre></td></tr></table></figure>
@@ -3831,13 +3953,13 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">RECORD LOCKS space id 11 page no 5 n bits 72 index idx_stuno of table cw****.****student trx id 2321 lock_mode X locks gap before rec insert intention waiting</span><br></pre></td></tr></table></figure>
 
 <p>表示事务 2 的 insert 语句正在等待插入意向锁 lock_mode X locks gap before rec insert intention waiting ( LOCK_X + LOCK_REC_gap )</p>
-<h3 id="4-经典案例分析"><a href="#4-经典案例分析" class="headerlink" title="4.经典案例分析"></a>4.经典案例分析</h3><h4 id="案例一-事务并发-insert-唯一键冲突"><a href="#案例一-事务并发-insert-唯一键冲突" class="headerlink" title="案例一:事务并发 insert 唯一键冲突"></a>案例一:事务并发 insert 唯一键冲突</h4><p>表结构和数据如下所示:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicw8EVmJ8BG8Khy2jYibfM5MwZMYpE5OXFlsQ9JD0rJveYJLTB8hT9Taw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"><img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicKAW3OPoFVWYoqnlzY7Kkwx6Tuib3P5jh88V1IZWMJ3nwjoU3kZx1bCA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">测试用例如下:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibich9nJAgXMicgAwhLiactz1dhbM8knHhptCQdAqNFia0LK19c6mGGpw7ic4w/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">日志分析如下:</p>
+<h3 id="4-经典案例分析"><a href="#4-经典案例分析" class="headerlink" title="4.经典案例分析"></a>4.经典案例分析</h3><h4 id="案例一-事务并发-insert-唯一键冲突"><a href="#案例一-事务并发-insert-唯一键冲突" class="headerlink" title="案例一:事务并发 insert 唯一键冲突"></a>案例一:事务并发 insert 唯一键冲突</h4><p>表结构和数据如下所示:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicw8EVmJ8BG8Khy2jYibfM5MwZMYpE5OXFlsQ9JD0rJveYJLTB8hT9Taw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"><img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p7.jpg" alt="图片">测试用例如下:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p8.jpg" alt="图片">日志分析如下:</p>
 <ol>
 <li>事务 T2 insert into t7(id,a) values (26,10) 语句 insert 成功，持有 a=10 的 <code>排他行锁( Xlocks rec but no gap )</code></li>
 <li>事务 T1 insert into t7(id,a) values (30,10), 因为T2的第一条 insert 已经插入 a=10 的记录,事务 T1 insert a=10 则发生唯一键冲突,需要申请对冲突的唯一索引加上S Next-key Lock( 即 lock mode S waiting ) 这是一个<code>间隙锁</code>会申请锁住(,10],(10,20]之间的 gap 区域。</li>
 <li>事务 T2 insert into t7(id,a) values (40，9)该语句插入的 a=9 的值在事务 T1 申请的 <code>gap 锁4-10之间</code>， 故需事务 T2 的第二条 insert 语句要等待事务 T1 的 <code>S-Next-key Lock 锁</code>释放,在日志中显示 lock_mode X locks gap before rec insert intention waiting 。</li>
 </ol>
-<h4 id="案例一-先-update-再-insert-的并发死锁问题"><a href="#案例一-先-update-再-insert-的并发死锁问题" class="headerlink" title="案例一:先 update 再 insert 的并发死锁问题"></a>案例一:先 update 再 insert 的并发死锁问题</h4><p>表结构如下，无数据:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicmQsgsOgYeUx4AC9hlfcXzRjFITIQ07yd3c1mbnO6f8pPHUSaDKFrKQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">测试用例如下:<img src="https://mmbiz.qpic.cn/mmbiz_png/7VkkuTzAZPp08uy3ZghjeKeEiae1ooyibicVWZujhIYpkiaFzorMic6jWsVYm2lENaIwAvQKGEIicGibELibRpuTRRcJoA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片">死锁分析:<br>可以看到两个事务 update 不存在的记录，先后获得<code>间隙锁( gap 锁)</code>，gap 锁之间是兼容的所以在update环节不会阻塞。两者都持有 gap 锁，然后去竞争插入<code>意向锁</code>。当存在其他会话持有 gap 锁的时候，当前会话申请不了插入意向锁，导致死锁。</p>
+<h4 id="案例一-先-update-再-insert-的并发死锁问题"><a href="#案例一-先-update-再-insert-的并发死锁问题" class="headerlink" title="案例一:先 update 再 insert 的并发死锁问题"></a>案例一:先 update 再 insert 的并发死锁问题</h4><p>表结构如下，无数据:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p9.jpg" alt="图片">测试用例如下:<img src="/2021/09/10/MySQL/%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3MySQL%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/p10.jpg" alt="图片">死锁分析:<br>可以看到两个事务 update 不存在的记录，先后获得<code>间隙锁( gap 锁)</code>，gap 锁之间是兼容的所以在update环节不会阻塞。两者都持有 gap 锁，然后去竞争插入<code>意向锁</code>。当存在其他会话持有 gap 锁的时候，当前会话申请不了插入意向锁，导致死锁。</p>
 <h3 id="5-如何尽可能避免死锁"><a href="#5-如何尽可能避免死锁" class="headerlink" title="5.如何尽可能避免死锁"></a>5.如何尽可能避免死锁</h3><ol>
 <li>合理的设计索引，区分度高的列放到组合索引前面，使业务 SQL 尽可能通过索引<code>定位更少的行，减少锁竞争</code>。</li>
 <li>调整业务逻辑 SQL 执行顺序， 避免 update/delete 长时间持有锁的 SQL 在事务前面。</li>
@@ -3862,11 +3984,11 @@
     <url>/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<p>[TOC]</p>
 <h3 id="1-为什么引入缓存"><a href="#1-为什么引入缓存" class="headerlink" title="1.为什么引入缓存"></a>1.为什么引入缓存</h3><p>如果你的业务处于起步阶段，流量非常小，那无论是读请求还是写请求，直接操作数据库即可。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo1NdGKV0ptDl4ZsCXKfwXLl1Kp35aOG1Iku9K2EJ8Y7v5bM91jK5NLQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p1.jpg" alt="img"></p>
 <p>随着业务量的增长，你的项目请求量越来越大，这时如果每次都从数据库中读数据，那肯定会有<strong>性能问题</strong>。</p>
 <span id="more"></span>
 
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo3lYxFg1icDgHngialHe8ibUDKCvfib4DmTMo36wJv0FeZ5ex0kId1LTOpw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p2.jpg" alt="图片"></p>
 <p>当下优秀的缓存中间件，当属 <strong>Redis</strong> 莫属，它不仅<u>性能非常高，还提供了很多友好的数据类型</u>，可以很好地满足我们的业务需求。</p>
 <h3 id="2-缓存怎么存"><a href="#2-缓存怎么存" class="headerlink" title="2.缓存怎么存"></a>2.缓存怎么存</h3><p>最简单直接的方案是「全量数据刷到缓存中」：</p>
 <ul>
@@ -3874,7 +3996,7 @@
 <li>写请求只更新数据库，不更新缓存</li>
 <li>启动一个定时任务，定时把数据库的数据，更新到缓存中</li>
 </ul>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo0jeBz8G4Kwr7ZgicicEQARCTuaFibHOf1pKzVnicVbiaxzGtKukzrEqGOOA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p3.jpg" alt="图片"></p>
 <p><strong>优点：</strong></p>
 <p>所有读请求都可以直接「命中」缓存，不需要再查数据库，性能非常高。</p>
 <p><strong>缺点：</strong></p>
@@ -3889,7 +4011,7 @@
 <li>读请求先读缓存，如果缓存不存在，则从数据库读取，并重建缓存</li>
 <li>同时，写入缓存中的数据，都设置失效时间</li>
 </ul>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo8ic8WbuqDQcJ2bVyia7t9rOu9CGyJnCkWQs16WNibAwdV0GbH3q0K6ZMw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p4.jpg" alt="图片"></p>
 <p>这样一来，缓存中不经常访问的数据，随着时间的推移，都会逐渐「过期」淘汰掉，最终缓存中保留的，都是经常被访问的「热数据」，缓存利用率得以最大化。</p>
 <p><strong>数据库和缓存都更新，又存在先后问题，那对应的方案就有 2 个：</strong></p>
 <ol>
@@ -3993,13 +4115,13 @@
 <li><strong>维护成本</strong>：我们项目中一般都会用到消息队列，维护成本并没有新增很多</li>
 </ul>
 <p>所以，引入消息队列来解决这个问题，是比较合适的。这时架构模型就变成了这样：</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCoNNyZnraolIYC8NntRZu8R0VpQp0iaXsohT5gjf4QpV0biah4iaRiaHOcyw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p5.jpg" alt="图片"></p>
 <p>那如果你确实不想在应用中去写消息队列，是否有更简单的方案，同时又可以保证一致性呢？</p>
 <p>方案还是有的，这就是近几年比较流行的解决方案：<strong>订阅数据库变更日志，再操作缓存</strong>。</p>
 <p>具体来讲就是，我们的业务应用在修改数据时，「只需」修改数据库，无需操作缓存。</p>
 <p>那什么时候操作缓存呢？这就和数据库的「变更日志」有关了。</p>
 <p>拿 MySQL 举例<u>，当一条数据发生修改时，MySQL 就会产生一条变更日志（Binlog），我们可以订阅这个日志，拿到具体操作的数据，然后再根据这条数据，去删除对应的缓存</u>。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCowjAarwD2g3lIfCPsvhEHGaohPHVa47GR9d1GUgj0Eta1ketClKZjfw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p6.jpg" alt="图片"></p>
 <p>订阅变更日志，目前也有了比较成熟的开源中间件，例如阿里的 canal，使用这种方案的优点在于：</p>
 <ul>
 <li><strong>无需考虑写消息队列失败情况</strong>：只要写 MySQL 成功，Binlog 肯定会有</li>
@@ -6181,7 +6303,7 @@
   </entry>
   <entry>
     <title>多线程打包压缩文件</title>
-    <url>/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/</url>
+    <url>/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/</url>
     <content><![CDATA[<h2 id="1-需求"><a href="#1-需求" class="headerlink" title="1.需求"></a>1.需求</h2><p>需要下载一个比较大的网络文件，想提高其下载速度。</p>
 <h2 id="2-问题分析"><a href="#2-问题分析" class="headerlink" title="2.问题分析"></a>2.问题分析</h2><p>可以将一个大的文件拆分为几个小的文件，使用多线程同时下载拆分后的线程片段，下载完成后进行拼接即可。</p>
 <span id="more"></span>
@@ -6218,7 +6340,7 @@
   </entry>
   <entry>
     <title>多线程打包压缩文件</title>
-    <url>/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/</url>
+    <url>/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/</url>
     <content><![CDATA[<h2 id="1-需求"><a href="#1-需求" class="headerlink" title="1.需求"></a>1.需求</h2><pre><code> 需要为每个业务对应的报表创建一个excel,多少个业务就有多少个报表，然后将多个excel导出为一个压缩包。
 </code></pre>
 <span id="more"></span>

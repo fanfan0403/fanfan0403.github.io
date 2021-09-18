@@ -146,6 +146,202 @@
     
     
     <article
+  id="post-力扣/数据结构/链表/K个一组翻转链表"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/"
+    >K个一组翻转链表</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/" class="article-date">
+  <time datetime="2021-04-24T02:26:34.000Z" itemprop="datePublished">2021-04-24</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/">力扣</a> / <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a> / <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/">链表</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/image-20210424102742069.png" alt="image-20210424102742069"></p>
+<h4 id="方法一：模拟"><a href="#方法一：模拟" class="headerlink" title="方法一：模拟"></a>方法一：模拟</h4><h4 id="思路与算法"><a href="#思路与算法" class="headerlink" title="思路与算法"></a><strong>思路与算法</strong></h4><p><img src="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/image-20210424102850741.png" alt="image-20210424102850741"></p>
+<p><img src="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/image-20210424102903084.png" alt="image-20210424102903084"></p>
+<p><img src="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/image-20210424102912820.png" alt="image-20210424102912820"></p>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a><strong>代码</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">reverseKGroup</span><span class="params">(ListNode head, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        ListNode hair = <span class="keyword">new</span> ListNode(<span class="number">0</span>);</span><br><span class="line">        hair.next = head;</span><br><span class="line">        ListNode pre = hair;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (head != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ListNode tail = pre;</span><br><span class="line">            <span class="comment">// 查看剩余部分长度是否大于等于 k</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; k; ++i) &#123;</span><br><span class="line">                tail = tail.next;</span><br><span class="line">                <span class="keyword">if</span> (tail == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> hair.next;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            ListNode nex = tail.next;</span><br><span class="line">            ListNode[] reverse = myReverse(head, tail);</span><br><span class="line">            head = reverse[<span class="number">0</span>];</span><br><span class="line">            tail = reverse[<span class="number">1</span>];</span><br><span class="line">            <span class="comment">// 把子链表重新接回原链表</span></span><br><span class="line">            pre.next = head;</span><br><span class="line">            tail.next = nex;</span><br><span class="line">            pre = tail;</span><br><span class="line">            head = tail.next;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> hair.next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> ListNode[] myReverse(ListNode head, ListNode tail) &#123;</span><br><span class="line">        ListNode prev = tail.next;</span><br><span class="line">        ListNode p = head;</span><br><span class="line">        <span class="keyword">while</span> (prev != tail) &#123;</span><br><span class="line">            ListNode nex = p.next;</span><br><span class="line">            p.next = prev;</span><br><span class="line">            prev = p;</span><br><span class="line">            p = nex;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ListNode[]&#123;tail, head&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a><strong>复杂度分析</strong></h4><p><img src="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8/image-20210424103021784.png" alt="image-20210424103021784"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-力扣/数据结构/链表/合并K个升序链表"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%90%88%E5%B9%B6K%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/"
+    >合并K个升序链表</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%90%88%E5%B9%B6K%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/" class="article-date">
+  <time datetime="2021-04-24T01:14:32.000Z" itemprop="datePublished">2021-04-24</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/">力扣</a> / <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a> / <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/">链表</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%90%88%E5%B9%B6K%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/image-20210424091626009.png" alt="image-20210424091626009"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一：顺序合并"><a href="#方法一：顺序合并" class="headerlink" title="方法一：顺序合并"></a>方法一：顺序合并</h4><p><strong>思路</strong></p>
+<p>我们可以想到一种最朴素的方法：用一个变量 <code>ans</code> 来维护以及合并的链表，第 i<em>i</em> 次循环把第 i<em>i</em> 个链表和 <code>ans</code> 合并，答案保存到 <code>ans</code> 中。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">mergeKLists</span><span class="params">(ListNode[] lists)</span> </span>&#123;</span><br><span class="line">        ListNode ans = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; lists.length; ++i) &#123;</span><br><span class="line">            ans = mergeTwoLists(ans, lists[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">mergeTwoLists</span><span class="params">(ListNode a, ListNode b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (a == <span class="keyword">null</span> || b == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> a != <span class="keyword">null</span> ? a : b;</span><br><span class="line">        &#125;</span><br><span class="line">        ListNode head = <span class="keyword">new</span> ListNode(<span class="number">0</span>);</span><br><span class="line">        ListNode tail = head, aPtr = a, bPtr = b;</span><br><span class="line">        <span class="keyword">while</span> (aPtr != <span class="keyword">null</span> &amp;&amp; bPtr != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (aPtr.val &lt; bPtr.val) &#123;</span><br><span class="line">                tail.next = aPtr;</span><br><span class="line">                aPtr = aPtr.next;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                tail.next = bPtr;</span><br><span class="line">                bPtr = bPtr.next;</span><br><span class="line">            &#125;</span><br><span class="line">            tail = tail.next;</span><br><span class="line">        &#125;</span><br><span class="line">        tail.next = (aPtr != <span class="keyword">null</span> ? aPtr : bPtr);</span><br><span class="line">        <span class="keyword">return</span> head.next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析</strong></p>
+<p><img src="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%90%88%E5%B9%B6K%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/image-20210424091858652.png" alt="image-20210424091858652"></p>
+<h4 id="方法二：分治合并"><a href="#方法二：分治合并" class="headerlink" title="方法二：分治合并"></a>方法二：分治合并</h4><p><strong>思路</strong></p>
+<p><img src="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%90%88%E5%B9%B6K%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/image-20210424091940958.png" alt="image-20210424091940958"></p>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">mergeKLists</span><span class="params">(ListNode[] lists)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> merge(lists, <span class="number">0</span>, lists.length - <span class="number">1</span>);</span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">merge</span><span class="params">(ListNode[] lists, <span class="keyword">int</span> l, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (l == r) &#123;</span><br><span class="line">            <span class="keyword">return</span> lists[l];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (l &gt; r) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> mid = (l + r) &gt;&gt; <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> mergeTwoLists(merge(lists, l, mid), merge(lists, mid + <span class="number">1</span>, r));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">mergeTwoLists</span><span class="params">(ListNode a, ListNode b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (a == <span class="keyword">null</span> || b == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> a != <span class="keyword">null</span> ? a : b;</span><br><span class="line">        &#125;</span><br><span class="line">        ListNode head = <span class="keyword">new</span> ListNode(<span class="number">0</span>);</span><br><span class="line">        ListNode tail = head, aPtr = a, bPtr = b;</span><br><span class="line">        <span class="keyword">while</span> (aPtr != <span class="keyword">null</span> &amp;&amp; bPtr != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (aPtr.val &lt; bPtr.val) &#123;</span><br><span class="line">                tail.next = aPtr;</span><br><span class="line">                aPtr = aPtr.next;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                tail.next = bPtr;</span><br><span class="line">                bPtr = bPtr.next;</span><br><span class="line">            &#125;</span><br><span class="line">            tail = tail.next;</span><br><span class="line">        &#125;</span><br><span class="line">        tail.next = (aPtr != <span class="keyword">null</span> ? aPtr : bPtr);</span><br><span class="line">        <span class="keyword">return</span> head.next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<h4 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><p><img src="/2021/04/24/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%90%88%E5%B9%B6K%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/image-20210424092053206.png" alt="image-20210424092053206"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8A%9B%E6%89%A3/" rel="tag">力扣</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-力扣/数据结构/链表/删除链表的倒数第N个结点"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2021/04/23/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E7%BB%93%E7%82%B9/"
+    >删除链表的倒数第N个结点</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/04/23/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E7%BB%93%E7%82%B9/" class="article-date">
+  <time datetime="2021-04-23T13:36:22.000Z" itemprop="datePublished">2021-04-23</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/">力扣</a> / <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a> / <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/">链表</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><img src="/2021/04/23/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E7%BB%93%E7%82%B9/image-20210423160555145.png" alt="image-20210423160555145"></p>
+<h3 id="文字题解"><a href="#文字题解" class="headerlink" title="文字题解"></a>文字题解</h3><h4 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h4><p><img src="/2021/04/23/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E7%BB%93%E7%82%B9/image-20210423162030915.png" alt="image-20210423162030915"></p>
+<p><img src="/2021/04/23/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E7%BB%93%E7%82%B9/image-20210423162105868.png" alt="image-20210423162105868"></p>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a><strong>代码</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">removeNthFromEnd</span><span class="params">(ListNode head, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        ListNode dummy = <span class="keyword">new</span> ListNode(<span class="number">0</span>, head);</span><br><span class="line">        ListNode first = head;</span><br><span class="line">        ListNode second = dummy;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">            first = first.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (first != <span class="keyword">null</span>) &#123;</span><br><span class="line">            first = first.next;</span><br><span class="line">            second = second.next;</span><br><span class="line">        &#125;</span><br><span class="line">        second.next = second.next.next;</span><br><span class="line">        ListNode ans = dummy.next;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a><strong>复杂度分析</strong></h4><ul>
+<li>时间复杂度：O(L)<em>O</em>(<em>L</em>)，其中 L<em>L</em> 是链表的长度。</li>
+<li>空间复杂度：O(1)<em>O</em>(1)。</li>
+</ul>
+<h4 id="方法二：计算链表长度"><a href="#方法二：计算链表长度" class="headerlink" title="方法二：计算链表长度"></a>方法二：计算链表长度</h4><p><img src="/2021/04/23/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E7%BB%93%E7%82%B9/image-20210423162320163.png" alt="image-20210423162320163"></p>
+<h4 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a><strong>代码</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">removeNthFromEnd</span><span class="params">(ListNode head, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        ListNode dummy = <span class="keyword">new</span> ListNode(<span class="number">0</span>, head);</span><br><span class="line">        <span class="keyword">int</span> length = getLength(head);</span><br><span class="line">        ListNode cur = dummy;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; length - n + <span class="number">1</span>; ++i) &#123;</span><br><span class="line">            cur = cur.next;</span><br><span class="line">        &#125;</span><br><span class="line">        cur.next = cur.next.next;</span><br><span class="line">        ListNode ans = dummy.next;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getLength</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> length = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (head != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ++length;</span><br><span class="line">            head = head.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> length;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="复杂度分析-1"><a href="#复杂度分析-1" class="headerlink" title="复杂度分析"></a><strong>复杂度分析</strong></h4><ul>
+<li>时间复杂度：O(L)<em>O</em>(<em>L</em>)，其中 L<em>L</em> 是链表的长度。</li>
+<li>空间复杂度：O(1)<em>O</em>(1)。</li>
+</ul>
+<h4 id="方法三：栈"><a href="#方法三：栈" class="headerlink" title="方法三：栈"></a>方法三：栈</h4><p><img src="/2021/04/23/%E5%8A%9B%E6%89%A3/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8/%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E7%BB%93%E7%82%B9/image-20210423162642353.png" alt="image-20210423162642353"></p>
+<h4 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a><strong>代码</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ListNode* removeNthFromEnd(ListNode* head, <span class="keyword">int</span> n) &#123;</span><br><span class="line">        ListNode* dummy = <span class="keyword">new</span> ListNode(<span class="number">0</span>, head);</span><br><span class="line">        stack&lt;ListNode*&gt; stk;</span><br><span class="line">        ListNode* cur = dummy;</span><br><span class="line">        <span class="keyword">while</span> (cur) &#123;</span><br><span class="line">            stk.push(cur);</span><br><span class="line">            cur = cur-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">            stk.pop();</span><br><span class="line">        &#125;</span><br><span class="line">        ListNode* prev = stk.top();</span><br><span class="line">        prev-&gt;next = prev-&gt;next-&gt;next;</span><br><span class="line">        ListNode* ans = dummy-&gt;next;</span><br><span class="line">        delete dummy;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="复杂度分析-2"><a href="#复杂度分析-2" class="headerlink" title="复杂度分析"></a><strong>复杂度分析</strong></h4><ul>
+<li>时间复杂度：O(L)<em>O</em>(<em>L</em>)，其中 L<em>L</em> 是链表的长度。</li>
+<li>空间复杂度：O(L)<em>O</em>(<em>L</em>)，其中 L<em>L</em> 是链表的长度。主要为栈的开销。</li>
+</ul>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-力扣/数据结构/链表/两数相加"
   class="article article-type-post"
   itemscope
@@ -202,7 +398,7 @@
 
     
     <article
-  id="post-项目实践/多线程下载文件"
+  id="post-项目实战/多线程下载文件"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -213,7 +409,7 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/"
+  <a class="article-title" href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/"
     >多线程打包压缩文件</a> 
 </h2>
  
@@ -222,7 +418,7 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/" class="article-date">
+      <a href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/" class="article-date">
   <time datetime="2020-08-04T04:35:03.000Z" itemprop="datePublished">2020-08-04</time>
 </a> 
   <div class="article-category">
@@ -235,7 +431,7 @@
        
   <h2 id="1-需求"><a href="#1-需求" class="headerlink" title="1.需求"></a>1.需求</h2><p>需要下载一个比较大的网络文件，想提高其下载速度。</p>
 <h2 id="2-问题分析"><a href="#2-问题分析" class="headerlink" title="2.问题分析"></a>2.问题分析</h2><p>可以将一个大的文件拆分为几个小的文件，使用多线程同时下载拆分后的线程片段，下载完成后进行拼接即可。</p> 
-      <a class="article-more-link" href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/"
+      <a class="article-more-link" href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/"
         >阅读更多...</a
       >
        
@@ -260,7 +456,7 @@
 
     
     <article
-  id="post-项目实践/多线程打包压缩文件"
+  id="post-项目实战/多线程打包压缩文件"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -271,7 +467,7 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/"
+  <a class="article-title" href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/"
     >多线程打包压缩文件</a> 
 </h2>
  
@@ -280,7 +476,7 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/" class="article-date">
+      <a href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/" class="article-date">
   <time datetime="2020-08-04T04:35:03.000Z" itemprop="datePublished">2020-08-04</time>
 </a> 
   <div class="article-category">
@@ -293,7 +489,7 @@
        
   <h2 id="1-需求"><a href="#1-需求" class="headerlink" title="1.需求"></a>1.需求</h2><pre><code> 需要为每个业务对应的报表创建一个excel,多少个业务就有多少个报表，然后将多个excel导出为一个压缩包。
 </code></pre> 
-      <a class="article-more-link" href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/"
+      <a class="article-more-link" href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/"
         >阅读更多...</a
       >
        
@@ -424,6 +620,10 @@
     
     <li class="nav-item">
       <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/resource">资源推荐</a>
     </li>
     
   </ul>

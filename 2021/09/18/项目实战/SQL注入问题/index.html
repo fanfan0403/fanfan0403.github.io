@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>多线程打包压缩文件 |  Fanfan</title>
+      <title>SQL注入问题 |  Fanfan</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -44,7 +44,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-项目实践/多线程打包压缩文件"
+  id="post-项目实战/SQL注入问题"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -55,7 +55,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  多线程打包压缩文件
+  SQL注入问题
 </h1>
  
 
@@ -63,11 +63,11 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/" class="article-date">
-  <time datetime="2020-08-04T04:35:03.000Z" itemprop="datePublished">2020-08-04</time>
+      <a href="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/" class="article-date">
+  <time datetime="2021-09-18T00:49:16.000Z" itemprop="datePublished">2021-09-18</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a>
+    <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/">项目实战</a>
   </div>
   
 <div class="word_count">
@@ -75,7 +75,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">529</span>
+            <span class="post-count">423</span>
         </span>
     </span>
 
@@ -84,7 +84,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2 分钟</span>
+            <span class="post-count">1 分钟</span>
         </span>
     </span>
 </div>
@@ -99,20 +99,39 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="1-需求"><a href="#1-需求" class="headerlink" title="1.需求"></a>1.需求</h2><pre><code> 需要为每个业务对应的报表创建一个excel,多少个业务就有多少个报表，然后将多个excel导出为一个压缩包。
-</code></pre>
+  <h3 id="1-SQL注入的原因"><a href="#1-SQL注入的原因" class="headerlink" title="1. SQL注入的原因"></a>1. SQL注入的原因</h3><p>SQL注入漏洞，根本上讲，是由于错把外部输入当作SQL代码去执行。目前最佳的解决方案就是<strong>预编译</strong>的方式。</p>
 <span id="more"></span>
 
-<h2 id="2-问题分析"><a href="#2-问题分析" class="headerlink" title="2.问题分析"></a>2.问题分析</h2><p>每个excel中可能有成千上万条数据，而创建excel和sheet又很耗费时间，那么此时该怎么解决呢？</p>
-<p>想到的方法就是使用多线程，为每个excel创建一个任务，生成完所有的excel再进行压缩，为避免开启线程太多，使用线程池和计数器（countdownLatch）。</p>
-<h2 id="3-类的设计"><a href="#3-类的设计" class="headerlink" title="3.类的设计"></a>3.类的设计</h2><h3 id="核心类："><a href="#核心类：" class="headerlink" title="核心类："></a>核心类：</h3><h5 id="1-ExcelTask"><a href="#1-ExcelTask" class="headerlink" title="1.ExcelTask"></a>1.ExcelTask</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExcelTask</span> <span class="keyword">extends</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">Boolean</span>&gt;</span>&#123;</span><br><span class="line">        <span class="comment">//这里是所有需要传参的参数</span></span><br><span class="line">        ZipOutputStream zos;</span><br><span class="line">        CountDownLatch count;</span><br><span class="line">        String excelName;</span><br><span class="line">        Object data;</span><br><span class="line">        <span class="comment">/*,其他参数*/</span></span><br><span class="line">        <span class="comment">//********</span></span><br><span class="line">        <span class="comment">//构造方法</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">ExcelTask</span><span class="params">(ZipOutputStream zos,CountDownLatch count,String excelName,Object data<span class="comment">/*,其他参数*/</span>)</span></span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.zos = zos;</span><br><span class="line">            <span class="keyword">this</span>.count = count;</span><br><span class="line">            <span class="keyword">this</span>.excelName = excelName;</span><br><span class="line">            <span class="keyword">this</span>.data = data;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                ThreadDeal(excelName,zos);</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//-1</span></span><br><span class="line">            count.countDown();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ThreadDeal</span><span class="params">(String excelName,ZipOutputStream zos,Object data)</span></span>&#123;</span><br><span class="line">       Workbook newWorkbook = WorkbookFactory.create(<span class="keyword">new</span> File(excelName));</span><br><span class="line">       Sheet newsheet=newWorkbook.getSheetAt(<span class="number">0</span>);</span><br><span class="line">       ExcelUtils excelUtils=<span class="keyword">new</span> ExcelUtils();</span><br><span class="line">       <span class="comment">//填充数据</span></span><br><span class="line">       excelUtils.setData(newsheet,data);</span><br><span class="line">        <span class="comment">//创建对应数据的方法</span></span><br><span class="line">       </span><br><span class="line">        <span class="comment">//多线程必须加锁</span></span><br><span class="line">        addLock(excelName,zos,workbook);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//上锁</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">addLock</span><span class="params">(String excelName, ZipOutputStream zos, SXSSFWorkbook workbook)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ZipEntry zipEntry = <span class="keyword">new</span> ZipEntry(excelName);</span><br><span class="line">            zos.putNextEntry(zipEntry);</span><br><span class="line">            ByteArrayOutputStream bos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">            workbook.write(bos);</span><br><span class="line">            bos.writeTo(zos);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h5 id="2-ExcelPakage"><a href="#2-ExcelPakage" class="headerlink" title="2.ExcelPakage"></a>2.ExcelPakage</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ExcelPakage</span><span class="params">(HttpServletResponse response)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line"> 	<span class="keyword">public</span> ThreadPoolExecutor poolExecutor = <span class="keyword">new</span> ThreadPoolExecutor(Constant.THREAD_NUM, Constant.THREAD_NUM, <span class="number">0</span>, TimeUnit.SECONDS, <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(Constant.THREAD_NUM));</span><br><span class="line">   <span class="keyword">private</span> CountDownLatch countDownLatch = <span class="keyword">new</span> CountDownLatch(Constant.THREAD_NUM);</span><br><span class="line">   OutputStream out = response.getOutputStream();<span class="comment">//response是HttpServletResponse</span></span><br><span class="line">   <span class="comment">//压缩包的文件名</span></span><br><span class="line">   String filename;</span><br><span class="line">   ZipOutputStream zos = <span class="keyword">new</span> ZipOutputStream(out);</span><br><span class="line">   <span class="comment">//map中的key为excel的名字，data为excel对应的数据</span></span><br><span class="line">   </span><br><span class="line">   Map&lt;String,Object&gt; data;</span><br><span class="line">     <span class="keyword">try</span> &#123;</span><br><span class="line">     	<span class="keyword">for</span> (Map.enteySet excelEntry:dataList.entrySet()) &#123;</span><br><span class="line">           String excelName=excelEntry.getKey();</span><br><span class="line">           Object data=excelEntry.getValue();</span><br><span class="line">       	ExcelTask task = <span class="keyword">new</span> ExcelTask(zos,countDownLatch,</span><br><span class="line">                                          excelName,data<span class="comment">/*,其他参数*/</span>);</span><br><span class="line">           poolExecutor.submit(task);<span class="comment">//执行任务</span></span><br><span class="line">           &#125;</span><br><span class="line">           count.await();<span class="comment">//等待所有Excel创建完成</span></span><br><span class="line">           zos.flush();</span><br><span class="line">       &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">           e.printStackTrace();</span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           executor.shutdown();<span class="comment">//关闭线程池</span></span><br><span class="line">           <span class="comment">//注意顺序</span></span><br><span class="line">           zos.close();</span><br><span class="line">           out.close();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="工具类："><a href="#工具类：" class="headerlink" title="工具类："></a>工具类：</h3><h5 id="1-ExcelUtils"><a href="#1-ExcelUtils" class="headerlink" title="1.ExcelUtils"></a>1.ExcelUtils</h5><p>操作excel的工具类</p>
-<p><strong>2.fileUtils</strong></p>
-<p>操作文件的工具类</p>
-<h3 id="3-总结"><a href="#3-总结" class="headerlink" title="3.总结"></a>3.总结</h3><p>这里只有核心代码哦，提供了一个大概的思路~</p>
+<p><strong>SQL语句在执行过程中，需要经过以下三大基本步骤：</strong></p>
+<ol>
+<li>代码语义分析</li>
+<li>制定执行计划</li>
+<li>获得返回结果</li>
+</ol>
+<p>而一个SQL语句是由<strong>代码</strong>和<strong>数据</strong>两部分，如：</p>
+<p>SELECT id, name, phone FROM userTable WHERE name = ‘xiaoming’; </p>
+<p>SELECT id, name, phone FROM userTable WHERE name = 是代码，’xiaoming’是数据。</p>
+<p>而预编译，以<strong>Mybatis为例，就是预先分析带有占位符的语义</strong>：</p>
+<p>如SELECT id, name, phone FROM userTable WHERE id = #{name}; </p>
+<p>然后再将数据’xiaoming’，传入到占位符。这样一来，错开来代码语义分析阶段，也就不会被误认为是代码的一部分了。</p>
+<h3 id="2-直接使用Mybatis"><a href="#2-直接使用Mybatis" class="headerlink" title="2. 直接使用Mybatis"></a>2. 直接使用Mybatis</h3><p>Mybatis传入数据有两种占位符${}和#{}。${}和#{}。</p>
+<p><strong>${}<strong>可以理解为语义分析前的</strong>字符串拼接</strong>，将传入的参数，原封不动地传入。</p>
+<p>**#{}**占位符就不存在注入问题</p>
+<p><strong>不能用#{}的场景：order by</strong></p>
+<p>SELECT id, name, phone FROM userTable ORDER BY #{}; ，执行时会报错。</p>
+<p>因为order by后的内容，是一个列名，属于代码语义的一部分。如果在语义分析部分没有确定下来，就相当于执行SELECT id, name, phone FROM userTable ORDER BY 。肯定会有语法错误。</p>
+<p><strong>正确写法：</strong></p>
+<p><strong>order by（group by）语句中使用${}</strong></p>
+<p>（1）使用条件判断</p>
+<p><img src="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/image-20210918090107908.png" alt="image-20210918090107908"></p>
+<ol start="2">
+<li>使用全局过滤机制，限制order by后的变量内容只能是数字、字母、下划线。</li>
+</ol>
+<p>如使用正则过滤：</p>
+<p><img src="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/image-20210918090140239.png" alt="image-20210918090140239"></p>
+<p>摘自：</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/mP49OCkwqSnamtop0cChdQ">https://mp.weixin.qq.com/s/mP49OCkwqSnamtop0cChdQ</a></p>
+<p>大佬写的真不戳，有空再仔细拜读。。。</p>
  
       <!-- reward -->
       
@@ -183,12 +202,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E2%80%94-SQL/" rel="tag">— SQL</a></li></ul>
 
     </footer>
   </div>
@@ -196,15 +215,20 @@
    
   <nav class="article-nav">
     
-      <a href="/2020/08/04/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/" class="article-nav-link">
+      <a href="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%94%90%E8%BD%A6%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            多线程打包压缩文件
+            唐车项目的一些思考
           
         </div>
       </a>
     
+    
+      <a href="/2021/09/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/BIO%E3%80%81NIO%E3%80%81AIO/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">BIO、NIO、AIO</div>
+      </a>
     
   </nav>
 
@@ -357,6 +381,10 @@
     
     <li class="nav-item">
       <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/resource">资源推荐</a>
     </li>
     
   </ul>

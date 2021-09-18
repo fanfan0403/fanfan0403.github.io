@@ -101,11 +101,11 @@
        
   <p>[TOC]</p>
 <h3 id="1-为什么引入缓存"><a href="#1-为什么引入缓存" class="headerlink" title="1.为什么引入缓存"></a>1.为什么引入缓存</h3><p>如果你的业务处于起步阶段，流量非常小，那无论是读请求还是写请求，直接操作数据库即可。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo1NdGKV0ptDl4ZsCXKfwXLl1Kp35aOG1Iku9K2EJ8Y7v5bM91jK5NLQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p1.jpg" alt="img"></p>
 <p>随着业务量的增长，你的项目请求量越来越大，这时如果每次都从数据库中读数据，那肯定会有<strong>性能问题</strong>。</p>
 <span id="more"></span>
 
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo3lYxFg1icDgHngialHe8ibUDKCvfib4DmTMo36wJv0FeZ5ex0kId1LTOpw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p2.jpg" alt="图片"></p>
 <p>当下优秀的缓存中间件，当属 <strong>Redis</strong> 莫属，它不仅<u>性能非常高，还提供了很多友好的数据类型</u>，可以很好地满足我们的业务需求。</p>
 <h3 id="2-缓存怎么存"><a href="#2-缓存怎么存" class="headerlink" title="2.缓存怎么存"></a>2.缓存怎么存</h3><p>最简单直接的方案是「全量数据刷到缓存中」：</p>
 <ul>
@@ -113,7 +113,7 @@
 <li>写请求只更新数据库，不更新缓存</li>
 <li>启动一个定时任务，定时把数据库的数据，更新到缓存中</li>
 </ul>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo0jeBz8G4Kwr7ZgicicEQARCTuaFibHOf1pKzVnicVbiaxzGtKukzrEqGOOA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p3.jpg" alt="图片"></p>
 <p><strong>优点：</strong></p>
 <p>所有读请求都可以直接「命中」缓存，不需要再查数据库，性能非常高。</p>
 <p><strong>缺点：</strong></p>
@@ -128,7 +128,7 @@
 <li>读请求先读缓存，如果缓存不存在，则从数据库读取，并重建缓存</li>
 <li>同时，写入缓存中的数据，都设置失效时间</li>
 </ul>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCo8ic8WbuqDQcJ2bVyia7t9rOu9CGyJnCkWQs16WNibAwdV0GbH3q0K6ZMw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p4.jpg" alt="图片"></p>
 <p>这样一来，缓存中不经常访问的数据，随着时间的推移，都会逐渐「过期」淘汰掉，最终缓存中保留的，都是经常被访问的「热数据」，缓存利用率得以最大化。</p>
 <p><strong>数据库和缓存都更新，又存在先后问题，那对应的方案就有 2 个：</strong></p>
 <ol>
@@ -232,13 +232,13 @@
 <li><strong>维护成本</strong>：我们项目中一般都会用到消息队列，维护成本并没有新增很多</li>
 </ul>
 <p>所以，引入消息队列来解决这个问题，是比较合适的。这时架构模型就变成了这样：</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCoNNyZnraolIYC8NntRZu8R0VpQp0iaXsohT5gjf4QpV0biah4iaRiaHOcyw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p5.jpg" alt="图片"></p>
 <p>那如果你确实不想在应用中去写消息队列，是否有更简单的方案，同时又可以保证一致性呢？</p>
 <p>方案还是有的，这就是近几年比较流行的解决方案：<strong>订阅数据库变更日志，再操作缓存</strong>。</p>
 <p>具体来讲就是，我们的业务应用在修改数据时，「只需」修改数据库，无需操作缓存。</p>
 <p>那什么时候操作缓存呢？这就和数据库的「变更日志」有关了。</p>
 <p>拿 MySQL 举例<u>，当一条数据发生修改时，MySQL 就会产生一条变更日志（Binlog），我们可以订阅这个日志，拿到具体操作的数据，然后再根据这条数据，去删除对应的缓存</u>。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gB9Yvac5K3OezNCibL5S9oyeYqJBQVZCowjAarwD2g3lIfCPsvhEHGaohPHVa47GR9d1GUgj0Eta1ketClKZjfw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="/2021/09/10/MySQL/%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/p6.jpg" alt="图片"></p>
 <p>订阅变更日志，目前也有了比较成熟的开源中间件，例如阿里的 canal，使用这种方案的优点在于：</p>
 <ul>
 <li><strong>无需考虑写消息队列失败情况</strong>：只要写 MySQL 成功，Binlog 肯定会有</li>
@@ -556,6 +556,10 @@
     
     <li class="nav-item">
       <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/resource">资源推荐</a>
     </li>
     
   </ul>

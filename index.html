@@ -146,6 +146,192 @@
     
     
     <article
+  id="post-项目实战/唐车项目的一些思考"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%94%90%E8%BD%A6%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/"
+    >唐车项目的一些思考</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/%E5%94%90%E8%BD%A6%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/" class="article-date">
+  <time datetime="2021-09-18T01:11:50.000Z" itemprop="datePublished">2021-09-18</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/">项目实战</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="1-改善提案模块的审批流"><a href="#1-改善提案模块的审批流" class="headerlink" title="1.改善提案模块的审批流"></a>1.改善提案模块的审批流</h3><p><strong>使用责任链模式</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义一个审批的父类，包括approve()和setNext()两个方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Approve</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Response <span class="title">approve</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        <span class="comment">//审批逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Response <span class="title">setNext</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        <span class="comment">//设置下一个结点</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//每种审批类型去实现父类——解耦，扩展性好</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ApproveA</span> <span class="keyword">implements</span> <span class="title">Approve</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Response <span class="title">approve</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Response <span class="title">setNext</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>改进：责任树模式</strong></p>
+<p>启发来源于阿里的技术博客</p>
+<p>就是将责任链和策略模式组合起来。。。</p>
+<p>有兴趣可以看看 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Wib0Ly45te00HMUnIG-tbg">https://mp.weixin.qq.com/s/Wib0Ly45te00HMUnIG-tbg</a></p>
+<h3 id="2-表设计的不大好"><a href="#2-表设计的不大好" class="headerlink" title="2.表设计的不大好"></a>2.表设计的不大好</h3><p>（1）应该对员工表进行分表处理，把员工表分成基本信息表和职务相关信息表，不然搜索起来太慢了。。。</p>
+<p>（2）该加索引的地方加上索引。。。</p>
+<h3 id="3-微服务"><a href="#3-微服务" class="headerlink" title="3.微服务"></a>3.微服务</h3><p>每个模块做一个微服务，比如管理创新、改善提案、操作创新模块。一个模块挂了不至于影响其它的。。。</p>
+<p>emmm,微服务还不会。。。慢慢学明白。。。</p>
+<h3 id="4-技术该更新下了"><a href="#4-技术该更新下了" class="headerlink" title="4.技术该更新下了"></a>4.技术该更新下了</h3><p>（1）mybaties换成mybatis-plus(这个灰常好用)</p>
+<p>（2）前后端应该分离了</p>
+<p>做全栈，被迫营业哇，前后端都写。。。那个审批流结点(node.js)写恶心了…</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-项目实战/SQL注入问题"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/"
+    >SQL注入问题</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/" class="article-date">
+  <time datetime="2021-09-18T00:49:16.000Z" itemprop="datePublished">2021-09-18</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/">项目实战</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="1-SQL注入的原因"><a href="#1-SQL注入的原因" class="headerlink" title="1. SQL注入的原因"></a>1. SQL注入的原因</h3><p>SQL注入漏洞，根本上讲，是由于错把外部输入当作SQL代码去执行。目前最佳的解决方案就是<strong>预编译</strong>的方式。</p> 
+      <a class="article-more-link" href="/2021/09/18/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/SQL%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E2%80%94-SQL/" rel="tag">— SQL</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-操作系统/BIO、NIO、AIO"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2021/09/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/BIO%E3%80%81NIO%E3%80%81AIO/"
+    >BIO、NIO、AIO</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/09/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/BIO%E3%80%81NIO%E3%80%81AIO/" class="article-date">
+  <time datetime="2021-09-18T00:19:48.000Z" itemprop="datePublished">2021-09-18</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>[TOC]</p>
+<h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><p><strong>同步与异步</strong></p>
+<p>同步和异步关注的是<em><strong>消息通信机制</strong></em></p>
+<ul>
+<li><strong>同步：</strong> 同步就是发起一个调用后，被调用者未处理完请求之前，调用不返回。</li>
+<li><strong>异步：</strong> 异步就是发起一个调用后，立刻得到被调用者的回应表示已接收到请求，但是被调用者并没有返回结果，此时我们可以处理其他的请求，被调用者通常依靠事件，回调等机制来通知调用者其返回结果。</li>
+</ul>
+<p>同步和异步的区别最大在于异步的话调用者不需要等待处理结果，被调用者会通过回调等机制来通知调用者其返回结果。</p> 
+      <a class="article-more-link" href="/2021/09/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/BIO%E3%80%81NIO%E3%80%81AIO/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-计算机网络/其它知识点"
   class="article article-type-post"
   itemscope
@@ -549,175 +735,6 @@
 </article>
 
     
-    <article
-  id="post-计算机网络/计算机体系结构"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/"
-    >计算机体系结构</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="article-date">
-  <time datetime="2021-09-10T05:28:07.000Z" itemprop="datePublished">2021-09-10</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p><img src="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/wps30.jpg" alt="img"> </p> 
-      <a class="article-more-link" href="/2021/09/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-数据结构/排序算法总结"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/"
-    >排序算法总结</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" class="article-date">
-  <time datetime="2021-09-10T05:25:12.000Z" itemprop="datePublished">2021-09-10</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>[TOC]</p>
-<h4 id="复杂度总结"><a href="#复杂度总结" class="headerlink" title="复杂度总结"></a><em><strong>复杂度总结</strong></em></h4><p><img src="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/wps29.jpg" alt="img"> </p> 
-      <a class="article-more-link" href="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-数据结构/常用数据结构总结"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93/"
-    >常用数据结构总结</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93/" class="article-date">
-  <time datetime="2021-09-10T05:08:03.000Z" itemprop="datePublished">2021-09-10</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>[TOC]</p>
-<h2 id="1-数组"><a href="#1-数组" class="headerlink" title="1.数组"></a>1.<em>数组</em></h2><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a><em>概念</em></h4><p><strong>数组</strong>（Array） 是一种很常见的数据结构。它由****相同类型的元素****（element）组成，并且是使用一块连续的内存来存储。</p>
-<p>我们直接可以利用元素的索引（index）可以计算出该元素对应的存储地址。</p>
-<p>数组的特点是：****提供随机访问 并且容量有限****。</p> 
-      <a class="article-more-link" href="/2021/09/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93/"
-        >阅读更多...</a
-      >
-       
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
   </article>
   
 
@@ -825,6 +842,10 @@
     
     <li class="nav-item">
       <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/resource">资源推荐</a>
     </li>
     
   </ul>
